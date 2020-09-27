@@ -6,13 +6,13 @@ RSpec.describe 'general' do
   describe 'root route' do
     it 'works' do
       post_json '/register', {
-        requestor_type:    'pl',
-        exam_type:         'pcr',
+        requestor_type:    'PL',
+        exam_type:         'PCR',
         exam_date:         '2020-09-28',
         first_name:        'jakub',
         last_name:         'kalab',
         municipality:      'mnicho',
-        zip_code:          '25164',
+        zip_code:          '251 64',
         email:             'j@k.cz',
         phone_number:      '602222222',
         insurance_number:  '8801019997',
