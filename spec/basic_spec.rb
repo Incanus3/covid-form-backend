@@ -5,7 +5,21 @@ RSpec.describe 'general' do
 
   describe 'root route' do
     it 'works' do
-      post '/register'
+      post_json '/register', {
+        requestor_type:    'pl',
+        exam_type:         'pcr',
+        exam_date:         '2020-09-28',
+        first_name:        'jakub',
+        last_name:         'kalab',
+        municipality:      'mnicho',
+        zip_code:          '25164',
+        email:             'j@k.cz',
+        phone_number:      '602222222',
+        insurance_number:  '8801019997',
+        insurance_company: 111
+      }
+
+      pp last_response.json
 
       expect(last_response).to be_ok
       expect(last_response.json).to eq({ 'result' => 'OK' })
