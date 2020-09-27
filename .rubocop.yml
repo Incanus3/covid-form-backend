@@ -1,0 +1,103 @@
+AllCops:
+  EnabledByDefault: true
+  Exclude:
+    - 'bin/*'
+  TargetRubyVersion: 2.7
+
+Bundler/GemComment:
+  Enabled: false
+
+Layout/FirstMethodArgumentLineBreak:
+  Enabled: false
+
+Layout/HashAlignment:
+  EnforcedColonStyle:      table
+  EnforcedHashRocketStyle: table
+
+Layout/LineLength:
+  Max: 100
+
+Layout/MultilineAssignmentLayout:
+  Enabled: false
+
+Layout/MultilineMethodArgumentLineBreaks:
+  Enabled: false
+
+Layout/SpaceInsideArrayLiteralBrackets:
+  Enabled: false
+
+Layout/SpaceInsideParens:
+  Enabled: false
+
+Layout/TrailingEmptyLines:
+  Enabled: false
+
+Lint/ConstantResolution:
+  Enabled: false
+
+Metrics/AbcSize:
+  Max: 30
+
+Metrics/BlockLength:
+  Max: 10
+
+Metrics/MethodLength:
+  Max: 15
+
+Metrics/ParameterLists:
+  CountKeywordArgs: false
+
+Style/AccessModifierDeclarations:
+  Enabled: false
+
+Style/BlockDelimiters:
+  EnforcedStyle: semantic
+
+Style/ConstantVisibility:
+  Enabled: false
+
+Style/Copyright:
+  Enabled: false
+
+Style/DisableCopsWithinSourceCodeDirective:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Style/DocumentationMethod:
+  Enabled: false
+
+Style/EmptyMethod:
+  EnforcedStyle: expanded
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/InlineComment:
+  Enabled: false
+
+Style/MethodCallWithArgsParentheses:
+  IgnoredMethods:
+    - gem
+    - 'on'
+    - is
+    - p
+    - pp
+    - puts
+    - raise
+    - require
+    - require_relative
+    - run
+    - source
+    - unshift
+    - yield
+
+Style/MissingElse:
+  EnforcedStyle: case
+
+Style/RedundantSelf:
+  Enabled: false
+
+Style/StringHashKeys:
+  Enabled: false
