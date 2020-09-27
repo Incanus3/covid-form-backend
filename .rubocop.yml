@@ -101,3 +101,6 @@ Style/RedundantSelf:
 
 Style/StringHashKeys:
   Enabled: false
+
+Style/TrailingCommaInArguments:
+  EnforcedStyleForMultiline: comma

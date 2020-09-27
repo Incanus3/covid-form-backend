@@ -3,8 +3,10 @@ source 'https://rubygems.org'
 gem 'dry-schema'
 gem 'dry-types'
 gem 'falcon'
+gem 'pg'
 gem 'rack-cors'
 gem 'roda'
+gem 'sequel'
 
 group :development do
   gem 'guard'

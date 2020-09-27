@@ -1,3 +1,5 @@
+require 'app/db'
+
 module CovidForm
   class Registration
     def self.perform(data)
