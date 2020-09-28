@@ -1,1 +1,1 @@
-require 'app/db/connection'
+require 'app/db/database'

@@ -1,5 +1,7 @@
 source 'https://rubygems.org'
 
+gem 'attr_extras'
+gem 'dry-monads'
 gem 'dry-schema'
 gem 'dry-types'
 gem 'falcon'
@@ -10,6 +12,7 @@ gem 'roda'
 gem 'sequel'
 
 group :development do
+  gem 'database_cleaner-sequel'
   gem 'guard'
   gem 'guard-bundler'
   gem 'guard-rspec'

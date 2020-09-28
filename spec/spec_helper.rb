@@ -1,14 +1,17 @@
+require 'database_cleaner/sequel'
 require 'rspec/collection_matchers'
 require 'rack/test'
+require 'sequel/core'
 require 'simplecov'
 
 $LOAD_PATH.unshift File.expand_path('..', __dir__)
 
 SimpleCov.start
 
-require 'app'
-
 ENV['APP_ENV'] = 'test'
+
+require 'app'
+require 'app/db/database'
 
 # rubocop:disable Style/MethodCallWithArgsParentheses
 RSpec.configure do |config|
@@ -28,6 +31,24 @@ RSpec.configure do |config|
   end
 
   config.default_formatter = 'doc' if config.files_to_run.one?
+
+  config.before(:suite) do
+    db = CovidForm::Database[:test].connect
+
+    Sequel.extension(:migration)
+
+    Sequel::Migrator.run(db, 'app/db/migrations')
+
+    DatabaseCleaner[:sequel].db = db
+    DatabaseCleaner[:sequel].strategy = :transaction
+    DatabaseCleaner[:sequel].clean_with(:truncation)
+  end
+
+  config.around(:each) do |example|
+    DatabaseCleaner[:sequel].cleaning do
+      example.run
+    end
+  end
 
   config.include Rack::Test::Methods
 

@@ -7,6 +7,9 @@ AllCops:
 Bundler/GemComment:
   Enabled: false
 
+Layout/FirstHashElementIndentation:
+  EnforcedStyle: consistent
+
 Layout/FirstMethodArgumentLineBreak:
   Enabled: false
 
@@ -72,6 +75,9 @@ Style/EmptyMethod:
   EnforcedStyle: expanded
 
 Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/ImplicitRuntimeError:
   Enabled: false
 
 Style/InlineComment:

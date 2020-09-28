@@ -3,7 +3,9 @@ $LOAD_PATH.unshift '.'
 require 'roda'
 require 'dry-schema'
 
+require 'app/db'
 require 'app/types'
+require 'app/serializers'
 require 'app/registration'
 
 module CovidForm
@@ -14,6 +16,10 @@ module CovidForm
     plugin :symbol_status
     plugin :json
     plugin :json_parser
+
+    # TODO: use dry-coontainer for this
+    Database[:development] = Database.new(database: 'covid')
+    Database[:test]        = Database.new(database: 'covid_test')
 
     REGISTRATION_SCHEMA = Dry::Schema.JSON {
       required(:requestor_type   ).filled(Types::RequestorType)
@@ -41,7 +47,7 @@ module CovidForm
           if validation_result.success?
             result = Registration.perform(validation_result.to_h)
 
-            { result: result }
+            RegistrationResultSerializer.serialize(result)
           else
             response.status = :bad_request
 

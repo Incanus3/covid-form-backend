@@ -1,7 +1,7 @@
 $LOAD_PATH.unshift '.'
 
 require 'logger'
-require 'app/db/connection'
+require 'app/db/database'
 
 namespace :db do
   desc 'Run migrations'
@@ -15,7 +15,7 @@ namespace :db do
     verbose = ENV['VERBOSE'] && !['false', 'no', 'n', '0'].include?(ENV['VERBOSE'].downcase)
     options = { logger: Logger.new($stderr, level: verbose ? :debug : :info) }
 
-    CovidForm::DB.connect(**options) do |db|
+    CovidForm::Database.connect(**options) do |db|
       Sequel::Migrator.run(db, 'app/db/migrations', target: version)
     end
   end
