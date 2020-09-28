@@ -11,7 +11,6 @@ SimpleCov.start
 ENV['APP_ENV'] = 'test'
 
 require 'app'
-require 'app/db/database'
 
 # rubocop:disable Style/MethodCallWithArgsParentheses
 RSpec.configure do |config|
@@ -33,13 +32,15 @@ RSpec.configure do |config|
   config.default_formatter = 'doc' if config.files_to_run.one?
 
   config.before(:suite) do
-    db = CovidForm::Database[:test].connect
+    CovidForm::Application.start(:persistence)
+
+    db = CovidForm::Application[:db]
 
     Sequel.extension(:migration)
 
-    Sequel::Migrator.run(db, 'app/db/migrations')
+    Sequel::Migrator.run(db.sequel_db, 'app/db/migrations')
 
-    DatabaseCleaner[:sequel].db = db
+    DatabaseCleaner[:sequel].db = db.sequel_db
     DatabaseCleaner[:sequel].strategy = :transaction
     DatabaseCleaner[:sequel].clean_with(:truncation)
   end

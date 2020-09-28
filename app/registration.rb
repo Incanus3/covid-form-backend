@@ -1,15 +1,21 @@
 require 'attr_extras/explicit'
 require 'dry/monads'
 require 'dry/monads/do'
-require 'app/db'
+
+require 'app/application'
 
 module CovidForm
   class Registration
     extend AttrExtras.mixin
     include Dry::Monads[:result]
     include Dry::Monads::Do.for(:perform)
+    include Import[:db]
 
-    static_facade :perform, :data
+    attr_private_initialize [:db, :data]
+
+    def self.perform(data)
+      new(data: data).perform
+    end
 
     def perform
       puts '=' * 80
@@ -41,11 +47,6 @@ module CovidForm
         puts 'client already exists'
         Failure("client with insurance_number #{self.data[:insurance_number]} already exists")
       end
-    end
-
-    # TODO: use dry-coontainer for this
-    private def db
-      @db ||= Database[ENV.fetch('APP_ENV', 'development')]
     end
   end
 end

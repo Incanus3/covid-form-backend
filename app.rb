@@ -3,8 +3,8 @@ $LOAD_PATH.unshift '.'
 require 'roda'
 require 'dry-schema'
 
-require 'app/db'
 require 'app/types'
+require 'app/application'
 require 'app/serializers'
 require 'app/registration'
 
@@ -17,9 +17,7 @@ module CovidForm
     plugin :json
     plugin :json_parser
 
-    # TODO: use dry-coontainer for this
-    Database[:development] = Database.new(database: 'covid')
-    Database[:test]        = Database.new(database: 'covid_test')
+    Application.start(:persistence) # TODO: stop persistence on exist
 
     REGISTRATION_SCHEMA = Dry::Schema.JSON {
       required(:requestor_type   ).filled(Types::RequestorType)
