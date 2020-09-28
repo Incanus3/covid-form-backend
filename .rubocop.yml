@@ -102,5 +102,11 @@ Style/RedundantSelf:
 Style/StringHashKeys:
   Enabled: false
 
+Style/SymbolArray:
+  MinSize: 5
+
 Style/TrailingCommaInArguments:
   EnforcedStyleForMultiline: comma
+
+Style/WordArray:
+  MinSize: 5

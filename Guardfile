@@ -30,6 +30,7 @@ group :red_green_refactor, halt_on_fail: true do # rubocop:disable Metrics/Block
   end
 
   guard :rubocop, cli: ['-D'] do
+    watch('Rakefile')
     watch(/.+\.rb$/)
     watch(%r{(?:.+/)?\.rubocop(?:_todo)?\.yml$}) { |m| File.dirname(m[0]) }
   end

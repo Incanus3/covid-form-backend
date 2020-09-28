@@ -1,0 +1,12 @@
+inherit_from:
+  - ../../../.rubocop.yml
+
+inherit_mode:
+  merge:
+    - IgnoredMethods
+
+Metrics/BlockLength:
+  Enabled: False
+
+Style/MethodCallWithArgsParentheses:
+  IgnoredMethods: []

@@ -5,6 +5,7 @@ gem 'dry-types'
 gem 'falcon'
 gem 'pg'
 gem 'rack-cors'
+gem 'rake'
 gem 'roda'
 gem 'sequel'
 

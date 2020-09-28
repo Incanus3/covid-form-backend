@@ -52,6 +52,12 @@ postgres> createdb -O covid covid
 
 * if you use another database/user/host/port/..., set environment variables accordingly
   (see app/db.rb)
+* run database migrations
+
+```sh
+rake db:migrate
+```
+
 * run server in one terminal through rerun - it will restart the server on file changes
 
 ```sh
@@ -67,6 +73,8 @@ bundle exec guard
 
 # Production
 
+* create db user and database
+* run db migrations
 * run facon server directly
 
 ```sh
