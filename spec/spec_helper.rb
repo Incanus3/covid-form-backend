@@ -1,4 +1,6 @@
 require 'database_cleaner/sequel'
+require 'factory_bot'
+require 'faker'
 require 'rspec/collection_matchers'
 require 'rack/test'
 require 'sequel/core'
@@ -31,7 +33,17 @@ RSpec.configure do |config|
 
   config.default_formatter = 'doc' if config.files_to_run.one?
 
+  config.include Rack::Test::Methods
+  config.include FactoryBot::Syntax::Methods
+
+  Faker::Config.locale = 'cz'
+
+  # TODO: do this relative to __dir__
+  I18n.load_path << Dir["#{File.expand_path('config/locales')}/*.yml"]
+
   config.before(:suite) do
+    FactoryBot.find_definitions
+
     CovidForm::Application.start(:persistence)
 
     db = CovidForm::Application[:db]
@@ -50,8 +62,6 @@ RSpec.configure do |config|
       example.run
     end
   end
-
-  config.include Rack::Test::Methods
 
   def app
     CovidForm::App

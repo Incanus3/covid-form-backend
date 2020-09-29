@@ -55,6 +55,10 @@ Style/AccessModifierDeclarations:
 
 Style/BlockDelimiters:
   EnforcedStyle: semantic
+  AllowBracesOnProceduralOneLiners: true
+
+Style/ClassMethodsDefinitions:
+  Enabled: false
 
 Style/ConstantVisibility:
   Enabled: false
@@ -112,6 +116,9 @@ Style/SymbolArray:
   MinSize: 5
 
 Style/TrailingCommaInArguments:
+  EnforcedStyleForMultiline: comma
+
+Style/TrailingCommaInArrayLiteral:
   EnforcedStyleForMultiline: comma
 
 Style/WordArray:

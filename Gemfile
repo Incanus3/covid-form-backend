@@ -14,6 +14,8 @@ gem 'sequel'
 
 group :development do
   gem 'database_cleaner-sequel'
+  gem 'factory_bot'
+  gem 'faker'
   gem 'guard'
   gem 'guard-bundler'
   gem 'guard-rspec'

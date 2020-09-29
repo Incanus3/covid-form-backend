@@ -17,8 +17,9 @@ module CovidForm
     plugin :json
     plugin :json_parser
 
-    Application.start(:persistence) # TODO: stop persistence on exist
+    Application.start(:persistence) # TODO: stop persistence on exit
 
+    # TODO: use dry-validations to add advanced rules
     REGISTRATION_SCHEMA = Dry::Schema.JSON {
       required(:requestor_type   ).filled(Types::RequestorType)
       required(:exam_type        ).filled(Types::ExamType)
