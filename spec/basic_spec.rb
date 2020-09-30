@@ -1,8 +1,13 @@
 require 'spec_helper'
 require 'app/dependencies'
+require 'app/web/validation/contracts'
 
 RSpec.describe 'POST /register route' do
   include CovidForm::Import[:db]
+
+  def clean_client_data(data)
+    CovidForm::Web::Validation::ClientSchema.call(data).to_h
+  end
 
   it 'accepts properly formed request' do
     client_data = attributes_for(:client)
@@ -45,7 +50,7 @@ RSpec.describe 'POST /register route' do
     exam_data   = attributes_for(:exam)
     data        = client_data.merge(exam_data)
 
-    db[:clients].insert(client_data)
+    db[:clients].insert(clean_client_data(client_data))
 
     post_json '/register', data
 

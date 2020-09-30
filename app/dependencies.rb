@@ -24,7 +24,7 @@ module CovidForm
       init do
         require 'app/persistence/database'
 
-        container.register(:db, Database.new(**DEFAULT_DB_OPTIONS.merge(
+        container.register(:db, Persistence::Database.new(**DEFAULT_DB_OPTIONS.merge(
           database: container[:env] == :test ? 'covid_test' : 'covid',
           logger:   container[:logger],
         )))
@@ -36,6 +36,16 @@ module CovidForm
 
       stop do
         container[:db].disconnect
+      end
+    end
+
+    boot(:repository) do |container|
+      start do
+        use :persistence
+
+        require 'app/persistence/repository'
+
+        container.register(:repository, Persistence::Repository.new)
       end
     end
   end

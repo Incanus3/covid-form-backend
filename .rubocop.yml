@@ -26,6 +26,9 @@ Layout/MultilineAssignmentLayout:
 Layout/MultilineMethodArgumentLineBreaks:
   Enabled: false
 
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
 Layout/SpaceInsideArrayLiteralBrackets:
   Enabled: false
 

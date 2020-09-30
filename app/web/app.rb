@@ -19,7 +19,8 @@ module CovidForm
       include Validation
       include Serialization
 
-      Dependencies.start(:persistence) # TODO: stop persistence on exit
+      # Dependencies.start(:persistence) # TODO: stop persistence on exit
+      Dependencies.start(:repository)
 
       route do |r| # rubocop:disable Metrics/BlockLength
         r.root do # GET /

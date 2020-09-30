@@ -2,10 +2,11 @@ require 'dry/monads'
 require 'dry/monads/do'
 
 require 'app/dependencies'
+require 'app/persistence/repository'
 
 module CovidForm
   class Registration
-    include Import[:db]
+    include Import[:db, :repository]
     include Dry::Monads[:result]
     include Dry::Monads::Do.for(:perform)
 
@@ -15,7 +16,7 @@ module CovidForm
       end
     end
 
-    attr_private_initialize [:db, :data]
+    attr_private_initialize [:db, :repository, :data]
 
     def self.perform(data)
       new(data: data).perform
@@ -37,15 +38,11 @@ module CovidForm
       client_data = self.data.slice(:first_name, :last_name, :municipality, :zip_code,
                                     :email, :phone_number, :insurance_number, :insurance_company)
 
-      # TODO: move client data preprocessing logic elsewere
-      client_data[:zip_code].gsub!(/\s/, '')
-
-      # TODO: move persistence logic elsewere
-      existing = db[:clients].where(insurance_number: client_data[:insurance_number]).for_update
+      existing = repository.clients.lock_by_insurance_number(client_data[:insurance_number])
 
       if existing.empty?
         puts 'creating new client'
-        db[:clients].insert(client_data)
+        repository.clients.create(client_data)
 
         Success()
       else
