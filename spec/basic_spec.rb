@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'app/application'
+require 'app/dependencies'
 
 RSpec.describe 'POST /register route' do
   include CovidForm::Import[:db]

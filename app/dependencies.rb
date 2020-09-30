@@ -1,7 +1,7 @@
 require 'dry/system/container'
 
 module CovidForm
-  class Application < Dry::System::Container
+  class Dependencies < Dry::System::Container
     DEFAULT_DB_OPTIONS = {
       adapter:       ENV.fetch('DB_BACKEND',  'postgres'),
       host:          ENV.fetch('DB_HOST',     'localhost'),
@@ -40,5 +40,5 @@ module CovidForm
     end
   end
 
-  Import = Dry::AutoInject(Application)
+  Import = Dry::AutoInject(Dependencies)
 end

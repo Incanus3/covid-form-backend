@@ -14,7 +14,7 @@ SimpleCov.start
 
 ENV['APP_ENV'] = 'test'
 
-require 'app'
+require 'app/web/app'
 
 # rubocop:disable Style/MethodCallWithArgsParentheses
 RSpec.configure do |config|
@@ -47,9 +47,9 @@ RSpec.configure do |config|
   config.before(:suite) do
     FactoryBot.find_definitions
 
-    CovidForm::Application.start(:persistence)
+    CovidForm::Dependencies.start(:persistence)
 
-    db = CovidForm::Application[:db]
+    db = CovidForm::Dependencies[:db]
 
     Sequel.extension(:migration)
 
@@ -67,7 +67,7 @@ RSpec.configure do |config|
   end
 
   def app
-    CovidForm::App
+    CovidForm::Web::App
   end
 end
 # rubocop:enable Style/MethodCallWithArgsParentheses

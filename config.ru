@@ -35,4 +35,4 @@ use Rack::Cors do
   #   end
 end
 
-run CovidForm::App.freeze.app
+run CovidForm::Web::App.freeze.app

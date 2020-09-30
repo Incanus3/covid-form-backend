@@ -1,7 +1,7 @@
 require 'dry/monads'
 require 'dry/monads/do'
 
-require 'app/application'
+require 'app/dependencies'
 
 module CovidForm
   class Registration
@@ -40,6 +40,7 @@ module CovidForm
       # TODO: move client data preprocessing logic elsewere
       client_data[:zip_code].gsub!(/\s/, '')
 
+      # TODO: move persistence logic elsewere
       existing = db[:clients].where(insurance_number: client_data[:insurance_number]).for_update
 
       if existing.empty?

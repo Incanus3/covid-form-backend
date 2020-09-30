@@ -1,18 +1,20 @@
 $LOAD_PATH.unshift '.'
 
+require 'attr_extras'
+
 namespace :db do
   desc 'Run migrations'
   task :migrate, [:version] do |_task, args|
     require 'sequel/core'
-    require 'app/application'
+    require 'app/dependencies'
 
     version = Integer(args[:version]) if args[:version]
 
     Sequel.extension(:migration)
 
-    CovidForm::Application.init(:persistence)
+    CovidForm::Dependencies.init(:persistence)
 
-    CovidForm::Application[:db].connect do |db|
+    CovidForm::Dependencies[:db].connect do |db|
       Sequel::Migrator.run(db, 'app/persistence/migrations', target: version)
     end
   end
