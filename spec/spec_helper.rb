@@ -5,6 +5,8 @@ require 'rspec/collection_matchers'
 require 'rack/test'
 require 'sequel/core'
 require 'simplecov'
+require_relative 'helpers/overrides'
+require_relative 'helpers/json_requests'
 
 $LOAD_PATH.unshift File.expand_path('..', __dir__)
 
@@ -35,6 +37,7 @@ RSpec.configure do |config|
 
   config.include Rack::Test::Methods
   config.include FactoryBot::Syntax::Methods
+  config.include JSONRequests
 
   Faker::Config.locale = 'cz'
 
@@ -65,26 +68,6 @@ RSpec.configure do |config|
 
   def app
     CovidForm::App
-  end
-end
-
-module Rack
-  class MockResponse
-    def json
-      body.empty? ? body : JSON.parse(body)
-    end
-  end
-end
-
-module JSONRequests
-  def post_json(path, body = nil)
-    header 'Content-Type', 'application/json'
-    post(path, body && JSON.generate(body))
-  end
-
-  def patch_json(path, body = nil)
-    header 'Content-Type', 'application/json'
-    patch(path, body && JSON.generate(body))
   end
 end
 # rubocop:enable Style/MethodCallWithArgsParentheses

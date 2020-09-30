@@ -2,8 +2,6 @@ require 'spec_helper'
 require 'app/application'
 
 RSpec.describe 'general' do
-  include JSONRequests
-
   describe 'root route' do
     it 'works' do
       client_data = attributes_for(:client)
