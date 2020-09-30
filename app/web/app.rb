@@ -3,8 +3,8 @@ require 'roda'
 
 require 'app/dependencies'
 require 'app/services/registration'
-require 'app/web/serializers'
-require 'app/web/validation/schemas'
+require 'app/web/validation'
+require 'app/web/serialization'
 
 module CovidForm
   module Web
@@ -16,6 +16,9 @@ module CovidForm
       plugin :json
       plugin :json_parser
 
+      include Validation
+      include Serialization
+
       Dependencies.start(:persistence) # TODO: stop persistence on exit
 
       route do |r| # rubocop:disable Metrics/BlockLength
@@ -25,8 +28,7 @@ module CovidForm
 
         r.is 'register' do
           r.post do # POST /register
-            # TODO: use dry-validations to add advanced rules
-            validation_result = REGISTRATION_SCHEMA.call(request.params)
+            validation_result = RegistrationContract.new.call(request.params)
 
             if validation_result.success?
               result     = Registration.perform(validation_result.to_h)

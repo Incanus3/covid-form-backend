@@ -1,5 +1,5 @@
-require 'app/types'
 require 'app/entities'
+require 'app/web/validation/types'
 
 FactoryBot.define do
   factory :client do
@@ -15,16 +15,22 @@ FactoryBot.define do
     insurance_number  { Faker::CZIDNumber.valid         }
     insurance_company { Faker::Number.number(digits: 3) }
 
-    trait :invalid do
+    trait :invalid_email do
       email { 'xxx' }
     end
 
-    factory :invalid_client, traits: [:invalid]
+    factory :client_with_invalid_email, traits: [:invalid_email]
   end
 
   factory :exam do
     requestor_type { CovidForm::Types::RequestorType.values.sample }
     exam_type      { CovidForm::Types::ExamType.values.sample      }
     exam_date      { Faker::Date.forward(days: 60)                 }
+
+    trait :past_date do
+      exam_date { Faker::Date.backward }
+    end
+
+    factory :exam_with_past_date, traits: [:past_date]
   end
 end
