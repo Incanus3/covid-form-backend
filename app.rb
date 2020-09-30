@@ -1,5 +1,6 @@
 $LOAD_PATH.unshift '.'
 
+require 'attr_extras'
 require 'roda'
 require 'dry-schema'
 
@@ -34,7 +35,7 @@ module CovidForm
       required(:insurance_company).filled(Types::Coercible::Integer)
     }.freeze
 
-    route do |r|
+    route do |r| # rubocop:disable Metrics/BlockLength
       r.root do # GET /
         '<p>tady bude seznam rout</p>'
       end
@@ -44,14 +45,16 @@ module CovidForm
           validation_result = REGISTRATION_SCHEMA.call(request.params)
 
           if validation_result.success?
-            result = Registration.perform(validation_result.to_h)
-
-            RegistrationResultSerializer.serialize(result)
+            result     = Registration.perform(validation_result.to_h)
+            serializer = RegistrationResultSerializer
           else
-            response.status = :bad_request
-
-            validation_result.errors.to_h
+            result     = validation_result.errors
+            serializer = ValidationErrorsSerializer
           end
+
+          response.status, body = serializer.serialize(result)
+
+          body
         end
       end
     end

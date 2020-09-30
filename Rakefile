@@ -13,7 +13,7 @@ namespace :db do
     CovidForm::Application.init(:persistence)
 
     CovidForm::Application[:db].connect do |db|
-      Sequel::Migrator.run(db, 'app/db/migrations', target: version)
+      Sequel::Migrator.run(db, 'app/persistence/migrations', target: version)
     end
   end
 end

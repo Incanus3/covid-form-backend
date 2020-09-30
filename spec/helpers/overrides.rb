@@ -5,6 +5,10 @@ module Rack
     def json
       body.empty? ? body : JSON.parse(body)
     end
+
+    def conflict?
+      status == 409
+    end
   end
 end
 

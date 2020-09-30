@@ -1,15 +1,9 @@
-require 'attr_extras/explicit'
 require 'forwardable'
 require 'sequel'
 
 module CovidForm
   class Database
     extend Forwardable
-    extend AttrExtras.mixin
-
-    def self.connect(**kwargs, &block)
-      new(**kwargs).connect(&block)
-    end
 
     attr_private :options
     def_delegators :sequel_db, :[], :transaction, :in_transaction?

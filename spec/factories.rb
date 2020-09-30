@@ -14,6 +14,12 @@ FactoryBot.define do
 
     insurance_number  { Faker::CZIDNumber.valid         }
     insurance_company { Faker::Number.number(digits: 3) }
+
+    trait :invalid do
+      email { 'xxx' }
+    end
+
+    factory :invalid_client, traits: [:invalid]
   end
 
   factory :exam do

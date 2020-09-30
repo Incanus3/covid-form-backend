@@ -53,7 +53,7 @@ RSpec.configure do |config|
 
     Sequel.extension(:migration)
 
-    Sequel::Migrator.run(db.sequel_db, 'app/db/migrations')
+    Sequel::Migrator.run(db.sequel_db, 'app/persistence/migrations')
 
     DatabaseCleaner[:sequel].db = db.sequel_db
     DatabaseCleaner[:sequel].strategy = :transaction

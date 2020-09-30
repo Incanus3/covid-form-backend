@@ -22,7 +22,7 @@ module CovidForm
 
     boot(:persistence) do |container|
       init do
-        require 'app/db/database'
+        require 'app/persistence/database'
 
         container.register(:db, Database.new(**DEFAULT_DB_OPTIONS.merge(
           database: container[:env] == :test ? 'covid_test' : 'covid',
