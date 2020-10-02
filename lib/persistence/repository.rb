@@ -4,6 +4,14 @@ module Utils
   module Persistence
     # subclass must provide db method returning a Database
     class Repository
+      class << self
+        private
+
+        def register_relation(name, **kwargs)
+          define_method(name) { get_relation(name, **kwargs) }
+        end
+      end
+
       private
 
       def get_relation(name, constructor: nil, dataset_module: nil)
@@ -22,6 +30,10 @@ module Utils
 
       def create_model(db_name:, row_proc:, dataset_module:)
         Class.new(Sequel::Model) do
+          def self.create(...)
+            dataset.row_proc.call(dataset.returning.insert(...).first)
+          end
+
           self.dataset_module(dataset_module) if dataset_module
 
           if row_proc

@@ -22,7 +22,9 @@ module CovidForm
       pp self.data
 
       db.transaction do
-        _client = yield create_or_update_client
+        client = yield create_or_update_client
+
+        p client
 
         Success()
       end
@@ -34,13 +36,14 @@ module CovidForm
 
       existing = repository.clients.lock_by_insurance_number(client_data[:insurance_number])
 
-      if existing.empty?
-        repository.clients.create(client_data)
-      else
-        existing.update(client_data.except(:insurance_number))
-      end
+      client =
+        if existing.empty?
+          repository.clients.create(client_data)
+        else
+          existing.update_returning(client_data.except(:insurance_number)).first
+        end
 
-      Success()
+      Success(client)
     end
   end
 end
