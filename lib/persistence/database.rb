@@ -1,13 +1,13 @@
 require 'forwardable'
 require 'sequel'
 
-module CovidForm
+module Utils
   module Persistence
     class Database
       extend Forwardable
 
       attr_private :options
-      def_delegators :sequel_db, :[], :transaction, :in_transaction?
+      def_delegators :sequel_db, :[], :table_exists?, :transaction, :in_transaction?
 
       def initialize(sequel_db: nil, **options)
         @options   = options

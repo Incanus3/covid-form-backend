@@ -10,12 +10,6 @@ module CovidForm
     include Dry::Monads[:result]
     include Dry::Monads::Do.for(:perform)
 
-    class ClientAlreadyExists < Failure
-      def initialize(data)
-        super("client with insurance_number #{data[:insurance_number]} already exists")
-      end
-    end
-
     attr_private_initialize [:db, :repository, :data]
 
     def self.perform(data)
@@ -41,14 +35,12 @@ module CovidForm
       existing = repository.clients.lock_by_insurance_number(client_data[:insurance_number])
 
       if existing.empty?
-        puts 'creating new client'
         repository.clients.create(client_data)
-
-        Success()
       else
-        puts 'client already exists'
-        ClientAlreadyExists.new(client_data)
+        existing.update(client_data.except(:insurance_number))
       end
+
+      Success()
     end
   end
 end

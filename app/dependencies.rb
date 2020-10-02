@@ -22,9 +22,9 @@ module CovidForm
 
     boot(:persistence) do |container|
       init do
-        require 'app/persistence/database'
+        require 'lib/persistence/database'
 
-        container.register(:db, Persistence::Database.new(**DEFAULT_DB_OPTIONS.merge(
+        container.register(:db, Utils::Persistence::Database.new(**DEFAULT_DB_OPTIONS.merge(
           database: container[:env] == :test ? 'covid_test' : 'covid',
           logger:   container[:logger],
         )))

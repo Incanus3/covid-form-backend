@@ -1,11 +1,14 @@
+require 'lib/persistence/repository'
+require 'app/entities'
+require_relative 'dataset_modules'
+
 module CovidForm
   module Persistence
-    class Repository
-      # TODO: make this generic
-      def clients
-        require_relative 'models'
+    class Repository < Utils::Persistence::Repository
+      include Import[:db]
 
-        Clients
+      def clients
+        get_relation(:clients, constructor: Client, dataset_module: DatasetModules::Clients)
       end
     end
   end

@@ -7,6 +7,9 @@ AllCops:
 Bundler/GemComment:
   Enabled: false
 
+Layout/FirstArgumentIndentation:
+  EnforcedStyle: consistent
+
 Layout/FirstHashElementIndentation:
   EnforcedStyle: consistent
 
@@ -52,6 +55,9 @@ Metrics/MethodLength:
 
 Metrics/ParameterLists:
   CountKeywordArgs: false
+
+Naming/ConstantName:
+  Enabled: false
 
 Style/AccessModifierDeclarations:
   Enabled: false
