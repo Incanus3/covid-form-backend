@@ -1,20 +1,5 @@
+require 'factory_bot'
 require 'faker'
-
-module Rack
-  class MockResponse
-    def json
-      body.empty? ? body : JSON.parse(body)
-    end
-
-    def symbolized_json
-      json.deep_symbolize_keys
-    end
-
-    def conflict?
-      status == 409
-    end
-  end
-end
 
 module Faker
   class Base
@@ -48,5 +33,18 @@ module Faker
         random_bool ? bare_phone_number : phone_number_with_country_code
       end
     end
+  end
+end
+
+RSpec.configure do |config|
+  config.include FactoryBot::Syntax::Methods
+
+  Faker::Config.locale = 'cz'
+
+  # TODO: do this relative to __dir__
+  I18n.load_path << Dir["#{File.join(APP_ROOT, 'config', 'locales')}/*.yml"]
+
+  config.before(:suite) do
+    FactoryBot.find_definitions
   end
 end
