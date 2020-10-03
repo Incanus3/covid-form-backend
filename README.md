@@ -50,8 +50,8 @@ postgres> createdb -O covid covid
 # press ctrl+d to log out of postgres account
 ```
 
-* if you use another database/user/host/port/..., set environment variables accordingly
-  (see app/db.rb)
+* if you use different database engine/host/user/port/..., set environment variables accordingly
+  (see https://github.com/Incanus3/covid-form-backend/blob/master/app/dependencies.rb#L5)
 * run database migrations
 
 ```sh
@@ -85,6 +85,7 @@ bundle exec falcon serve -b http://0.0.0.0:80
   (puma, thin, phusion passenger, whatever, see https://github.com/rack/rack)
 * if you serve more than one app on the server, you can bind it to a different port and employ
   a reverse proxy (typically nginx) to forward traffic to each app (typically based on Host header)
-* you can also use Phusion Passenger nginx module to run the app in an nginx worker process(es)
+* you can also use Phusion Passenger apache/nginx module to run the app in an nginx worker
+  process(es)
 * ideally set up SSL to transfer data securely over HTTPS
   (out of the scope of this Readme, see e.g. https://certbot.eff.org/)
