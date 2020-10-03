@@ -8,17 +8,29 @@ module CovidForm
       port:          ENV.fetch('DB_PORT',     '5432'),
       user:          ENV.fetch('DB_USER',     'covid'),
       password:      ENV.fetch('DB_PASSWORD', 'covid'),
-      sql_log_level: :debug
+      sql_log_level: :debug,
     }.freeze
+
+    ENV_TO_OUTPUT_PROVIDER = {
+      production:  -> { File.open(File.join(APP_ROOT, 'log', 'central.log'), 'a') },
+      development: -> { $stderr },
+      test:        -> { IO::NULL },
+    }.freeze
+
+    # TODO: split logging into several files in production
+    def self.logger
+      env     = resolve(:env) or raise 'env must be registered before calling logger'
+      verbose = ENV['VERBOSE'] && !['false', 'no', 'n', '0'].include?(ENV['VERBOSE'].downcase)
+
+      Logger.new(ENV_TO_OUTPUT_PROVIDER[env].call, level: verbose ? :debug : :info)
+    end
 
     configure do |config|
       # config.root = Pathname('./my/app')
     end
 
-    verbose = ENV['VERBOSE'] && !['false', 'no', 'n', '0'].include?(ENV['VERBOSE'].downcase)
-
     register :env,    ENV.fetch('APP_ENV', :development).to_sym
-    register :logger, Logger.new($stderr, level: verbose ? :debug : :info)
+    register :logger, logger
 
     boot(:persistence) do |container|
       init do

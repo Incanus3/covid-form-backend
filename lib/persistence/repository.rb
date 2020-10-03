@@ -21,6 +21,9 @@ module Utils
 
         raise "database has no table #{name}" unless db.table_exists?(name)
 
+        # TODO: so as not to leak abstraction, this will need to wrap the new model subclass in a
+        # Ralation instance, that will delegate to it and translate Sequel exceptions to custom ones
+
         self.class.const_set(class_name, create_model(
           db_name:        name,
           row_proc:       constructor && to_row_proc(constructor),

@@ -8,11 +8,12 @@ require 'simplecov'
 require_relative 'helpers/overrides'
 require_relative 'helpers/json_requests'
 
-$LOAD_PATH.unshift File.expand_path('..', __dir__)
+APP_ROOT = File.expand_path('..', __dir__)
+ENV['APP_ENV'] = 'test'
+
+$LOAD_PATH.unshift(APP_ROOT)
 
 SimpleCov.start
-
-ENV['APP_ENV'] = 'test'
 
 require 'app/web/app'
 

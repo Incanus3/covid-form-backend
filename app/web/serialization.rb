@@ -28,7 +28,7 @@ module CovidForm
           in Services::Registration::Success({ client: client, registration: registration })
             [:ok, success_response_with(client: client.to_h, registration: registration.to_h)]
           in Services::Registration::Failure(message)
-            [:unprocessable_entity, error_response_with(error: message)]
+            [:unprocessable_entity, error_response_with(error: [message])]
           end
         end
       end

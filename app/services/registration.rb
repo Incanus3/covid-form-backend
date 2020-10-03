@@ -11,6 +11,13 @@ module CovidForm
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:perform)
 
+      class ClientAlreadyRegisteredForDate < Failure
+        def initialize(client, date)
+          super("client with insurance_number #{client.insurance_number} " \
+                "is already registered for #{date}")
+        end
+      end
+
       attr_private_initialize [:db, :repository, :data]
 
       def self.perform(data)
@@ -22,11 +29,13 @@ module CovidForm
           client       = yield create_or_update_client
           registration = yield create_registration(client)
 
-          Success({ client: client, registration: registration })
+          Success.new({ client: client, registration: registration })
         end
       end
 
-      private def create_or_update_client
+      private
+
+      def create_or_update_client
         client_data = self.data.slice(:first_name, :last_name, :municipality, :zip_code,
                                       :email, :phone_number, :insurance_number, :insurance_company)
 
@@ -39,16 +48,19 @@ module CovidForm
             existing.update_returning(client_data.except(:insurance_number)).first
           end
 
-        Success(client)
+        Success.new(client)
       end
 
-      private def create_registration(client)
-        registration_data = self.data.slice(:requestor_type, :exam_type, :exam_date)
-        registration_data[:client_id] = client.id
+      def create_registration(client)
+        registration_data = self.data
+          .slice(:requestor_type, :exam_type, :exam_date)
+          .merge({ client_id: client.id })
 
-        registration = repository.registrations.create(registration_data)
-
-        Success(registration)
+        begin
+          Success.new(repository.registrations.create(registration_data))
+        rescue Sequel::UniqueConstraintViolation # FIXME: this is an abstraciton leak
+          ClientAlreadyRegisteredForDate.new(client, registration_data[:exam_date])
+        end
       end
     end
   end
