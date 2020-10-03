@@ -1,3 +1,4 @@
+require 'lib/transformations'
 require 'sequel/model'
 
 module Utils
@@ -15,7 +16,7 @@ module Utils
       private
 
       def get_relation(name, constructor: nil, dataset_module: nil)
-        class_name = name.to_s.camelize
+        class_name = Utils::String.camelize(name)
 
         return self.class.const_get(class_name) if self.class.const_defined?(class_name)
 

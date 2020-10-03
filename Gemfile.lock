@@ -83,6 +83,7 @@ GEM
       dry-equalizer (~> 0.2)
       dry-inflector (~> 0.1, >= 0.1.2)
       dry-struct (~> 1.0)
+    dry-transformer (0.1.1)
     dry-types (1.4.0)
       concurrent-ruby (~> 1.0)
       dry-container (~> 0.3)
@@ -235,9 +236,11 @@ PLATFORMS
 DEPENDENCIES
   attr_extras
   database_cleaner-sequel
+  dry-inflector
   dry-monads
   dry-schema
   dry-system
+  dry-transformer
   dry-types
   dry-validation
   factory_bot

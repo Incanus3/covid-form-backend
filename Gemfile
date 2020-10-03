@@ -1,6 +1,8 @@
 source 'https://rubygems.org'
 
 gem 'attr_extras'
+gem 'dry-transformer'
+gem 'dry-inflector'
 gem 'dry-monads'
 gem 'dry-schema'
 gem 'dry-system'

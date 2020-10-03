@@ -1,6 +1,7 @@
 require 'dry/monads'
 require 'dry/monads/do'
 
+require 'lib/transformations'
 require 'app/dependencies'
 require 'app/persistence/repository'
 
@@ -45,7 +46,9 @@ module CovidForm
           if existing.empty?
             repository.clients.create(client_data)
           else
-            existing.update_returning(client_data.except(:insurance_number)).first
+            without_ins_num = Utils::Hash.reject_keys(client_data, [:insurance_number])
+
+            existing.update_returning(without_ins_num).first
           end
 
         Success.new(client)
