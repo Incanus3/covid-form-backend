@@ -6,7 +6,7 @@ inherit_mode:
     - IgnoredMethods
 
 Metrics/BlockLength:
-  Max: 50
+  Max: 80
 
 Style/MethodCallWithArgsParentheses:
   IgnoredMethods:

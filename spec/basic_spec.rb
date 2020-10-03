@@ -9,21 +9,30 @@ RSpec.describe 'POST /register route' do
     CovidForm::Web::Validation::ClientSchema.call(data).to_h
   end
 
-  it 'creates a new client' do
+  def serialize(entity)
+    entity.to_h.transform_values { |val| val.is_a?(Date) ? val.to_s : val }
+  end
+
+  it 'creates a new client and a registration' do
     client_data = attributes_for(:client)
     exam_data   = attributes_for(:exam)
     data        = client_data.merge(exam_data)
 
     post_json '/register', data
 
-    client = repository.clients[insurance_number: client_data[:insurance_number]]
+    client        = repository.clients[insurance_number: client_data[:insurance_number]]
+    registration  = repository.registrations[client_id: client.id]
+    response_data = last_response.symbolized_json
 
-    expect(last_response     ).to be_ok
-    expect(last_response.json).to eq({ 'status' => 'OK' })
-    expect(client.first_name ).to eq client_data[:first_name]
+    expect(last_response               ).to be_ok
+    expect(response_data[:status]      ).to eq 'OK'
+    expect(response_data[:client]      ).to eq client.to_h
+    expect(response_data[:registration]).to eq serialize(registration)
+    expect(client.first_name           ).to eq client_data[:first_name]
+    expect(registration.exam_type      ).to eq exam_data[:exam_type]
   end
 
-  it 'updates existing client (by insurance number)' do
+  it 'updates existing client (by insurance number) and creates a new registration' do
     client_data = attributes_for(:client)
     exam_data   = attributes_for(:exam)
     data        = client_data.merge(exam_data)
@@ -34,10 +43,15 @@ RSpec.describe 'POST /register route' do
     post_json '/register', data
 
     updated_client = repository.clients.with_pk!(client_id)
+    registration   = repository.registrations[client_id: client_id]
+    response_data  = last_response.symbolized_json
 
-    expect(last_response            ).to be_ok
-    expect(last_response.json       ).to eq({ 'status' => 'OK' })
-    expect(updated_client.first_name).to eq 'Updated'
+    expect(last_response               ).to be_ok
+    expect(response_data[:status]      ).to eq 'OK'
+    expect(response_data[:client]      ).to eq updated_client.to_h
+    expect(response_data[:registration]).to eq serialize(registration)
+    expect(updated_client.first_name   ).to eq 'Updated'
+    expect(registration.exam_type      ).to eq exam_data[:exam_type]
   end
 
   it 'rejects request if the email is invalid' do

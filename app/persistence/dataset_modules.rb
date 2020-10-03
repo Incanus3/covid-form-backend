@@ -10,6 +10,10 @@ module CovidForm
           where(insurance_number: number).for_update
         end
       end
+
+      module Registrations
+        include Utils::Persistence::DatasetModule
+      end
     end
   end
 end

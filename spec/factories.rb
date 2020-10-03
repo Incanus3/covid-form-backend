@@ -2,7 +2,7 @@ require 'app/entities'
 require 'app/web/validation/types'
 
 FactoryBot.define do
-  factory :client do
+  factory :client, class: CovidForm::Entities::Client do
     first_name        { Faker::Name.first_name  }
     last_name         { Faker::Name.last_name   }
 
@@ -22,7 +22,7 @@ FactoryBot.define do
     factory :client_with_invalid_email, traits: [:invalid_email]
   end
 
-  factory :exam do
+  factory :exam, class: CovidForm::Entities::Registration do
     requestor_type { CovidForm::Types::RequestorType.values.sample }
     exam_type      { CovidForm::Types::ExamType.values.sample      }
     exam_date      { Faker::Date.forward(days: 60)                 }

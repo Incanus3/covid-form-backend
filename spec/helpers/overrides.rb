@@ -6,6 +6,10 @@ module Rack
       body.empty? ? body : JSON.parse(body)
     end
 
+    def symbolized_json
+      json.deep_symbolize_keys
+    end
+
     def conflict?
       status == 409
     end

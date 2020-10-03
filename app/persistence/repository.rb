@@ -7,7 +7,12 @@ module CovidForm
     class Repository < Utils::Persistence::Repository
       include Import[:db]
 
-      register_relation :clients, constructor: Client, dataset_module: DatasetModules::Clients
+      register_relation(:clients,
+                        constructor:    Entities::Client,
+                        dataset_module: DatasetModules::Clients)
+      register_relation(:registrations,
+                        constructor:    Entities::Registration,
+                        dataset_module: DatasetModules::Registrations)
     end
   end
 end
