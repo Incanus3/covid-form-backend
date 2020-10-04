@@ -14,8 +14,8 @@ module CovidForm
 
       class ClientAlreadyRegisteredForDate < Failure
         def initialize(client, date)
-          super("client with insurance_number #{client.insurance_number} " \
-                "is already registered for #{date}")
+          super(I18n.t('registration.client_already_registered_for_date',
+                       insurance_number: client.insurance_number, date: I18n.l(date)))
         end
       end
 

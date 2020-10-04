@@ -250,6 +250,7 @@ DEPENDENCIES
   guard-bundler
   guard-rspec
   guard-rubocop
+  i18n
   pg
   rack-cors
   rack-test

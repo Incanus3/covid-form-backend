@@ -1,17 +1,4 @@
 cz:
-  faker:
-    address:
-      postcode: ['#####', '### ##']
-
-    phone_number:
-      formats: ['#########', '### ### ###']
-
-    cell_phone:
-      formats: ['#########', '### ### ###']
-
-    country_code: ['420']
-
-    id_number:
-      valid: "#{Number.number(digits: 10)}"
-      invalid: ['000-##-####', '###-00-####', '###-##-0000', '666-##-####', '9##-##-####']
-
+  registration:
+    client_already_registered_for_date:
+      "klient s číslem pojištěnce %{insurance_number} je již registrován na %{date}"

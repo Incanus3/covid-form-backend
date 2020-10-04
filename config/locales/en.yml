@@ -1,0 +1,4 @@
+en:
+  registration:
+    client_already_registered_for_date:
+      "client with insurance_number %{insurance_number} is already registered for %{date}"
