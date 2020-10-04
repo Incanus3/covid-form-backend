@@ -6,7 +6,7 @@ Sequel.migration do
       column :first_name,        String,    null: false
       column :last_name,         String,    null: false
       column :municipality,      String,    null: false
-      column :zip_code,          Integer,   null: false
+      column :zip_code,          String,    null: false
       column :email,             String,    null: false
       column :phone_number,      String,    null: false
       column :insurance_number,  String,    null: false, unique: true

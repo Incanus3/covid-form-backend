@@ -1,7 +1,6 @@
 require 'dry/system/container'
 require 'lib/env_vars'
 
-# rubocop:disable Metrics/BlockLength
 module CovidForm
   class Dependencies < Dry::System::Container
     DEFAULT_DB_OPTIONS = {
@@ -80,4 +79,3 @@ module CovidForm
 
   Import = Dry::AutoInject(Dependencies)
 end
-# rubocop:enable Metrics/BlockLength
