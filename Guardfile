@@ -12,7 +12,7 @@ guard :bundler do
 end
 
 group :red_green_refactor, halt_on_fail: true do # rubocop:disable Metrics/BlockLength
-  guard :rspec, cmd: 'bundle exec rspec -f d' do
+  guard :rspec, cmd: 'bundle exec rspec -f d --order rand' do
     require 'guard/rspec/dsl'
 
     dsl = Guard::RSpec::Dsl.new(self)
