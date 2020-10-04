@@ -20,10 +20,16 @@ module CovidForm
       include Serialization
 
       Dependencies.start(:repository) # TODO: stop persistence on exit
+      Dependencies.start(:mail_delivery)
 
       route do |r| # rubocop:disable Metrics/BlockLength
         r.root do # GET /
-          '<p>tady bude seznam rout</p>'
+          <<~TXT
+            <h1>Seznam rout</h1>
+            <ul>
+              <li>POST /register</li>
+            </ul>
+          TXT
         end
 
         r.is 'register' do

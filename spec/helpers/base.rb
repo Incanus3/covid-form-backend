@@ -18,5 +18,7 @@ RSpec.configure do |config|
   end
 
   config.default_formatter = 'doc' if config.files_to_run.one?
+
+  config.backtrace_exclusion_patterns = [/bundler|rack|roda|rspec|database_cleaner/]
 end
 # rubocop:enable Style/MethodCallWithArgsParentheses

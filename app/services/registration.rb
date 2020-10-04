@@ -8,7 +8,7 @@ require 'app/persistence/repository'
 module CovidForm
   module Services
     class Registration
-      include Import[:db, :repository]
+      include Import[:db, :repository, :mail_sender]
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:perform)
 
@@ -19,7 +19,7 @@ module CovidForm
         end
       end
 
-      attr_private_initialize [:db, :repository, :data]
+      attr_private_initialize [:db, :repository, :mail_sender, :data]
 
       def self.perform(data)
         new(data: data).perform
@@ -29,6 +29,8 @@ module CovidForm
         db.transaction do
           client       = yield create_or_update_client
           registration = yield create_registration(client)
+
+          yield send_mail(client)
 
           Success.new({ client: client, registration: registration })
         end
@@ -65,6 +67,27 @@ module CovidForm
           ClientAlreadyRegisteredForDate.new(client, registration_data[:exam_date])
         end
       end
+
+      # rubocop:disable Style/MethodCallWithArgsParentheses
+      def send_mail(client)
+        mail = mail_sender.deliver {
+          to      client.email
+          subject I18n.t('registration.success_email_subject')
+
+          text_part do
+            content_type 'text/plain; charset=UTF-8'
+            body         I18n.t('registration.success_email_body')
+          end
+
+          html_part do
+            content_type 'text/html; charset=UTF-8'
+            body         "<p>#{I18n.t('registration.success_email_body')}</p>"
+          end
+        }
+
+        Success.new(mail)
+      end
+      # rubocop:enable Style/MethodCallWithArgsParentheses
     end
   end
 end

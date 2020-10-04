@@ -1,5 +1,7 @@
 require 'dry/system/container'
+require 'lib/env_vars'
 
+# rubocop:disable Metrics/BlockLength
 module CovidForm
   class Dependencies < Dry::System::Container
     DEFAULT_DB_OPTIONS = {
@@ -20,7 +22,7 @@ module CovidForm
     # TODO: split logging into several files in production
     def self.logger
       env     = resolve(:env) or raise 'env must be registered before calling logger'
-      verbose = ENV['VERBOSE'] && !['false', 'no', 'n', '0'].include?(ENV['VERBOSE'].downcase)
+      verbose = Utils::EnvVars.fetch_bool(:verbose)
 
       Logger.new(ENV_TO_OUTPUT_PROVIDER[env].call, level: verbose ? :debug : :info)
     end
@@ -52,15 +54,30 @@ module CovidForm
     end
 
     boot(:repository) do |container|
+      init do
+        require 'app/persistence/repository'
+      end
+
       start do
         use :persistence
 
-        require 'app/persistence/repository'
+        container.register(:repository, Persistence::Repository.new(db: container[:db]))
+      end
+    end
 
-        container.register(:repository, Persistence::Repository.new)
+    boot(:mail_delivery) do |container|
+      init do
+        require 'lib/mail_delivery'
+      end
+
+      start do
+        Utils::MailSender.configure(container[:env], container[:logger])
+
+        container.register(:mail_sender, Utils::MailSender.new(env: container[:env]))
       end
     end
   end
 
   Import = Dry::AutoInject(Dependencies)
 end
+# rubocop:enable Metrics/BlockLength

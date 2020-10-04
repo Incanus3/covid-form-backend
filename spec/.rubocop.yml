@@ -14,4 +14,5 @@ Style/MethodCallWithArgsParentheses:
     - describe
     - eq
     - include
+    - not_to
     - to

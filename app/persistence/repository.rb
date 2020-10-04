@@ -5,7 +5,7 @@ require_relative 'dataset_modules'
 module CovidForm
   module Persistence
     class Repository < Utils::Persistence::Repository
-      include Import[:db]
+      attr_private_initialize [:db]
 
       register_relation(:clients,
                         constructor:    Entities::Client,

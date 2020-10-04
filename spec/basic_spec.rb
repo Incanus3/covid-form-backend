@@ -30,6 +30,13 @@ RSpec.describe 'POST /register route' do
     expect(response_data[:registration]).to eq serialize(registration)
     expect(client.first_name           ).to eq client_data[:first_name]
     expect(registration.exam_type      ).to eq exam_data[:exam_type]
+
+    is_expected.to have_sent_email
+      .from('covid@test.cz')
+      .to(client_data[:email])
+      .matching_subject(/test registration/)
+      .matching_body(/registration was successful/)
+      .with_no_attachments
   end
 
   it 'updates existing client (by insurance number) and creates a new registration' do

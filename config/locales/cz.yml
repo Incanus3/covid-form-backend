@@ -1,4 +1,8 @@
 cz:
   registration:
+    success_email_subject:
+      "Registrace k testu na COVID-19"
+    success_email_body:
+      "Vaše registrace k testu na COVID-19 byla úspěšná."
     client_already_registered_for_date:
       "klient s číslem pojištěnce %{insurance_number} je již registrován na %{date}"
