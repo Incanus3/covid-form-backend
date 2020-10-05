@@ -20,7 +20,7 @@ module PersistenceTests
   end
 
   class Repository < Utils::Persistence::Repository
-    attr_private_initialize [:db]
+    attr_private_initialize [:database]
 
     register_relation(:clients,
                       constructor:    Entities::Client,
@@ -29,12 +29,31 @@ module PersistenceTests
 end
 
 RSpec.describe Utils::Persistence::Repository do
+  let(:database)   { Utils::Persistence::Database.new(adapter: 'sqlite', database: ':memory:') }
+  let(:repository) { PersistenceTests::Repository.new(database: database)                      }
+
+  before do
+    database.sequel_db.create_table(:clients) do
+      primary_key :id
+
+      column :first_name,   String, null: false
+      column :last_name,    String, null: false
+      column :email,        String, null: false
+      column :phone_number, String
+    end
+  end
+
+  after do
+    database.sequel_db.drop_table(:clients)
+  end
+
   it 'works' do
-    db         = Utils::Persistence::Database.new(adapter: 'sqlite', database: ':memory:')
-    repository = PersistenceTests::Repository.new(db: db)
+    repository.clients.insert(first_name: 'Testy', last_name: 'Testson', email: 'testy@testson.org')
+    repository.clients.insert(first_name: 'Your',  last_name: 'Mama',    email: 'your@mama.codes')
 
-    # TODO: we will have to create tables somehow
+    client = repository.clients.by_email('your@mama.codes').first!
 
-    p repository
+    expect(client).to be_a PersistenceTests::Entities::Client
+    expect(client.last_name).to eq 'Mama'
   end
 end

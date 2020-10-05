@@ -3,7 +3,6 @@ require 'sequel/model'
 
 module Utils
   module Persistence
-    # subclass must provide db method returning a Database
     class Repository
       class << self
         private
@@ -15,12 +14,14 @@ module Utils
 
       private
 
+      attr_implement :database # must return a Utils::Persistence::Database instance
+
       def get_relation(name, constructor: nil, dataset_module: nil)
         class_name = Utils::String.camelize(name)
 
         return self.class.const_get(class_name) if self.class.const_defined?(class_name)
 
-        raise "database has no table #{name}" unless db.table_exists?(name)
+        raise "database has no table #{name}" unless database.table_exists?(name)
 
         # TODO: so as not to leak abstraction, this will need to wrap the new model subclass in a
         # Ralation instance, that will delegate to it and translate Sequel exceptions to custom ones
@@ -33,6 +34,8 @@ module Utils
       end
 
       def create_model(db_name:, row_proc:, dataset_module:)
+        database = self.database
+
         Class.new(Sequel::Model) do
           def self.create(...)
             dataset.row_proc.call(dataset.returning.insert(...).first)
@@ -45,9 +48,9 @@ module Utils
               dataset # don't reset dataset row proc to model constructor
             end
 
-            self.dataset = db[db_name].with_row_proc(row_proc)
+            self.dataset = database[db_name].with_row_proc(row_proc)
           else
-            self.dataset = db[db_name]
+            self.dataset = database[db_name]
           end
         end
       end

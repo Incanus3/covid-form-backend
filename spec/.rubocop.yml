@@ -26,6 +26,7 @@ RSpec/MultipleExpectations:
 Style/MethodCallWithArgsParentheses:
   IgnoredMethods:
     - be
+    - be_a
     - describe
     - eq
     - feature

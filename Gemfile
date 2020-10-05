@@ -17,7 +17,7 @@ gem 'rake'
 gem 'roda'
 gem 'sequel'
 
-group :development do
+group :development do # rubocop:disable Metrics/BlockLength
   gem 'database_cleaner-sequel'
   gem 'factory_bot'
   gem 'faker'
@@ -31,6 +31,8 @@ group :development do
   gem 'rspec-collection_matchers'
   gem 'rubocop'
   gem 'rubocop-performance'
+  gem 'rubocop-rake'
   gem 'rubocop-rspec'
   gem 'simplecov'
+  gem 'sqlite3'
 end

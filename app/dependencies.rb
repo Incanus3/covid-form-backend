@@ -60,7 +60,7 @@ module CovidForm
       start do
         use :persistence
 
-        container.register(:repository, Persistence::Repository.new(db: container[:db]))
+        container.register(:repository, Persistence::Repository.new(database: container[:db]))
       end
     end
 
