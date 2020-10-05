@@ -29,6 +29,10 @@ module CovidForm
             [:ok, success_response_with(client: client.to_h, registration: registration.to_h)]
           in Services::Registration::Failure(message)
             [:unprocessable_entity, error_response_with(error: [message])]
+          else
+            # :nocov:
+            raise "invalid registration result to serialize: #{result.inspect}"
+            # :nocov:
           end
         end
       end

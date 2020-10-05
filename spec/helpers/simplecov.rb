@@ -9,7 +9,7 @@ SimpleCov.configure do
   add_group 'Utilities',   'lib'
 
   maximum_coverage_drop 3
-  minimum_coverage line: 95, branch: 65
-  minimum_coverage_by_file 90
+  minimum_coverage line: 97, branch: 85
+  minimum_coverage_by_file 95
 end
 

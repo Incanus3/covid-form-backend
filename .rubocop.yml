@@ -121,6 +121,12 @@ Style/MethodCallWithArgsParentheses:
 Style/MissingElse:
   EnforcedStyle: case
 
+Style/PreferredHashMethods:
+  EnforcedStyle: verbose
+
+Style/RaiseArgs:
+  EnforcedStyle: compact
+
 Style/RedundantSelf:
   Enabled: false
 

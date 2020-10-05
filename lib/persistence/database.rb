@@ -6,8 +6,12 @@ module Utils
     class Database
       extend Forwardable
 
-      attr_private :options
-      def_delegators :sequel_db, :[], :table_exists?, :transaction, :in_transaction?
+      attr_reader :options
+
+      def_delegators(:sequel_db,
+                     :disconnect,   :[],
+                     :create_table, :table_exists?,
+                     :transaction,  :in_transaction?)
 
       def initialize(sequel_db: nil, **options)
         options[:keep_reference] ||= false
@@ -17,27 +21,41 @@ module Utils
       end
 
       def sequel_db
-        @sequel_db or connect
+        connect unless connected?
+
+        @sequel_db
       end
 
       def connect(&block)
-        if @sequel_db
+        if connected?
           if block_given?
-            block.call(@sequel_db)
+            yield self
           else
-            @sequel_db
+            self
           end
         else
           connect!(&block)
         end
       end
 
-      def connect!(&block)
+      def connect!
         if block_given?
-          Sequel.connect(**self.options, &block)
+          Sequel.connect(**self.options) do |sequel_db|
+            yield self.class.new(sequel_db: sequel_db, **self.options)
+          end
         else
           @sequel_db = Sequel.connect(**self.options)
+
+          self
         end
+      end
+
+      def connected?
+        !!@sequel_db
+      end
+
+      def backend_type
+        sequel_db.database_type
       end
     end
   end

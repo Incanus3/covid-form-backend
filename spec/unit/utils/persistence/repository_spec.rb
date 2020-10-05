@@ -1,5 +1,5 @@
-require 'attr_extras'
 require 'base_helper'
+require 'lib/transformations'
 require 'lib/persistence/database'
 require 'lib/persistence/repository'
 require 'lib/persistence/dataset_module'
@@ -22,9 +22,21 @@ module PersistenceTests
   class Repository < Utils::Persistence::Repository
     attr_private_initialize [:database]
 
-    register_relation(:clients,
-                      constructor:    Entities::Client,
+    register_relation(:clients)
+    register_relation(:clients_with_entity_constructor,
+                      table_name:  'clients',
+                      constructor: Entities::Client)
+    register_relation(:clients_with_callable_constructor,
+                      table_name:  'clients',
+                      constructor: Utils::Transformations[:stringify_keys])
+    register_relation(:clients_with_custom_dm,
+                      table_name:     'clients',
                       dataset_module: DatasetModules::Clients)
+    register_relation(:clients_with_invalid_constructor,
+                      table_name:  'clients',
+                      constructor: 'bad')
+
+    register_relation(:nonexistent)
   end
 end
 
@@ -33,7 +45,7 @@ RSpec.describe Utils::Persistence::Repository do
   let(:repository) { PersistenceTests::Repository.new(database: database)                      }
 
   before do
-    database.sequel_db.create_table(:clients) do
+    database.create_table(:clients) do
       primary_key :id
 
       column :first_name,   String, null: false
@@ -41,19 +53,50 @@ RSpec.describe Utils::Persistence::Repository do
       column :email,        String, null: false
       column :phone_number, String
     end
+
+    repository.clients.insert(first_name: 'Testy', last_name: 'Testson', email: 'testy@testson.org')
+    repository.clients.insert(first_name: 'Your',  last_name: 'Mama',    email: 'your@mama.codes')
   end
 
   after do
-    database.sequel_db.drop_table(:clients)
+    database.disconnect
   end
 
   it 'works' do
-    repository.clients.insert(first_name: 'Testy', last_name: 'Testson', email: 'testy@testson.org')
-    repository.clients.insert(first_name: 'Your',  last_name: 'Mama',    email: 'your@mama.codes')
+    expect(repository.clients.count).to eq 2
+    expect(repository.clients.map(:last_name)).to include 'Mama'
+  end
 
-    client = repository.clients.by_email('your@mama.codes').first!
+  it 'supports custom dataset modules' do
+    expect {
+      repository.clients.by_email
+    }.to raise_exception NoMethodError
 
-    expect(client).to be_a PersistenceTests::Entities::Client
-    expect(client.last_name).to eq 'Mama'
+    client = repository.clients_with_custom_dm.by_email('your@mama.codes').first!
+
+    expect(client[:last_name]).to eq 'Mama'
+  end
+
+  it 'supports custom constructors' do
+    expect(repository.clients.first).to be_a Hash
+    expect(repository.clients.first.keys).to all(be_a Symbol)
+    expect(repository.clients_with_callable_constructor.first.keys).to all(be_a String)
+    expect(repository.clients_with_entity_constructor.first)
+      .to be_a PersistenceTests::Entities::Client
+    expect {
+      repository.clients_with_invalid_constructor.all
+    }.to raise_exception Utils::Persistence::InvalidConstructor
+  end
+
+  it 'handles nonexistent table' do
+    expect {
+      repository.nonexistent.all
+    }.to raise_exception Utils::Persistence::MissingTable
+  end
+
+  it 'provides relation with meaningful string representations' do
+    expect(repository.clients.name   ).to eq 'Clients'
+    expect(repository.clients.to_s   ).to eq 'Clients'
+    expect(repository.clients.inspect).to eq '#<Relation clients>'
   end
 end

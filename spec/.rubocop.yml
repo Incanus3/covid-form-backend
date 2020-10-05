@@ -32,4 +32,5 @@ Style/MethodCallWithArgsParentheses:
     - feature
     - include
     - not_to
+    - raise_exception
     - to

@@ -27,7 +27,6 @@ module Utils
         end
       end
     end
-    # :nocov:
 
     def self.smtp_options_from_env
       {
@@ -41,6 +40,7 @@ module Utils
         enable_starttls_auto: Utils::EnvVars.fetch_bool('SMTP_STARTTLS', default: false),
       }
     end
+    # :nocov:
 
     def initialize(env:, default_from: nil)
       @env          = env
