@@ -64,9 +64,9 @@ module CovidForm
       end
     end
 
-    boot(:mail_delivery) do |container|
+    boot(:mail_sender) do |container|
       init do
-        require 'lib/mail_delivery'
+        require 'lib/mail_sender'
       end
 
       start do

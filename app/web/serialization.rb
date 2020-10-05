@@ -27,7 +27,10 @@ module CovidForm
           case result
           in Services::Registration::Success({ client: client, registration: registration })
             [:ok, success_response_with(client: client.to_h, registration: registration.to_h)]
-          in Services::Registration::Failure(message)
+          in Services::Registration::ClientAlreadyRegisteredForDate({ client: client, date: date })
+            message = I18n.t('registration.client_already_registered_for_date',
+                             insurance_number: client.insurance_number, date: I18n.l(date))
+
             [:unprocessable_entity, error_response_with(error: [message])]
           else
             # :nocov:

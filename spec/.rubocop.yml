@@ -33,4 +33,5 @@ Style/MethodCallWithArgsParentheses:
     - include
     - not_to
     - raise_exception
+    - subject
     - to

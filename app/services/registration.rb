@@ -13,9 +13,8 @@ module CovidForm
       include Dry::Monads::Do.for(:perform)
 
       class ClientAlreadyRegisteredForDate < Failure
-        def initialize(client, date)
-          super(I18n.t('registration.client_already_registered_for_date',
-                       insurance_number: client.insurance_number, date: I18n.l(date)))
+        def initialize(client:, date:)
+          super({ client: client, date: date })
         end
       end
 
@@ -64,11 +63,10 @@ module CovidForm
         begin
           Success.new(repository.registrations.create(registration_data))
         rescue Sequel::UniqueConstraintViolation # FIXME: this is an abstraciton leak
-          ClientAlreadyRegisteredForDate.new(client, registration_data[:exam_date])
+          ClientAlreadyRegisteredForDate.new(client: client, date: registration_data[:exam_date])
         end
       end
 
-      # rubocop:disable Style/MethodCallWithArgsParentheses
       def send_mail(client)
         mail = mail_sender.deliver {
           to      client.email
@@ -87,7 +85,6 @@ module CovidForm
 
         Success.new(mail)
       end
-      # rubocop:enable Style/MethodCallWithArgsParentheses
     end
   end
 end

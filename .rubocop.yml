@@ -103,6 +103,8 @@ Style/InlineComment:
 
 Style/MethodCallWithArgsParentheses:
   IgnoredMethods:
+    - body
+    - content_type
     - delivery_method
     - gem
     - 'on'
@@ -115,6 +117,8 @@ Style/MethodCallWithArgsParentheses:
     - require_relative
     - run
     - source
+    - subject
+    - to
     - unshift
     - yield
 

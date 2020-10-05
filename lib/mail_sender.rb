@@ -47,8 +47,13 @@ module Utils
       @default_from = default_from || ENV.fetch('SMTP_DEFAULT_FROM', 'covid@test.cz')
     end
 
-    def deliver(&block)
-      mail = Mail.new(&block)
+    def deliver(mail = nil, &block)
+      if (mail && block_given?) || (!mail && !block_given?)
+        raise 'you must either supply a Mail::Message object or a block, not both'
+      end
+
+      mail ||= Mail.new(&block)
+
       mail.from ||= @default_from
       mail.deliver
     end

@@ -18,7 +18,7 @@ RSpec.configure do |config|
   config.include Mail::Matchers
 
   config.before(:suite) do
-    CovidForm::Dependencies.start(:mail_delivery)
+    CovidForm::Dependencies.start(:mail_sender)
   end
 
   config.before(:each) do
