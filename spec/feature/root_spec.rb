@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe 'GET / root route' do
+RSpec.feature 'GET / root route' do
   it 'shows a list of routes' do
     get '/'
 

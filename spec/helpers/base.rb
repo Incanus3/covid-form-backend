@@ -7,10 +7,16 @@ RSpec.configure do |config|
   config.fail_fast = true
   config.run_all_when_everything_filtered = true
 
+  config.alias_example_group_to :feature, type: :feature
+
   config.filter_run_including :focus
   config.filter_run_excluding :disabled
   config.filter_run_excluding :slow
   config.filter_run_excluding block: nil
+
+  config.expect_with :rspec do |expectations|
+    expectations.syntax = :expect
+  end
 
   config.mock_with :rspec do |mocks|
     mocks.verify_partial_doubles = true

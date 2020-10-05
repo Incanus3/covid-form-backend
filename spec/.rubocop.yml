@@ -5,14 +5,30 @@ inherit_mode:
   merge:
     - IgnoredMethods
 
+Capybara/FeatureMethods:
+  EnabledMethods: [feature]
+
+FactoryBot/FactoryClassName:
+  Enabled: false
+
 Metrics/BlockLength:
   Max: 80
+
+RSpec/ExampleLength:
+  Max: 15
+
+RSpec/ImplicitSubject:
+  Enabled: false
+
+RSpec/MultipleExpectations:
+  Max: 5
 
 Style/MethodCallWithArgsParentheses:
   IgnoredMethods:
     - be
     - describe
     - eq
+    - feature
     - include
     - not_to
     - to

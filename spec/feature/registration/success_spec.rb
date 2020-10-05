@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'app/dependencies'
 require_relative 'helpers'
 
-RSpec.describe 'POST /register route' do
+RSpec.feature 'POST /register route' do
   include CovidForm::TestHelpers::Registration
   include CovidForm::Import[:repository]
 
