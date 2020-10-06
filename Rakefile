@@ -14,8 +14,8 @@ namespace :db do
 
     CovidForm::Dependencies.init(:persistence)
 
-    CovidForm::Dependencies[:db].connect do |db|
-      Sequel::Migrator.run(db, 'app/persistence/migrations', target: version)
+    CovidForm::Dependencies[:db].connect do |database|
+      Sequel::Migrator.run(database.sequel_db, 'app/persistence/migrations', target: version)
     end
   end
 end

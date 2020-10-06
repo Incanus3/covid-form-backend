@@ -39,6 +39,21 @@ module CovidForm
           end
         end
       end
+
+      class ExportResultSerializer < Serializer
+        def self.serialize(result)
+          case result
+          in Services::Export::Success(output)
+            [:ok, success_response_with({ csv: output })]
+          in Services::Export::Failure(output)
+            [:unprocessable_entity, error_response_with(error: [output])]
+          else
+            # :nocov:
+            raise "invalid export result to serialize: #{result.inspect}"
+            # :nocov:
+          end
+        end
+      end
     end
   end
 end

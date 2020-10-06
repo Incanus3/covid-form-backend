@@ -131,6 +131,9 @@ Style/PreferredHashMethods:
 Style/RaiseArgs:
   EnforcedStyle: compact
 
+Style/RedundantParentheses:
+  Enabled: false
+
 Style/RedundantSelf:
   Enabled: false
 

@@ -2,6 +2,7 @@ require 'attr_extras'
 require 'roda'
 
 require 'app/dependencies'
+require 'app/services/export'
 require 'app/services/registration'
 require 'app/web/validation'
 require 'app/web/serialization'
@@ -45,6 +46,16 @@ module CovidForm
             end
 
             response.status, body = serializer.serialize(result)
+
+            body
+          end
+        end
+
+        r.is 'export' do
+          r.get do
+            result = Services::Export.perform
+
+            response.status, body = ExportResultSerializer.serialize(result)
 
             body
           end

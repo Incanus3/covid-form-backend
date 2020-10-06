@@ -58,7 +58,7 @@ module CovidForm
       def create_registration(client)
         registration_data = self.data
           .slice(:requestor_type, :exam_type, :exam_date)
-          .merge({ client_id: client.id })
+          .merge({ client_id: client.id, registered_at: Time.now })
 
         begin
           Success.new(repository.registrations.create(registration_data))

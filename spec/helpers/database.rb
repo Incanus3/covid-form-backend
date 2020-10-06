@@ -17,8 +17,14 @@ RSpec.configure do |config|
   end
 
   config.around(:each) do |example|
-    DatabaseCleaner[:sequel].cleaning do
+    if example.metadata.fetch(:no_transaction, false)
       example.run
+
+      DatabaseCleaner[:sequel].clean_with(:truncation)
+    else
+      DatabaseCleaner[:sequel].cleaning do
+        example.run
+      end
     end
   end
 end

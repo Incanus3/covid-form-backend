@@ -37,7 +37,9 @@ RSpec.feature 'POST /register route' do
     data        = client_data.merge(exam_data)
 
     client_id = repository.clients.insert(clean_client_data(client_data))
-    repository.registrations.insert(exam_data.merge({ client_id: client_id }))
+    repository.registrations.insert(
+      exam_data.merge({ client_id: client_id, registered_at: Time.now }),
+    )
 
     post_json '/register', data
 
