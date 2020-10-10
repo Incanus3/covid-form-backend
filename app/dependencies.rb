@@ -9,6 +9,7 @@ module CovidForm
       port:          ENV.fetch('DB_PORT',     '5432'),
       user:          ENV.fetch('DB_USER',     'covid'),
       password:      ENV.fetch('DB_PASSWORD', 'covid'),
+      database:      ENV.fetch('DB_NAME',     'covid'),
       sql_log_level: :debug,
     }.freeze
 
@@ -37,10 +38,11 @@ module CovidForm
       init do
         require 'lib/persistence/database'
 
-        container.register(:db, Utils::Persistence::Database.new(**DEFAULT_DB_OPTIONS.merge(
-          database: container[:env] == :test ? 'covid_test' : 'covid',
-          logger:   container[:logger],
-        )))
+        options = DEFAULT_DB_OPTIONS.merge(logger: container[:logger])
+
+        options[:database] += '_test' if container[:env] == :test
+
+        container.register(:db, Utils::Persistence::Database.new(**options))
       end
 
       start do
