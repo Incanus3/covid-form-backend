@@ -6,22 +6,33 @@ require 'app/services/export'
 require 'app/services/registration'
 require 'app/web/validation'
 require 'app/web/serialization'
+require 'app/web/services/authentication'
 
 module CovidForm
   module Web
     class App < Roda
-      plugin :halt
       plugin :all_verbs
-      plugin :not_allowed
-      plugin :symbol_status
+      plugin :halt
       plugin :json
       plugin :json_parser
+      plugin :not_allowed
+      plugin :request_headers
+      plugin :symbol_status
 
       include Validation
       include Serialization
 
       Dependencies.start(:repository) # TODO: stop persistence on exit
       Dependencies.start(:mail_sender)
+
+      def authenticate!(request)
+        result = Authentication.perform(request)
+
+        return unless result.failure?
+
+        status, body = AuthenticationFailureSerializer.serialize(result)
+        request.halt(status, body)
+      end
 
       route do |r| # rubocop:disable Metrics/BlockLength
         r.root do # GET /
@@ -53,6 +64,8 @@ module CovidForm
 
         r.is 'export' do
           r.get do
+            authenticate!(request)
+
             result = Services::Export.perform
 
             response.status, body = ExportResultSerializer.serialize(result)

@@ -1,4 +1,16 @@
 en:
+  authentication:
+    authentication_failed:
+      "authentication failed"
+    missing_auth_header:
+      "missing Authorization header"
+    malformed_auth_header:
+      "malformed Authorization header"
+    unrecognized_auth_method:
+      "unrecognized authentication method '%{method}'"
+    bad_credentials:
+      "bad credentials"
+
   registration:
     success_email_subject:
       "COVID-19 test registration"

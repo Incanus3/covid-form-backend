@@ -8,19 +8,64 @@ RSpec.feature 'GET /export route' do
   let(:client_data) { attributes_for(:client) }
   let(:exam_data)   { attributes_for(:exam)   }
 
-  it 'returns a CSV with exported data', :no_transaction do
-    client_id = repository.clients.insert(clean_client_data(client_data))
-    repository.registrations.insert(
-      exam_data.merge({ client_id: client_id, registered_at: Time.now }),
-    )
+  context 'without authentication' do
+    it 'returns an appropriate error response' do
+      get '/export'
 
-    get '/export'
+      expect(last_response).to be_unauthorized
+      expect(last_response.json['error'])
+        .to eq 'authentication failed: missing Authorization header'
+    end
+  end
 
-    expect(last_response).to be_ok
+  context 'with malformed authentication header' do
+    it 'returns an appropriate error response' do
+      header 'Authorization', 'XXX'
+      get    '/export'
 
-    data = last_response.json['csv'].split("\n")
+      expect(last_response).to be_unauthorized
+      expect(last_response.json['error'])
+        .to eq 'authentication failed: malformed Authorization header'
+    end
+  end
 
-    expect(data[0]).to match(/,requestor_type,.*,email/)
-    expect(data[1]).to match(/,"#{exam_data[:requestor_type]}",.*,"#{client_data[:email]}"/)
+  context 'with unrecognized authentication method' do
+    it 'returns an appropriate error response' do
+      header 'Authorization', 'MagicToken XXX'
+      get    '/export'
+
+      expect(last_response).to be_unauthorized
+      expect(last_response.json['error'])
+        .to eq "authentication failed: unrecognized authentication method 'MagicToken'"
+    end
+  end
+
+  context 'with bad password' do
+    it 'returns an appropriate error response' do
+      header 'Authorization', 'Password XXX'
+      get    '/export'
+
+      expect(last_response).to be_unauthorized
+      expect(last_response.json['error']).to eq 'authentication failed: bad credentials'
+    end
+  end
+
+  context 'with valid authentication' do
+    it 'returns a CSV with exported data', :no_transaction do
+      client_id = repository.clients.insert(clean_client_data(client_data))
+      repository.registrations.insert(
+        exam_data.merge({ client_id: client_id, registered_at: Time.now }),
+      )
+
+      header 'Authorization', 'Password admin'
+      get    '/export'
+
+      expect(last_response).to be_ok
+
+      data = last_response.json['csv'].split("\n")
+
+      expect(data[0]).to match(/,requestor_type,.*,email/)
+      expect(data[1]).to match(/,"#{exam_data[:requestor_type]}",.*,"#{client_data[:email]}"/)
+    end
   end
 end

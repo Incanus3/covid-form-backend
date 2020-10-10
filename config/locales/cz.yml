@@ -1,4 +1,16 @@
 cz:
+  authentication:
+    authentication_failed:
+      "přihlášení selhalo"
+    missing_auth_header:
+      "chybí Authorization hlavička"
+    malformed_auth_header:
+      "špatný formát Authorization hlavičky"
+    unrecognized_auth_method:
+      "nepodporovaná autentifikační metoda '%{method}'"
+    bad_credentials:
+      "špatné přihlašovací údaje"
+
   registration:
     success_email_subject:
       "Registrace k testu na COVID-19"

@@ -103,6 +103,7 @@ Style/InlineComment:
 
 Style/MethodCallWithArgsParentheses:
   IgnoredMethods:
+    - abort
     - body
     - content_type
     - delivery_method

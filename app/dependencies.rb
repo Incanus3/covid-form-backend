@@ -31,8 +31,19 @@ module CovidForm
       # config.root = Pathname('./my/app')
     end
 
-    register :env,    ENV.fetch('APP_ENV', :development).to_sym
+    env = ENV.fetch('APP_ENV', :development).to_sym
+
+    register :env,    env
     register :logger, logger
+    register :auth,   {
+      admin_password: ENV.fetch('ADMIN_PASSWORD') {
+        if env == :production
+          abort 'You must set the ADMIN_PASSWORD environment variable'
+        else
+          'admin'
+        end
+      },
+    }
 
     boot(:persistence) do |container|
       init do
