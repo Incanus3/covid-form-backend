@@ -30,12 +30,12 @@ module Utils
 
     def self.smtp_options_from_env
       {
-        address:              ENV.fetch('SMTP_SERVER'),
-        port:                 ENV.fetch('SMTP_PORT', 587),
-        authentication:       ENV.fetch('SMTP_AUTH', 'login'),
-        user_name:            ENV.fetch('SMTP_USER'),
-        password:             ENV.fetch('SMTP_PASSWORD'),
-        tls:                  Utils::EnvVars.fetch_bool('SMTP_TLS',      default: true),
+        address:              ENV.fetch('SMTP_SERVER',   'localhost'),
+        port:                 ENV.fetch('SMTP_PORT',     25),
+        authentication:       ENV.fetch('SMTP_AUTH',     nil),
+        user_name:            ENV.fetch('SMTP_USER',     nil),
+        password:             ENV.fetch('SMTP_PASSWORD', nil),
+        tls:                  Utils::EnvVars.fetch_bool('SMTP_TLS',      default: false),
         ssl:                  Utils::EnvVars.fetch_bool('SMTP_SSL',      default: false),
         enable_starttls_auto: Utils::EnvVars.fetch_bool('SMTP_STARTTLS', default: false),
       }
