@@ -208,4 +208,5 @@ cz:
       default: "%a %e. %B %Y %H:%M %z"
       long: "%A %e. %B %Y %H:%M"
       short: "%e. %-m. %H:%M"
+      time_only: "%H:%M"
     pm: odpoledne

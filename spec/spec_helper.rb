@@ -3,6 +3,7 @@ ENV['APP_ENV'] = 'test'
 
 $LOAD_PATH.unshift(APP_ROOT)
 
+require 'timecop'
 require_relative 'helpers/base'
 require_relative 'helpers/database'
 require_relative 'helpers/factories'
@@ -18,4 +19,5 @@ end
 
 SimpleCov.start
 
+require 'lib/utils'
 require 'app/web/app'

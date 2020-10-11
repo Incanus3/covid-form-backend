@@ -1,4 +1,4 @@
-require 'lib/transformations'
+require 'lib/utils'
 require 'sequel/model'
 
 module Utils

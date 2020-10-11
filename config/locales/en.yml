@@ -11,6 +11,12 @@ en:
     bad_credentials:
       "bad credentials"
 
+  validation:
+    must_not_be_in_past:
+      "must not be in the past"
+    only_possible_before:
+      "is only possible before %{time}"
+
   registration:
     success_email_subject:
       "COVID-19 test registration"
@@ -18,3 +24,5 @@ en:
       "Your COVID-19 test registration was successful."
     client_already_registered_for_date:
       "client with insurance_number %{insurance_number} is already registered for %{date}"
+    registration_for_today:
+      "registration for today"

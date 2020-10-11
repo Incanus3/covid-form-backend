@@ -6,6 +6,24 @@ module Utils
   Array  = Dry::Transformer::ArrayTransformations
   Hash   = Dry::Transformer::HashTransformations
 
+  module Date
+    module_function
+
+    def tomorrow
+      ::Date.today + 1
+    end
+  end
+
+  module Time
+    module_function
+
+    def today_at(hour, minute, second = 0)
+      today = ::Date.today
+
+      ::Time.local(today.year, today.month, today.day, hour, minute, second)
+    end
+  end
+
   module Transformations
     extend Dry::Transformer::Registry
 

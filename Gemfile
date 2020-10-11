@@ -35,4 +35,5 @@ group :development do # rubocop:disable Metrics/BlockLength
   gem 'rubocop-rspec'
   gem 'simplecov'
   gem 'sqlite3'
+  gem 'timecop'
 end

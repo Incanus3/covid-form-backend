@@ -33,7 +33,15 @@ module CovidForm
         json(ClientSchema, ExamSchema)
 
         rule(:exam_date) do
-          key.failure('must not be in the past') if value < Date.today
+          key.failure(I18n.t('validation.must_not_be_in_past')) if value < Date.today
+
+          if value == Date.today && Time.now.hour >= 10
+            base.failure([
+              I18n.t('registration.registration_for_today'),
+              I18n.t('validation.only_possible_before',
+                     time: I18n.l(Utils::Time.today_at(10, 0), format: :time_only)),
+            ].join(' '))
+          end
         end
       end
     end

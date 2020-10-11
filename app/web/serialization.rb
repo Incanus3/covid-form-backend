@@ -1,3 +1,4 @@
+require 'lib/utils'
 require 'app/services/registration'
 require 'app/web/services/authentication'
 
@@ -20,7 +21,9 @@ module CovidForm
 
       class ValidationErrorsSerializer < Serializer
         def self.serialize(errors)
-          error_response_with(errors)
+          errors_hash = Utils::Hash.map_keys(errors.to_h, ->(key) { key.nil? ? 'error' : key })
+
+          error_response_with(errors_hash)
         end
       end
 

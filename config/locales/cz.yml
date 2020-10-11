@@ -11,6 +11,12 @@ cz:
     bad_credentials:
       "špatné přihlašovací údaje"
 
+  validation:
+    must_not_be_in_past:
+      "nesmí být v minulosti"
+    only_possible_before:
+      "je možná pouze před %{time}"
+
   registration:
     success_email_subject:
       "Registrace k testu na COVID-19"
@@ -18,3 +24,5 @@ cz:
       "Vaše registrace k testu na COVID-19 byla úspěšná."
     client_already_registered_for_date:
       "klient s číslem pojištěnce %{insurance_number} je již registrován na %{date}"
+    registration_for_today:
+      "registrace na dnešní den"

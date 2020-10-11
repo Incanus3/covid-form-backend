@@ -12,7 +12,7 @@ RSpec.configure do |config|
   config.filter_run_including :focus
   config.filter_run_excluding :disabled
   config.filter_run_excluding :slow
-  config.filter_run_excluding block: nil
+  # config.filter_run_excluding block: nil
 
   config.expect_with :rspec do |expectations|
     expectations.syntax = :expect
