@@ -10,12 +10,10 @@ RSpec.feature 'POST /register route' do # rubocop:disable Metrics/BlockLength
   let(:allow_registration_for_today_after_10) { true }
 
   before do
-    allow(CovidForm::Dependencies).to receive(:resolve).and_call_original
-    allow(CovidForm::Dependencies).to receive(:resolve).with(:config).and_return({
+    mock_config_with(
       allow_registration_for_weekends:       allow_registration_for_weekends,
       allow_registration_for_today_after_10: allow_registration_for_today_after_10,
-      daily_registration_limit:              200,
-    })
+    )
   end
 
   describe 'basic validations' do

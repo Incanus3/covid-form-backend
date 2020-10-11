@@ -5,6 +5,7 @@ $LOAD_PATH.unshift(APP_ROOT)
 
 require 'timecop'
 require_relative 'helpers/base'
+require_relative 'helpers/configuration'
 require_relative 'helpers/database'
 require_relative 'helpers/factories'
 require_relative 'helpers/mail'
