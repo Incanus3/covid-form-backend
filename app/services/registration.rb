@@ -8,7 +8,7 @@ require 'app/persistence/repository'
 module CovidForm
   module Services
     class Registration
-      include Import[:db, :repository, :mail_sender]
+      include Import[:config, :db, :repository, :mail_sender]
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:perform)
 
@@ -18,7 +18,13 @@ module CovidForm
         end
       end
 
-      attr_private_initialize [:db, :repository, :mail_sender, :data]
+      class DailyRegistrationLimitReached < Failure
+        def initialize(date)
+          super({ date: date })
+        end
+      end
+
+      attr_private_initialize %i[config db repository mail_sender data]
 
       def self.perform(data)
         new(data: data).perform
@@ -59,6 +65,16 @@ module CovidForm
         registration_data = self.data
           .slice(:requestor_type, :exam_type, :exam_date)
           .merge({ client_id: client.id, registered_at: Time.now })
+
+        # TODO: check registration limits for the day
+
+        exam_date                   = registration_data[:exam_date]
+        existing_registration_count = repository.registrations.where(exam_date: exam_date).count
+        daily_registration_limit    = config[:daily_registration_limit]
+
+        if existing_registration_count >= daily_registration_limit
+          return DailyRegistrationLimitReached.new(exam_date)
+        end
 
         begin
           Success.new(repository.registrations.create(registration_data))

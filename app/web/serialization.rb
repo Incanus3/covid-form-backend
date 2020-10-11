@@ -62,6 +62,10 @@ module CovidForm
                              insurance_number: client.insurance_number, date: I18n.l(date))
 
             error_response_with(error: [message])
+          in Services::Registration::DailyRegistrationLimitReached({ date: date })
+            message = I18n.t('registration.daily_registration_limit_reached', date: I18n.l(date))
+
+            error_response_with(error: [message])
           else
             # :nocov:
             raise "invalid registration result to serialize: #{result.inspect}"

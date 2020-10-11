@@ -11,6 +11,7 @@ RSpec.feature 'POST /register route' do
     allow(CovidForm::Dependencies).to receive(:[]).with(:config).and_return({
       allow_registration_for_weekends:       true,
       allow_registration_for_today_after_10: true,
+      daily_registration_limit:              200,
     })
   end
 

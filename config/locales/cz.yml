@@ -20,13 +20,15 @@ cz:
       "je možná pouze před %{time}"
 
   registration:
+    exam_date:
+      "datum vyšetření"
+    registration_for_today:
+      "registrace na dnešní den"
+    daily_registration_limit_reached:
+      "Na %{date} již není možné se registrovat - bylo dosaženo denního limitu registrací"
     success_email_subject:
       "Registrace k testu na COVID-19"
     success_email_body:
       "Vaše registrace k testu na COVID-19 byla úspěšná."
     client_already_registered_for_date:
       "klient s číslem pojištěnce %{insurance_number} je již registrován na %{date}"
-    exam_date:
-      "datum vyšetření"
-    registration_for_today:
-      "registrace na dnešní den"

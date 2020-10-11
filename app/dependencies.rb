@@ -6,6 +6,7 @@ module CovidForm
     DEFAULT_CONFIG_OPTIONS = {
       allow_registration_for_weekends:       false,
       allow_registration_for_today_after_10: false,
+      daily_registration_limit:              5,
     }.freeze
 
     DEFAULT_DB_OPTIONS = {
