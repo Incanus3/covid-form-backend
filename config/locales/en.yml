@@ -12,12 +12,16 @@ en:
       "bad credentials"
 
   validation:
+    must_be_a_weekday:
+      "must be a weekday"
     must_not_be_in_past:
       "must not be in the past"
     only_possible_before:
       "is only possible before %{time}"
 
   registration:
+    exam_date:
+      "exam date"
     success_email_subject:
       "COVID-19 test registration"
     success_email_body:

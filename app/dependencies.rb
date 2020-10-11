@@ -3,6 +3,11 @@ require 'lib/env_vars'
 
 module CovidForm
   class Dependencies < Dry::System::Container
+    DEFAULT_CONFIG_OPTIONS = {
+      allow_registration_for_weekends:       false,
+      allow_registration_for_today_after_10: false,
+    }.freeze
+
     DEFAULT_DB_OPTIONS = {
       adapter:       ENV.fetch('DB_BACKEND',  'postgres'),
       host:          ENV.fetch('DB_HOST',     'localhost'),
@@ -44,6 +49,7 @@ module CovidForm
         end
       },
     }
+    register :config, DEFAULT_CONFIG_OPTIONS
 
     boot(:persistence) do |container|
       init do

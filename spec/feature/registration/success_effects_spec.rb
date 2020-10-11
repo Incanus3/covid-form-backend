@@ -6,6 +6,14 @@ RSpec.feature 'POST /register route' do
   include CovidForm::TestHelpers::Registration
   include CovidForm::Import[:repository]
 
+  before do
+    allow(CovidForm::Dependencies).to receive(:[]).and_call_original
+    allow(CovidForm::Dependencies).to receive(:[]).with(:config).and_return({
+      allow_registration_for_weekends:       true,
+      allow_registration_for_today_after_10: true,
+    })
+  end
+
   let(:client_data)  { attributes_for(:client)      }
   let(:exam_data)    { attributes_for(:exam)        }
   let(:request_data) { client_data.merge(exam_data) }

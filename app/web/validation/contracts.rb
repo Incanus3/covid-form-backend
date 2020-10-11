@@ -30,17 +30,44 @@ module CovidForm
       }
 
       class RegistrationContract < Contract
+        def self.cf_config
+          CovidForm::Dependencies[:config]
+        end
+
+        def self.valid_weekday?(date)
+          cf_config[:allow_registration_for_weekends] || !(date.saturday? || date.sunday?)
+        end
+
+        def self.valid_registration_time_for?(date, time = Time.now)
+          cf_config[:allow_registration_for_today_after_10] || date != Date.today || time.hour < 10
+        end
+
+        def self.invalid_weekday_message
+          [
+            I18n.t('registration.exam_date'),
+            I18n.t('validation.must_be_a_weekday'),
+          ].join(' ')
+        end
+
+        def self.invalid_registration_time_message
+          [
+            I18n.t('registration.registration_for_today'),
+            I18n.t('validation.only_possible_before',
+                   time: I18n.l(Utils::Time.today_at(10, 0), format: :time_only)),
+          ].join(' ')
+        end
+
         json(ClientSchema, ExamSchema)
 
         rule(:exam_date) do
           key.failure(I18n.t('validation.must_not_be_in_past')) if value < Date.today
 
-          if value == Date.today && Time.now.hour >= 10
-            base.failure([
-              I18n.t('registration.registration_for_today'),
-              I18n.t('validation.only_possible_before',
-                     time: I18n.l(Utils::Time.today_at(10, 0), format: :time_only)),
-            ].join(' '))
+          unless RegistrationContract.valid_weekday?(value)
+            base.failure(RegistrationContract.invalid_weekday_message)
+          end
+
+          unless RegistrationContract.valid_registration_time_for?(value)
+            base.failure(RegistrationContract.invalid_registration_time_message)
           end
         end
       end

@@ -12,6 +12,8 @@ cz:
       "špatné přihlašovací údaje"
 
   validation:
+    must_be_a_weekday:
+      "musí být v týdnu"
     must_not_be_in_past:
       "nesmí být v minulosti"
     only_possible_before:
@@ -24,5 +26,7 @@ cz:
       "Vaše registrace k testu na COVID-19 byla úspěšná."
     client_already_registered_for_date:
       "klient s číslem pojištěnce %{insurance_number} je již registrován na %{date}"
+    exam_date:
+      "datum vyšetření"
     registration_for_today:
       "registrace na dnešní den"
