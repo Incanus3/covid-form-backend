@@ -6,6 +6,10 @@ RSpec.feature 'POST /register route' do # rubocop:disable Metrics/BlockLength
   include CovidForm::TestHelpers::Registration
   include CovidForm::Import[:repository]
 
+  let(:client_data ) { attributes_for(:client)      }
+  let(:exam_data   ) { attributes_for(:exam)        }
+  let(:request_data) { client_data.merge(exam_data) }
+
   let(:allow_registration_for_weekends)       { true }
   let(:allow_registration_for_today_after_10) { true }
 
@@ -17,91 +21,86 @@ RSpec.feature 'POST /register route' do # rubocop:disable Metrics/BlockLength
   end
 
   describe 'basic validations' do
-    it 'rejects request if the email is invalid' do
-      client_data = attributes_for(:client_with_invalid_email)
-      exam_data   = attributes_for(:exam)
-      data        = client_data.merge(exam_data)
+    context 'with invalid email' do
+      let(:client_data) { attributes_for(:client_with_invalid_email) }
 
-      post_json '/register', data
+      it 'request is rejected' do
+        post_json '/register', request_data
 
-      response_data = last_response.symbolized_json
+        response_data = last_response.symbolized_json
 
-      expect(last_response).to be_unprocessable
-      expect(response_data[:status]).to eq 'ERROR'
-      expect(response_data[:email])
-        .to include 'is in invalid format'
+        expect(last_response).to be_unprocessable
+        expect(response_data[:status]).to eq 'ERROR'
+        expect(response_data[:email])
+          .to include 'is in invalid format'
+      end
     end
 
-    it 'rejects request if exam date is in the past' do
-      client_data = attributes_for(:client)
-      exam_data   = attributes_for(:exam_with_past_date)
-      data        = client_data.merge(exam_data)
+    context 'with exam date in the past' do
+      let(:exam_data) { attributes_for(:exam_with_past_date) }
 
-      post_json '/register', data
+      it 'request is rejected' do
+        post_json '/register', request_data
 
-      response_data = last_response.symbolized_json
+        response_data = last_response.symbolized_json
 
-      expect(last_response).to be_unprocessable
-      expect(response_data[:status]).to eq 'ERROR'
-      expect(response_data[:exam_date])
-        .to include 'must not be in the past'
+        expect(last_response).to be_unprocessable
+        expect(response_data[:status]).to eq 'ERROR'
+        expect(response_data[:exam_date])
+          .to include 'must not be in the past'
+      end
     end
   end
 
   describe 'registration locking' do
     let(:allow_registration_for_today_after_10) { false }
 
-    it 'accepts registration for tomorrow even after 10pm' do
-      client_data = attributes_for(:client)
-      exam_data   = attributes_for(:exam, exam_date: Utils::Date.tomorrow)
-      data        = client_data.merge(exam_data)
+    context 'registration for tomorrow' do
+      let(:exam_data) { attributes_for(:exam, exam_date: Utils::Date.tomorrow) }
 
-      Timecop.freeze(Utils::Time.today_at(10, 0)) do
-        post_json '/register', data
+      it 'is accepted even after 10pm' do
+        Timecop.freeze(Utils::Time.today_at(10, 0)) do
+          post_json '/register', request_data
+        end
+
+        expect(last_response).to be_ok
       end
-
-      expect(last_response).to be_ok
     end
 
-    it 'accepts registration for today before 10pm' do
-      client_data = attributes_for(:client)
-      exam_data   = attributes_for(:exam, exam_date: Date.today)
-      data        = client_data.merge(exam_data)
+    context 'registration for today' do
+      let(:exam_data) { attributes_for(:exam, exam_date: Date.today) }
 
-      Timecop.freeze(Utils::Time.today_at(9, 59)) do
-        post_json '/register', data
+      it 'is accepted before 10pm' do
+        Timecop.freeze(Utils::Time.today_at(9, 59)) do
+          post_json '/register', request_data
+        end
+
+        expect(last_response).to be_ok
       end
 
-      expect(last_response).to be_ok
-    end
+      it 'is rejected after 10pm' do
+        Timecop.freeze(Utils::Time.today_at(10, 0)) do
+          post_json '/register', request_data
+        end
 
-    it 'rejects registration for today after 10pm' do
-      client_data = attributes_for(:client)
-      exam_data   = attributes_for(:exam, exam_date: Date.today)
-      data        = client_data.merge(exam_data)
+        response_data = last_response.symbolized_json
 
-      Timecop.freeze(Utils::Time.today_at(10, 0)) do
-        post_json '/register', data
+        expect(last_response).to be_unprocessable
+        expect(response_data[:status]).to eq 'ERROR'
+        expect(response_data[:error])
+          .to include 'registration for today is only possible before 10:00'
       end
-
-      response_data = last_response.symbolized_json
-
-      expect(last_response).to be_unprocessable
-      expect(response_data[:status]).to eq 'ERROR'
-      expect(response_data[:error])
-        .to include 'registration for today is only possible before 10:00'
     end
   end
 
   describe 'disallow registration for weekends' do
     let(:allow_registration_for_weekends) { false }
 
-    it 'rejects registration for saturday' do
-      client_data = attributes_for(:client)
-      exam_data   = attributes_for(:exam, exam_date: Date.new(2050, 1, 1))
-      data        = client_data.merge(exam_data)
+    it 'registration for saturday is rejected' do
+      exam_data    = attributes_for(:exam, exam_date: Date.new(2050, 1, 1))
+      request_data = client_data.merge(exam_data)
 
-      post_json '/register', data
+      post_json '/register', request_data
 
       response_data = last_response.symbolized_json
 
@@ -111,36 +110,32 @@ RSpec.feature 'POST /register route' do # rubocop:disable Metrics/BlockLength
         .to include 'exam date must be a weekday'
     end
 
-    it 'accepts registration for monday' do
-      client_data = attributes_for(:client)
-      exam_data   = attributes_for(:exam, exam_date: Date.new(2050, 1, 3))
-      data        = client_data.merge(exam_data)
+    it 'registration for monday is accepted' do
+      exam_data    = attributes_for(:exam, exam_date: Date.new(2050, 1, 3))
+      request_data = client_data.merge(exam_data)
 
-      post_json '/register', data
+      post_json '/register', request_data
 
       expect(last_response).to be_ok
     end
   end
 
   describe 'repeated registration validations' do
-    it 'rejects request if the client is already registered for that day' do
-      client_data = attributes_for(:client)
-      exam_data   = attributes_for(:exam)
-      data        = client_data.merge(exam_data)
+    context 'if the client is already registered for that day' do
+      before do
+        create_client_with_registration(client_data: client_data, exam_data: exam_data)
+      end
 
-      client_id = repository.clients.insert(clean_client_data(client_data))
-      repository.registrations.insert(
-        exam_data.merge({ client_id: client_id, registered_at: Time.now }),
-      )
+      it 'request is rejected' do
+        post_json '/register', request_data
 
-      post_json '/register', data
-
-      expect(last_response     ).to be_unprocessable
-      expect(last_response.json).to eq({
-        'status' => 'ERROR',
-        'error'  => ["client with insurance_number #{client_data[:insurance_number]} " \
-                     "is already registered for #{exam_data[:exam_date]}"],
-      })
+        expect(last_response     ).to be_unprocessable
+        expect(last_response.json).to eq({
+          'status' => 'ERROR',
+          'error'  => ["client with insurance_number #{client_data[:insurance_number]} " \
+                       "is already registered for #{exam_data[:exam_date]}"],
+        })
+      end
     end
   end
 end

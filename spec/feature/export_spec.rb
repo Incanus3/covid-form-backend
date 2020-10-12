@@ -64,8 +64,8 @@ RSpec.feature 'GET /export route' do
 
       data = last_response.json['csv'].split("\n")
 
-      expect(data[0]).to match(/,requestor_type,.*,email/)
-      expect(data[1]).to match(/,"#{exam_data[:requestor_type]}",.*,"#{client_data[:email]}"/)
+      expect(data[0]).to match(/;requestor_type;.*;email/)
+      expect(data[1]).to match(/;"#{exam_data[:requestor_type]}";.*;"#{client_data[:email]}"/)
     end
   end
 end

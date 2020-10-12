@@ -52,9 +52,9 @@ module Utils
         raise 'you must either supply a Mail::Message object or a block, not both'
       end
 
-      mail ||= Mail.new(&block)
-
+      mail      ||= Mail.new(&block)
       mail.from ||= @default_from
+
       mail.deliver
     end
   end

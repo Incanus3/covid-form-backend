@@ -11,11 +11,12 @@ module CovidForm
 
       def perform
         query        = repository.registrations.for_export
-        psql_command = "\\copy (#{query.sql.delete('()')}) to STDOUT CSV HEADER FORCE QUOTE *"
+        psql_command = "\\copy (#{query.sql.delete("()'")}) to STDOUT CSV DELIMITER ';' HEADER FORCE QUOTE *"
+
         command      = ("PGPASSWORD=#{db.options[:password]} psql "         \
                         "-h #{db.options[:host]} -p #{db.options[:port]} "  \
                         "-U #{db.options[:user]} #{db.options[:database]} " \
-                        "-c '#{psql_command}'")
+                        "-c \"#{psql_command}\"")
 
         output = `#{command} | tail -n +2`
 

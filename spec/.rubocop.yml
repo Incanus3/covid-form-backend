@@ -20,6 +20,9 @@ RSpec/ExampleLength:
 RSpec/ImplicitSubject:
   Enabled: false
 
+RSpec/ContextWording:
+  Enabled: false
+
 RSpec/MultipleExpectations:
   Max: 5
 
