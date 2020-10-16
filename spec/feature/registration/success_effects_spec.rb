@@ -4,7 +4,7 @@ require_relative 'helpers'
 
 RSpec.feature 'POST /register route' do
   include CovidForm::TestHelpers::Registration
-  include CovidForm::Import[:repository]
+  include CovidForm::Import[:db]
 
   before do
     mock_config_with(
@@ -21,7 +21,7 @@ RSpec.feature 'POST /register route' do
     it 'creates the client' do
       post_json '/register', request_data
 
-      client = repository.clients[insurance_number: client_data[:insurance_number]]
+      client = db.clients.find_by_insurance_number(client_data[:insurance_number])
 
       expect(serialize(client)).to include clean_client_data(client_data)
     end
@@ -29,8 +29,8 @@ RSpec.feature 'POST /register route' do
     it 'creates a registration' do
       post_json '/register', request_data
 
-      client       = repository.clients[insurance_number: client_data[:insurance_number]]
-      registration = repository.registrations[client_id: client.id]
+      client       = db.clients.find_by_insurance_number(client_data[:insurance_number])
+      registration = db.registrations.for_client(client).one!
 
       expect(serialize(registration))
         .to include serialize(exam_data.merge({ client_id: client.id }))
@@ -62,13 +62,13 @@ RSpec.feature 'POST /register route' do
 
   context 'with an existing client (insurance number)' do
     it 'updates the client' do
-      client_id = repository.clients.insert(clean_client_data(client_data))
+      client = db.clients.create(clean_client_data(client_data))
 
       request_data[:first_name] = 'Updated'
 
       post_json '/register', request_data
 
-      updated_client = repository.clients.with_pk!(client_id)
+      updated_client = db.clients.find(client.id)
 
       expect(updated_client.first_name).to eq 'Updated'
     end

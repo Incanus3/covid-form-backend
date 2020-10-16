@@ -1,26 +1,27 @@
 require 'English'
+require 'open3'
 require 'dry/monads'
 
 module CovidForm
   module Services
     class Export
-      include Import[:db, :repository]
+      include Import[:db]
       include Dry::Monads[:result]
 
-      static_facade :perform, [:db, :repository]
+      static_facade :perform, [:db]
 
       def perform
-        query        = repository.registrations.for_export
-        psql_command = "\\copy (#{query.sql.delete("()'")}) to STDOUT CSV DELIMITER ';' HEADER FORCE QUOTE *"
-
-        command      = ("PGPASSWORD=#{db.options[:password]} psql "         \
-                        "-h #{db.options[:host]} -p #{db.options[:port]} "  \
-                        "-U #{db.options[:user]} #{db.options[:database]} " \
+        select_sql   = db.registrations.sql_for_export
+        psql_command = "\\copy (#{select_sql}) to STDOUT CSV DELIMITER ';' HEADER FORCE QUOTE *"
+        db_options   = db.gateways[:default].options
+        command      = ("PGPASSWORD=#{db_options[:password]} psql "         \
+                        "-h #{db_options[:host]} -p #{db_options[:port]} "  \
+                        "-U #{db_options[:user]} #{db_options[:database]} " \
                         "-c \"#{psql_command}\"")
 
-        output = `#{command} | tail -n +2`
+        stdout, stderr, status = Open3.capture3(command)
 
-        $CHILD_STATUS.success? ? Success(output) : Failure(output)
+        status.success? ? Success(stdout.lines[1..].join) : Failure(stderr)
       end
     end
   end

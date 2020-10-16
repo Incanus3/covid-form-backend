@@ -3,12 +3,11 @@ require 'dry/monads/do'
 
 require 'lib/utils'
 require 'app/dependencies'
-require 'app/persistence/repository'
 
 module CovidForm
   module Services
     class Registration
-      include Import[:config, :db, :repository, :mail_sender]
+      include Import[:config, :db, :mail_sender]
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:perform)
 
@@ -24,14 +23,14 @@ module CovidForm
         end
       end
 
-      attr_private_initialize %i[config db repository mail_sender data]
+      attr_private_initialize %i[config db mail_sender data]
 
       def self.perform(data)
         new(data: data).perform
       end
 
       def perform
-        db.transaction do
+        db.clients.transaction do
           client       = yield create_or_update_client
           registration = yield create_registration(client)
 
@@ -47,29 +46,25 @@ module CovidForm
         client_data = self.data.slice(:first_name, :last_name, :municipality, :zip_code,
                                       :email, :phone_number, :insurance_number, :insurance_company)
 
-        existing = repository.clients.lock_by_insurance_number(client_data[:insurance_number])
+        existing = db.clients.lock_by_insurance_number(client_data[:insurance_number])
 
         client =
-          if existing.empty?
-            repository.clients.create(client_data)
-          else
+          if existing.exist?
             without_ins_num = Utils::Hash.reject_keys(client_data, [:insurance_number])
 
-            existing.update_returning(without_ins_num).first
+            existing.command(:update).call(without_ins_num)
+          else
+            db.clients.create(client_data)
           end
 
         Success.new(client)
       end
 
       def create_registration(client)
-        registration_data = self.data
-          .slice(:requestor_type, :exam_type, :exam_date)
-          .merge({ client_id: client.id, registered_at: Time.now })
-
-        # TODO: check registration limits for the day
+        registration_data = self.data.slice(:requestor_type, :exam_type, :exam_date)
 
         exam_date                   = registration_data[:exam_date]
-        existing_registration_count = repository.registrations.where(exam_date: exam_date).count
+        existing_registration_count = db.registrations.count_for_date(exam_date)
         daily_registration_limit    = config[:daily_registration_limit]
 
         if existing_registration_count >= daily_registration_limit
@@ -77,8 +72,8 @@ module CovidForm
         end
 
         begin
-          Success.new(repository.registrations.create(registration_data))
-        rescue Sequel::UniqueConstraintViolation # FIXME: this is an abstraciton leak
+          Success.new(db.registrations.create_for_client(registration_data, client))
+        rescue ROM::SQL::UniqueConstraintError # FIXME: this is an abstraciton leak
           ClientAlreadyRegisteredForDate.new(client: client, date: registration_data[:exam_date])
         end
       end

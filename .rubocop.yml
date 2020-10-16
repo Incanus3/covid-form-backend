@@ -64,6 +64,9 @@ Metrics/ParameterLists:
 Naming/ConstantName:
   Enabled: false
 
+Naming/MethodParameterName:
+  AllowedNames: [as, pk]
+
 Style/AccessModifierDeclarations:
   Enabled: false
 

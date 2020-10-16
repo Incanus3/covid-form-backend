@@ -1,5 +1,7 @@
-Sequel.migration do
-  up do
+# frozen_string_literal: true
+
+ROM::SQL.migration do
+  change do
     create_table(:clients) do
       primary_key :id
 
@@ -12,9 +14,5 @@ Sequel.migration do
       column :insurance_number,  String,    null: false, unique: true
       column :insurance_company, :smallint, null: false
     end
-  end
-
-  down do
-    drop_table(:clients)
   end
 end

@@ -23,9 +23,9 @@ FactoryBot.define do
   end
 
   factory :exam, class: CovidForm::Entities::Registration do
-    requestor_type { CovidForm::Types::RequestorType.values.sample }
-    exam_type      { CovidForm::Types::ExamType.values.sample      }
-    exam_date      { Faker::Date.forward(days: 60)                 }
+    requestor_type { CovidForm::Web::Validation::Types::RequestorType.values.sample }
+    exam_type      { CovidForm::Web::Validation::Types::ExamType.values.sample      }
+    exam_date      { Faker::Date.forward(days: 60)                                  }
 
     trait :past_date do
       exam_date { Faker::Date.backward }

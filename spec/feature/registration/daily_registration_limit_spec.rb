@@ -4,7 +4,7 @@ require_relative 'helpers'
 
 RSpec.feature 'POST /register route' do
   include CovidForm::TestHelpers::Registration
-  include CovidForm::Import[:repository]
+  include CovidForm::Import[:db]
 
   let(:daily_registration_limit) { 5 }
 
