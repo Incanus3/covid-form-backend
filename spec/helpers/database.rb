@@ -5,13 +5,11 @@ RSpec.configure do |config|
   config.before(:suite) do
     CovidForm::Dependencies.start(:persistence)
 
-    db = CovidForm::Dependencies[:db]
+    default_db_gateway = CovidForm::Dependencies[:db].gateways[:default]
 
-    Sequel.extension(:migration)
+    default_db_gateway.run_migrations
 
-    Sequel::Migrator.run(db.sequel_db, 'app/persistence/migrations')
-
-    DatabaseCleaner[:sequel].db = db.sequel_db
+    DatabaseCleaner[:sequel].db = default_db_gateway.connection
     DatabaseCleaner[:sequel].strategy = :transaction
     DatabaseCleaner[:sequel].clean_with(:truncation)
   end

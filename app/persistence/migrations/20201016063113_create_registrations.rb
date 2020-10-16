@@ -1,5 +1,7 @@
-Sequel.migration do
-  up do
+# frozen_string_literal: true
+
+ROM::SQL.migration do
+  change do
     create_table(:registrations) do
       primary_key :id
 
@@ -12,9 +14,5 @@ Sequel.migration do
 
       unique [:client_id, :exam_date]
     end
-  end
-
-  down do
-    drop_table(:registrations)
   end
 end

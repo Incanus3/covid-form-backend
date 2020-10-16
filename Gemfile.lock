@@ -189,6 +189,34 @@ GEM
     rexml (3.2.4)
     roda (3.36.0)
       rack
+    rom (5.2.4)
+      rom-changeset (~> 5.2, >= 5.2.3)
+      rom-core (~> 5.2, >= 5.2.3)
+      rom-repository (~> 5.2, >= 5.2.2)
+    rom-changeset (5.2.3)
+      dry-core (~> 0.4)
+      rom-core (~> 5.2)
+      transproc (~> 1.0, >= 1.1.0)
+    rom-core (5.2.3)
+      concurrent-ruby (~> 1.1)
+      dry-container (~> 0.7)
+      dry-core (~> 0.4)
+      dry-equalizer (~> 0.2)
+      dry-inflector (~> 0.1)
+      dry-initializer (~> 3.0, >= 3.0.1)
+      dry-struct (~> 1.0)
+      dry-types (~> 1.0)
+      transproc (~> 1.0, >= 1.1.0)
+    rom-repository (5.2.2)
+      dry-core (~> 0.4)
+      dry-initializer (~> 3.0, >= 3.0.1)
+      rom-core (~> 5.2, >= 5.2.2)
+    rom-sql (3.2.0)
+      dry-core (~> 0.4)
+      dry-equalizer (~> 0.2)
+      dry-types (~> 1.0)
+      rom-core (~> 5.2, >= 5.2.1)
+      sequel (>= 4.49)
     rspec (3.9.0)
       rspec-core (~> 3.9.0)
       rspec-expectations (~> 3.9.0)
@@ -227,6 +255,9 @@ GEM
       console (~> 1.0)
       mapping (~> 1.0)
     sequel (5.36.0)
+    sequel_pg (1.14.0)
+      pg (>= 0.18.0, != 1.2.0)
+      sequel (>= 4.38.0)
     shellany (0.0.1)
     simplecov (0.19.0)
       docile (~> 1.1)
@@ -237,6 +268,7 @@ GEM
     thread_safe (0.3.6)
     timecop (0.9.1)
     timers (4.3.2)
+    transproc (1.1.1)
     tzinfo (1.2.7)
       thread_safe (~> 0.1)
     unicode-display_width (1.7.0)
@@ -270,6 +302,8 @@ DEPENDENCIES
   rake
   rerun
   roda
+  rom
+  rom-sql
   rspec
   rspec-collection_matchers
   rubocop
@@ -277,6 +311,7 @@ DEPENDENCIES
   rubocop-rake
   rubocop-rspec
   sequel
+  sequel_pg
   simplecov
   sqlite3
   timecop

@@ -3,7 +3,7 @@ require_relative 'registration/helpers'
 
 RSpec.feature 'GET /export route' do
   include CovidForm::TestHelpers::Registration
-  include CovidForm::Import[:repository]
+  include CovidForm::Import[:db]
 
   let(:client_data) { attributes_for(:client) }
   let(:exam_data)   { attributes_for(:exam)   }
@@ -51,21 +51,41 @@ RSpec.feature 'GET /export route' do
   end
 
   context 'with valid authentication' do
-    it 'returns a CSV with exported data', :no_transaction do
-      client_id = repository.clients.insert(clean_client_data(client_data))
-      repository.registrations.insert(
-        exam_data.merge({ client_id: client_id, registered_at: Time.now }),
-      )
+    context 'on successful export' do
+      it 'returns a CSV with exported data', :no_transaction do
+        client = db.clients.create(clean_client_data(client_data))
+        db.registrations.create(
+          exam_data.merge({ client_id: client.id, registered_at: Time.now }),
+        )
 
-      header 'Authorization', 'Password admin'
-      get    '/export'
+        header 'Authorization', 'Password admin'
+        get    '/export'
 
-      expect(last_response).to be_ok
+        expect(last_response).to be_ok
 
-      data = last_response.json['csv'].split("\n")
+        data = last_response.json['csv'].split("\n")
 
-      expect(data[0]).to match(/;requestor_type;.*;email/)
-      expect(data[1]).to match(/;"#{exam_data[:requestor_type]}";.*;"#{client_data[:email]}"/)
+        expect(data[0]).to match(/;requestor_type;.*;email/)
+        expect(data[1]).to match(/;"#{exam_data[:requestor_type]}";.*;"#{client_data[:email]}"/)
+      end
+    end
+
+    context 'when export fails' do
+      before { allow(db.gateways[:default]).to receive(:options).and_return({}) }
+
+      it 'returns a meaningful error', :no_transaction do
+        client = db.clients.create(clean_client_data(client_data))
+        db.registrations.create(
+          exam_data.merge({ client_id: client.id, registered_at: Time.now }),
+        )
+
+        header 'Authorization', 'Password admin'
+        get    '/export'
+
+        expect(last_response).to be_unprocessable
+        expect(last_response.json['status']  ).to eq 'ERROR'
+        expect(last_response.json['error'][0]).to match(/could not connect to server/)
+      end
     end
   end
 end

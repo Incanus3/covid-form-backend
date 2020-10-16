@@ -4,7 +4,7 @@ require_relative 'helpers'
 
 RSpec.feature 'POST /register route' do # rubocop:disable Metrics/BlockLength
   include CovidForm::TestHelpers::Registration
-  include CovidForm::Import[:repository]
+  include CovidForm::Import[:db]
 
   let(:client_data ) { attributes_for(:client)      }
   let(:exam_data   ) { attributes_for(:exam)        }

@@ -10,13 +10,12 @@ module CovidForm
     }.freeze
 
     DEFAULT_DB_OPTIONS = {
-      adapter:       ENV.fetch('DB_BACKEND',  'postgres'),
-      host:          ENV.fetch('DB_HOST',     'localhost'),
-      port:          ENV.fetch('DB_PORT',     '5432'),
-      user:          ENV.fetch('DB_USER',     'covid'),
-      password:      ENV.fetch('DB_PASSWORD', 'covid'),
-      database:      ENV.fetch('DB_NAME',     'covid'),
-      sql_log_level: :debug,
+      adapter:  ENV.fetch('DB_BACKEND',  'postgres'),
+      host:     ENV.fetch('DB_HOST',     'localhost'),
+      port:     ENV.fetch('DB_PORT',     '5432'),
+      user:     ENV.fetch('DB_USER',     'covid'),
+      password: ENV.fetch('DB_PASSWORD', 'covid'),
+      database: ENV.fetch('DB_NAME',     'covid'),
     }.freeze
 
     ENV_TO_OUTPUT_PROVIDER = {
@@ -33,14 +32,12 @@ module CovidForm
       Logger.new(ENV_TO_OUTPUT_PROVIDER[env].call, level: verbose ? :debug : :info)
     end
 
-    configure do |config|
-      # config.root = Pathname('./my/app')
-    end
-
     env = ENV.fetch('APP_ENV', :development).to_sym
 
     register :env,    env
     register :logger, logger
+    register :config, DEFAULT_CONFIG_OPTIONS
+
     register :auth,   {
       admin_password: ENV.fetch('ADMIN_PASSWORD') {
         if env == :production
@@ -50,37 +47,27 @@ module CovidForm
         end
       },
     }
-    register :config, DEFAULT_CONFIG_OPTIONS
 
     boot(:persistence) do |container|
       init do
-        require 'lib/persistence/database'
+        require 'lib/persistence/configuration'
+        require 'app/persistence/container'
 
-        options = DEFAULT_DB_OPTIONS.merge(logger: container[:logger])
-
+        options = DEFAULT_DB_OPTIONS.merge({
+          logger:        container[:logger],
+          sql_log_level: :debug,
+        })
         options[:database] += '_test' if container[:env] == :test
 
-        container.register(:db, Utils::Persistence::Database.new(**options))
+        container.register(:db, CovidForm::Persistence::Container.new(options))
       end
 
-      start do
-        container[:db].connect
-      end
+      # start do
+      #   container[:db].connect
+      # end
 
       stop do
         container[:db].disconnect
-      end
-    end
-
-    boot(:repository) do |container|
-      init do
-        require 'app/persistence/repository'
-      end
-
-      start do
-        use :persistence
-
-        container.register(:repository, Persistence::Repository.new(database: container[:db]))
       end
     end
 

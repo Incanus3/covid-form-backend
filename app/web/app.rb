@@ -22,7 +22,7 @@ module CovidForm
       include Validation
       include Serialization
 
-      Dependencies.start(:repository) # TODO: stop persistence on exit
+      Dependencies.start(:persistence) # TODO: stop persistence on exit
       Dependencies.start(:mail_sender)
 
       def authenticate!(request)

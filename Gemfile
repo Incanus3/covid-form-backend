@@ -15,7 +15,10 @@ gem 'pg'
 gem 'rack-cors'
 gem 'rake'
 gem 'roda'
+gem 'rom'
+gem 'rom-sql'
 gem 'sequel'
+gem 'sequel_pg'
 
 group :development do # rubocop:disable Metrics/BlockLength
   gem 'database_cleaner-sequel'
