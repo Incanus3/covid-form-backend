@@ -24,6 +24,8 @@ cz:
       "datum vyšetření"
     registration_for_today:
       "registrace na dnešní den"
+    nonexistent_time_slot:
+      "časový slot s id %{id} neexistuje"
     daily_registration_limit_reached:
       "Na %{date} již není možné se registrovat - bylo dosaženo denního limitu registrací"
     success_email_subject:

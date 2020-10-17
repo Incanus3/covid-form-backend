@@ -26,6 +26,8 @@ en:
       "registration for today"
     daily_registration_limit_reached:
       "daily registration limit for %{date} reached"
+    nonexistent_time_slot:
+      "time slot with id %{id} does not exist"
     success_email_subject:
       "COVID-19 test registration"
     success_email_body:

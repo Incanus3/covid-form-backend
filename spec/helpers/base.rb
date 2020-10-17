@@ -26,5 +26,7 @@ RSpec.configure do |config|
   config.default_formatter = 'doc' if config.files_to_run.one?
 
   config.backtrace_exclusion_patterns = [/bundler|rack|roda|rspec|database_cleaner/]
+
+  config.example_status_persistence_file_path = File.join(APP_ROOT, 'spec', '.rspec.status')
 end
 # rubocop:enable Style/MethodCallWithArgsParentheses

@@ -7,6 +7,7 @@ module CovidForm
         schema(:registrations) do
           attribute :id,             Types::Integer
           attribute :client_id,      Types::ForeignKey(:clients)
+          attribute :time_slot_id,   Types::ForeignKey(:time_slots)
           attribute :registered_at,  Types::DateTime
           # TODO: map these to enum types
           attribute :requestor_type, Types::String
@@ -17,6 +18,7 @@ module CovidForm
 
           associations do
             belongs_to :client
+            belongs_to :time_slot
           end
         end
 

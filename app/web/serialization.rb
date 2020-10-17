@@ -53,7 +53,7 @@ module CovidForm
       end
 
       class RegistrationResultSerializer < Serializer
-        def self.serialize(result)
+        def self.serialize(result) # rubocop:disable Metrics/MethodLength
           case result
           in Services::Registration::Success({ client: client, registration: registration })
             success_response_with(client: client.to_h, registration: registration.to_h)
@@ -64,6 +64,10 @@ module CovidForm
             error_response_with(error: [message])
           in Services::Registration::DailyRegistrationLimitReached({ date: date })
             message = I18n.t('registration.daily_registration_limit_reached', date: I18n.l(date))
+
+            error_response_with(error: [message])
+          in Services::Registration::NonexistentTimeSlot({ id: time_slot_id })
+            message = I18n.t('registration.nonexistent_time_slot', id: time_slot_id)
 
             error_response_with(error: [message])
           else

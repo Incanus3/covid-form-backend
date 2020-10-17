@@ -23,6 +23,12 @@ module CovidForm
         end
       end
 
+      class NonexistentTimeSlot < Failure
+        def initialize(time_slot_id)
+          super({ id: time_slot_id })
+        end
+      end
+
       attr_private_initialize %i[config db mail_sender data]
 
       def self.perform(data)
@@ -61,7 +67,7 @@ module CovidForm
       end
 
       def create_registration(client)
-        registration_data = self.data.slice(:requestor_type, :exam_type, :exam_date)
+        registration_data = self.data.slice(:requestor_type, :exam_type, :exam_date, :time_slot_id)
 
         exam_date                   = registration_data[:exam_date]
         existing_registration_count = db.registrations.count_for_date(exam_date)
@@ -75,6 +81,8 @@ module CovidForm
           Success.new(db.registrations.create_for_client(registration_data, client))
         rescue ROM::SQL::UniqueConstraintError # FIXME: this is an abstraciton leak
           ClientAlreadyRegisteredForDate.new(client: client, date: registration_data[:exam_date])
+        rescue ROM::SQL::ForeignKeyConstraintError # FIXME: this is an abstraciton leak
+          NonexistentTimeSlot.new(registration_data[:time_slot_id])
         end
       end
 

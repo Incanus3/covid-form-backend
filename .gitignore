@@ -1,5 +1,6 @@
 .ruby-version
 .rbenv-gemsets
+.rspec.status
 /coverage
 /log/*
 !/log/.keep

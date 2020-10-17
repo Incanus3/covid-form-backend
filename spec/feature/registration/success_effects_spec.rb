@@ -11,6 +11,8 @@ RSpec.feature 'POST /register route' do
       allow_registration_for_weekends:       true,
       allow_registration_for_today_after_10: true,
     )
+
+    populate_time_slots
   end
 
   let(:client_data)  { attributes_for(:client)      }

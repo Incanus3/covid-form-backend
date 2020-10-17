@@ -10,6 +10,8 @@ RSpec.feature 'POST /register route' do
 
   before do
     mock_config_with(daily_registration_limit: daily_registration_limit)
+
+    populate_time_slots
   end
 
   context 'with daily limit already reached' do

@@ -5,6 +5,10 @@ RSpec.feature 'GET /export route' do
   include CovidForm::TestHelpers::Registration
   include CovidForm::Import[:db]
 
+  before do
+    populate_time_slots
+  end
+
   let(:client_data) { attributes_for(:client) }
   let(:exam_data)   { attributes_for(:exam)   }
 

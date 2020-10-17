@@ -27,6 +27,7 @@ module CovidForm
         required(:requestor_type).filled(Types::RequestorType)
         required(:exam_type     ).filled(Types::ExamType)
         required(:exam_date     ).filled(Types::JSON::Date)
+        required(:time_slot_id  ).filled(Types::Integer)
       }
 
       class RegistrationContract < Contract

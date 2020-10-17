@@ -1,4 +1,5 @@
 require 'app/entities'
+require 'app/dependencies'
 require 'app/web/validation/types'
 
 FactoryBot.define do
@@ -23,9 +24,14 @@ FactoryBot.define do
   end
 
   factory :exam, class: CovidForm::Entities::Registration do
+    transient do
+      db { CovidForm::Dependencies[:db] }
+    end
+
     requestor_type { CovidForm::Web::Validation::Types::RequestorType.values.sample }
     exam_type      { CovidForm::Web::Validation::Types::ExamType.values.sample      }
     exam_date      { Faker::Date.forward(days: 60)                                  }
+    time_slot_id   { db.time_slots.ids.sample                                       }
 
     trait :past_date do
       exam_date { Faker::Date.backward }
