@@ -67,6 +67,9 @@ Metrics/ParameterLists:
 Naming/ConstantName:
   Enabled: false
 
+Naming/MemoizedInstanceVariableName:
+  EnforcedStyleForLeadingUnderscores: required
+
 Naming/MethodParameterName:
   AllowedNames: [as, pk]
 

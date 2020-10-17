@@ -7,6 +7,7 @@ require 'app/services/registration'
 require 'app/web/validation'
 require 'app/web/serialization'
 require 'app/web/services/authentication'
+require 'app/web/services/crud'
 
 module CovidForm
   module Web
@@ -71,6 +72,18 @@ module CovidForm
             response.status, body = ExportResultSerializer.serialize(result)
 
             body
+          end
+        end
+
+        r.on 'crud' do
+          r.is 'time_slots' do
+            r.get do
+              time_slots = CRUD::TimeSlots.all
+
+              response.status, body = TimeSlotSerializer.serialize_many(time_slots)
+
+              body
+            end
           end
         end
       end

@@ -5,6 +5,18 @@ module Utils
     class Repository < ROM::Repository::Root
       commands :create, update: :by_pk, delete: :by_pk
 
+      def all
+        root.to_a
+      end
+
+      def count_all
+        root.count
+      end
+
+      def first
+        root.first
+      end
+
       def find(pk)
         root.by_pk(pk).one!
       end

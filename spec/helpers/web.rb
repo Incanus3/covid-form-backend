@@ -3,11 +3,18 @@ require 'rack/test'
 module Rack
   class MockResponse
     def json
-      body.empty? ? body : JSON.parse(body)
+      @_json ||= body.empty? ? body : JSON.parse(body)
     end
 
     def symbolized_json
-      json.deep_symbolize_keys
+      case json
+      when Hash
+        json.deep_symbolize_keys
+      when Array
+        json.map(&:deep_symbolize_keys)
+      else
+        raise "cannot symbolize #{json.inspect}"
+      end
     end
 
     def conflict?

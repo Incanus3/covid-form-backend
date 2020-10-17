@@ -92,6 +92,25 @@ module CovidForm
           end
         end
       end
+
+      class TimeSlotSerializer < Serializer
+        class << self
+          def serialize_many(time_slots)
+            success_response_with(time_slots: time_slots.map { do_serialize(_1) })
+          end
+
+          private
+
+          def do_serialize(time_slot)
+            {
+              id:         time_slot.id,
+              name:       time_slot.name,
+              start_time: I18n.l(time_slot.start_time, format: :time_only),
+              end_time:   I18n.l(time_slot.end_time,   format: :time_only),
+            }
+          end
+        end
+      end
     end
   end
 end
