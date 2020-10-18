@@ -1,3 +1,5 @@
+require 'lib/utils'
+
 module CovidForm
   module TestHelpers
     module Generic
@@ -10,6 +12,10 @@ module CovidForm
           { name: 'afternoon 2', start_time: Utils::Time.today_at(15, 0), end_time: Utils::Time.today_at(17, 0) },
         ])
         # rubocop:enable Layout/LineLength
+      end
+
+      def formatted_time_range(time_slot)
+        "#{Utils::Time.format(time_slot.start_time)}-#{Utils::Time.format(time_slot.end_time)}"
       end
     end
   end

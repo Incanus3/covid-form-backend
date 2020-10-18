@@ -78,7 +78,7 @@ module CovidForm
         r.on 'crud' do
           r.is 'time_slots' do
             r.get do
-              time_slots = CRUD::TimeSlots.all
+              time_slots = CRUD::TimeSlots.all_with_time_ranges
 
               response.status, body = TimeSlotSerializer.serialize_many(time_slots)
 

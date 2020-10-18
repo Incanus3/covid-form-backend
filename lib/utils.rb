@@ -22,6 +22,10 @@ module Utils
 
       ::Time.local(today.year, today.month, today.day, hour, minute, second)
     end
+
+    def format(time)
+      I18n.l(time, format: :time_only).delete_prefix('0')
+    end
   end
 
   module Transformations

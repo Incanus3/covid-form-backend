@@ -102,12 +102,22 @@ module CovidForm
           private
 
           def do_serialize(time_slot)
-            {
+            output = {
               id:         time_slot.id,
               name:       time_slot.name,
-              start_time: I18n.l(time_slot.start_time, format: :time_only),
-              end_time:   I18n.l(time_slot.end_time,   format: :time_only),
+              start_time: Utils::Time.format(time_slot.start_time),
+              end_time:   Utils::Time.format(time_slot.end_time),
             }
+
+            if time_slot.respond_to?(:time_range)
+              output[:time_range] = formatted_time_range(time_slot)
+            end
+
+            output
+          end
+
+          def formatted_time_range(time_slot)
+            "#{Utils::Time.format(time_slot.start_time)}-#{Utils::Time.format(time_slot.end_time)}"
           end
         end
       end

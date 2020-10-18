@@ -57,7 +57,9 @@ RSpec.feature 'GET /export route' do
   context 'with valid authentication' do
     context 'on successful export' do
       it 'returns a CSV with exported data', :no_transaction do
-        client = db.clients.create(clean_client_data(client_data))
+        client    = db.clients.create(clean_client_data(client_data))
+        time_slot = db.time_slots.find(exam_data[:time_slot_id])
+
         db.registrations.create(
           exam_data.merge({ client_id: client.id, registered_at: Time.now }),
         )
@@ -67,10 +69,13 @@ RSpec.feature 'GET /export route' do
 
         expect(last_response).to be_ok
 
-        data = last_response.json['csv'].split("\n")
+        data       = last_response.json['csv'].split("\n")
+        time_range = formatted_time_range(time_slot)
 
-        expect(data[0]).to match(/;requestor_type;.*;email/)
-        expect(data[1]).to match(/;"#{exam_data[:requestor_type]}";.*;"#{client_data[:email]}"/)
+        expect(data[0]).to match(/;requestor_type;.*;time_range;.*;email/)
+        expect(data[1]).to match(
+          /;"#{exam_data[:requestor_type]}";.*;"#{time_range}";.*;"#{client_data[:email]}"/,
+        )
       end
     end
 

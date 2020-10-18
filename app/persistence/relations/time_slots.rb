@@ -16,6 +16,16 @@ module CovidForm
             has_many :registrations
           end
         end
+
+        def with_time_range
+          time_format = 'FMHH24:MI'
+
+          select_append {
+            string.concat(
+              string.to_char(start_time, time_format), '-', string.to_char(end_time, time_format)
+            ).as(:time_range)
+          }
+        end
       end
     end
   end
