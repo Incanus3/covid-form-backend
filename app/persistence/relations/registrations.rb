@@ -31,22 +31,21 @@ module CovidForm
         end
 
         def for_export
-          ts_with_tr = time_slots.with_time_range
+          slots_with_ranges = time_slots.with_time_range
 
-          join(clients).join(ts_with_tr)
-            .select(registrations[:registered_at], registrations[:requestor_type],
-                    registrations[:exam_type],     registrations[:exam_date],
-                    column_from(:time_range, ts_with_tr),
-                    clients[:last_name],           clients[:first_name],
-                    clients[:insurance_number],    clients[:insurance_company],
-                    clients[:zip_code],            clients[:municipality],
-                    clients[:phone_number],        clients[:email])
-        end
-
-        private
-
-        def column_from(column, relation)
-          relation.schema.project(column).first
+          join(clients).join(slots_with_ranges)
+            .select(
+              *translated_columns_from(
+                registrations,
+                %i[registered_at requestor_type exam_type exam_date],
+              ),
+              translated_column_from(slots_with_ranges, :time_range),
+              *translated_columns_from(
+                clients,
+                %i[last_name first_name insurance_number insurance_company] +
+                %i[zip_code municipality phone_number email],
+              ),
+            )
         end
       end
     end

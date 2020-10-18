@@ -34,3 +34,7 @@ en:
       "Your COVID-19 test registration was successful."
     client_already_registered_for_date:
       "client with insurance_number %{insurance_number} is already registered for %{date}"
+
+  column_translations:
+    clients:
+      municipality: 'city'

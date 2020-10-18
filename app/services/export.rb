@@ -1,6 +1,7 @@
 require 'English'
 require 'open3'
 require 'dry/monads'
+require 'app/dependencies'
 
 module CovidForm
   module Services
