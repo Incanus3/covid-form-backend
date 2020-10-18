@@ -22,7 +22,8 @@ module CovidForm
 
         stdout, stderr, status = Open3.capture3(command)
 
-        status.success? ? Success(stdout.lines[1..].join) : Failure(stderr)
+        # status.success? ? Success(stdout.lines[1..].join) : Failure(stderr)
+        status.success? ? Success(stdout) : Failure(stderr)
       end
     end
   end
