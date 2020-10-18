@@ -44,7 +44,7 @@ cz:
       Odběrové místo Nemocnice Litoměřice, a.s.
     success_email_html_body:
       <p>Vaše registrace k testu na COVID-19 byla úspěšná.</p>
-      <p>Registrovali jste se na %{date}, %{time_range}. Druh vyšetření je %{exam_type}</p>
+      <p>Registrovali jste se na %{date}, %{time_range}. Druh vyšetření je %{exam_type}.</p>
       <p>Prosíme, dostavte se v uvedený den a v časovém rozmezí, pro které jste se registroval/a, do odběrového místa Nemocnice Litoměřice, a.s.</p>
       <p>I přes úspěšně provedenou registraci upozorňujeme na možnost neprovedení odběru v daném časovém úseku a v krajním případě (zejména v případě výpadku celorepublikového  žádankového systému či náhlého omezení množství vzorků přijímaných ze strany spolupracující laboratoře) i na možnost neprovedení odběru ve vámi zvolený den. Ačkoli tyto situace nemocnice nemůže ovlivnit, nastanou-li, snažíme se jejich dopady na pacienty maximálně eliminovat.</p>
       <p>Věříme však, že vše proběhne v pořádku. Těšíme se na vaši návštěvu.</p>
