@@ -34,10 +34,11 @@ module CovidForm
           where(client_id: client.id)
         end
 
-        def for_export
+        def for_export(start_date, end_date)
           slots_with_ranges = time_slots.with_time_range
 
           join(clients).join(slots_with_ranges)
+            .where { (exam_date >= start_date) & (exam_date <= end_date) }
             .select(
               *translated_columns_from(
                 registrations,

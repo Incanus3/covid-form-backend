@@ -9,10 +9,10 @@ module CovidForm
       include Import[:db]
       include Dry::Monads[:result]
 
-      static_facade :perform, [:db]
+      static_facade :perform, [:db, :start_date, :end_date]
 
       def perform
-        select_sql   = db.registrations.sql_for_export
+        select_sql   = db.registrations.sql_for_export(start_date, end_date)
         psql_command = "\\copy (#{select_sql}) to STDOUT CSV DELIMITER ';' HEADER FORCE QUOTE *"
         db_options   = db.gateways[:default].options
         command      = ("PGPASSWORD=#{db_options[:password]} psql "         \

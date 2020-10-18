@@ -30,7 +30,7 @@ FactoryBot.define do
 
     requestor_type { CovidForm::Web::Validation::Types::RequestorType.values.sample }
     exam_type      { CovidForm::Web::Validation::Types::ExamType.values.sample      }
-    exam_date      { Faker::Date.forward(days: 60)                                  }
+    exam_date      { Faker::Date.forward(days: 7)                                   }
     time_slot_id   { db.time_slots.ids.sample                                       }
 
     trait :past_date do

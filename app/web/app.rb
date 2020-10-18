@@ -67,9 +67,17 @@ module CovidForm
           r.get do
             authenticate!(request)
 
-            result = Services::Export.perform
+            validation_result = ExportContract.new.call(request.params)
 
-            response.status, body = ExportResultSerializer.serialize(result)
+            if validation_result.success?
+              result     = Services::Export.perform(validation_result.to_h)
+              serializer = ExportResultSerializer
+            else
+              result     = validation_result.errors
+              serializer = ValidationErrorsSerializer
+            end
+
+            response.status, body = serializer.serialize(result)
 
             body
           end

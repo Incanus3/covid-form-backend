@@ -72,6 +72,15 @@ module CovidForm
           end
         end
       end
+
+      ExportSchema = Dry::Schema.JSON {
+        required(:start_date).filled(Types::JSON::Date.default(Date.today))
+        required(:end_date  ).filled(Types::JSON::Date.default(Date.today + 7))
+      }
+
+      class ExportContract < Contract
+        json(ExportSchema)
+      end
     end
   end
 end
