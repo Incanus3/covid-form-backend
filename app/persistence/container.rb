@@ -6,6 +6,7 @@ require 'app/entities'
 require_relative 'repositories/clients'
 require_relative 'repositories/registrations'
 require_relative 'repositories/time_slots'
+require_relative 'repositories/daily_overrides'
 
 module CovidForm
   module Persistence
@@ -28,6 +29,7 @@ module CovidForm
       register_repo(Persistence::Repositories::Clients)
       register_repo(Persistence::Repositories::Registrations)
       register_repo(Persistence::Repositories::TimeSlots)
+      register_repo(Persistence::Repositories::DailyOverrides)
     end
   end
 end

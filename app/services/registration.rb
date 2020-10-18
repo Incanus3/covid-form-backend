@@ -71,7 +71,7 @@ module CovidForm
 
         exam_date                   = registration_data[:exam_date]
         existing_registration_count = db.registrations.count_for_date(exam_date)
-        daily_registration_limit    = config[:daily_registration_limit]
+        daily_registration_limit    = registration_limit_for(exam_date)
 
         if existing_registration_count >= daily_registration_limit
           return DailyRegistrationLimitReached.new(exam_date)
@@ -103,6 +103,12 @@ module CovidForm
         }
 
         Success.new(mail)
+      end
+
+      def registration_limit_for(date)
+        daily_override = db.daily_overrides.for_date(date)
+
+        daily_override&.registration_limit || config[:daily_registration_limit]
       end
     end
   end
