@@ -48,7 +48,7 @@ module CovidForm
                                   :email, :phone_number, :insurance_number, :insurance_company)
         @registration_data = data.slice(:requestor_type, :exam_type, :exam_date, :time_slot_id)
 
-        @all_time_slots = db.time_slots.all
+        @all_time_slots = db.time_slots.all_with_time_ranges
         @time_slot      = all_time_slots.find { _1.id == registration_data[:time_slot_id] }
       end
 
@@ -105,18 +105,23 @@ module CovidForm
       end
 
       def send_mail(client)
+        exam_date, exam_type = registration_data.values_at(:exam_date, :exam_type)
+        time_range           = time_slot.time_range
+
+        exam_info = { date: I18n.l(exam_date), time_range: time_range, exam_type: exam_type.upcase }
+
         mail = mail_sender.deliver {
           to      client.email
           subject I18n.t('registration.success_email_subject')
 
           text_part do
             content_type 'text/plain; charset=UTF-8'
-            body         I18n.t('registration.success_email_body')
+            body         I18n.t('registration.success_email_body', **exam_info)
           end
 
           html_part do
             content_type 'text/html; charset=UTF-8'
-            body         "<p>#{I18n.t('registration.success_email_html_body')}</p>"
+            body         I18n.t('registration.success_email_html_body', **exam_info)
           end
         }
 
