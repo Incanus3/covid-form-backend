@@ -116,7 +116,7 @@ module CovidForm
 
           html_part do
             content_type 'text/html; charset=UTF-8'
-            body         "<p>#{I18n.t('registration.success_email_body')}</p>"
+            body         "<p>#{I18n.t('registration.success_email_html_body')}</p>"
           end
         }
 
