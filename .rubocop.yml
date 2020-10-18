@@ -12,6 +12,12 @@ AllCops:
 Bundler/GemComment:
   Enabled: false
 
+Layout/EmptyLines:
+  Enabled: false
+
+Layout/EmptyLineBetweenDefs:
+  Enabled: false
+
 Layout/FirstArgumentIndentation:
   EnforcedStyle: consistent
 
@@ -71,7 +77,7 @@ Naming/MemoizedInstanceVariableName:
   EnforcedStyleForLeadingUnderscores: required
 
 Naming/MethodParameterName:
-  AllowedNames: [as, pk]
+  AllowedNames: [as, db, pk]
 
 Style/AccessModifierDeclarations:
   Enabled: false

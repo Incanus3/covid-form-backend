@@ -66,6 +66,13 @@ module CovidForm
             message = I18n.t('registration.daily_registration_limit_reached', date: I18n.l(date))
 
             error_response_with(error: [message])
+          in Services::Registration::SlotRegistrationLimitReached({ date: date, slot: slot })
+            message = I18n.t(
+              'registration.slot_registration_limit_reached',
+              date: I18n.l(date), slot: TimeSlotSerializer.formatted_time_range(slot),
+            )
+
+            error_response_with(error: [message])
           in Services::Registration::NonexistentTimeSlot({ id: time_slot_id })
             message = I18n.t('registration.nonexistent_time_slot', id: time_slot_id)
 
@@ -99,6 +106,10 @@ module CovidForm
             success_response_with(time_slots: time_slots.map { do_serialize(_1) })
           end
 
+          def formatted_time_range(time_slot)
+            "#{Utils::Time.format(time_slot.start_time)}-#{Utils::Time.format(time_slot.end_time)}"
+          end
+
           private
 
           def do_serialize(time_slot)
@@ -114,10 +125,6 @@ module CovidForm
             end
 
             output
-          end
-
-          def formatted_time_range(time_slot)
-            "#{Utils::Time.format(time_slot.start_time)}-#{Utils::Time.format(time_slot.end_time)}"
           end
         end
       end

@@ -35,7 +35,7 @@ module CovidForm
           CovidForm::Dependencies[:config]
         end
 
-        def self.valid_weekday?(date)
+        def self.valid_workday?(date)
           cf_config[:allow_registration_for_weekends] || !(date.saturday? || date.sunday?)
         end
 
@@ -43,10 +43,10 @@ module CovidForm
           cf_config[:allow_registration_for_today_after_10] || date != Date.today || time.hour < 10
         end
 
-        def self.invalid_weekday_message
+        def self.invalid_workday_message
           [
-            I18n.t('registration.exam_date'),
-            I18n.t('validation.must_be_a_weekday'),
+            I18n.t('registration.registration'),
+            I18n.t('validation.must_be_a_workday'),
           ].join(' ')
         end
 
@@ -63,8 +63,8 @@ module CovidForm
         rule(:exam_date) do
           key.failure(I18n.t('validation.must_not_be_in_past')) if value < Date.today
 
-          unless RegistrationContract.valid_weekday?(value)
-            base.failure(RegistrationContract.invalid_weekday_message)
+          unless RegistrationContract.valid_workday?(value)
+            base.failure(RegistrationContract.invalid_workday_message)
           end
 
           unless RegistrationContract.valid_registration_time_for?(value)

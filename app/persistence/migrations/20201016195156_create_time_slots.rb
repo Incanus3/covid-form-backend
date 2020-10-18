@@ -7,9 +7,10 @@ ROM::SQL.migration do
     create_table(:time_slots) do
       primary_key :id
 
-      column :name,       String, unique:    true, null: false
-      column :start_time, Time,   only_time: true, null: false
-      column :end_time,   Time,   only_time: true, null: false
+      column :name,              String,  null: false, unique:    true
+      column :start_time,        Time,    null: false, only_time: true
+      column :end_time,          Time,    null: false, only_time: true
+      column :limit_coefficient, Integer, null: false, default:   1
     end
 
     alter_table(:registrations) do

@@ -20,6 +20,10 @@ module CovidForm
           registrations.by_date(date).count
         end
 
+        def count_for_date_and_slot(date, slot)
+          registrations.by_date_and_slot(date, slot).count
+        end
+
         def sql_for_export
           registrations.for_export.dataset.sql
         end

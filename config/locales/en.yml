@@ -12,22 +12,26 @@ en:
       "bad credentials"
 
   validation:
-    must_be_a_weekday:
-      "must be a weekday"
+    must_be_a_workday:
+      "is only possible for workdays"
     must_not_be_in_past:
       "must not be in the past"
     only_possible_before:
       "is only possible before %{time}"
 
   registration:
+    registration:
+      "registration for examination"
     exam_date:
-      "exam date"
+      "examination date"
     registration_for_today:
       "registration for today"
     nonexistent_time_slot:
       "time slot with id %{id} does not exist"
     daily_registration_limit_reached:
       "daily registration limit for %{date} reached"
+    slot_registration_limit_reached:
+      "time slot registration limit for %{date}, %{slot} reached"
     success_email_subject:
       "COVID-19 test registration"
     success_email_body:

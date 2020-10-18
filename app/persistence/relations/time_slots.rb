@@ -5,10 +5,11 @@ module CovidForm
     module Relations
       class TimeSlots < Utils::Persistence::Relation
         schema(:time_slots) do
-          attribute :id,         Types::Integer
-          attribute :name,       Types::String
-          attribute :start_time, Types::Time, only_time: true
-          attribute :end_time,   Types::Time, only_time: true
+          attribute :id,                Types::Integer
+          attribute :name,              Types::String
+          attribute :start_time,        Types::Time, only_time: true
+          attribute :end_time,          Types::Time, only_time: true
+          attribute :limit_coefficient, Types::Integer
 
           primary_key :id
 

@@ -120,7 +120,8 @@ RSpec.feature 'POST /register route' do # rubocop:disable Metrics/BlockLength
 
       expect(last_response).to be_unprocessable
       expect(response_data[:status]).to eq 'ERROR'
-      expect(response_data[:error] ).to include 'exam date must be a weekday'
+      expect(response_data[:error] )
+        .to include 'registration for examination is only possible for workdays'
     end
 
     it 'registration for monday is accepted' do

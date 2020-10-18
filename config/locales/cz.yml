@@ -12,14 +12,16 @@ cz:
       "špatné přihlašovací údaje"
 
   validation:
-    must_be_a_weekday:
-      "musí být v týdnu"
+    must_be_a_workday:
+      "je možná pouze na pracovní dny"
     must_not_be_in_past:
       "nesmí být v minulosti"
     only_possible_before:
       "je možná pouze před %{time}"
 
   registration:
+    registration:
+      "registrace k vyšetření"
     exam_date:
       "datum vyšetření"
     registration_for_today:
@@ -27,7 +29,9 @@ cz:
     nonexistent_time_slot:
       "časový slot s id %{id} neexistuje"
     daily_registration_limit_reached:
-      "Na %{date} již není možné se registrovat - bylo dosaženo denního limitu registrací"
+      "na %{date} již není možné se registrovat - bylo dosaženo denního limitu registrací, vyberte si prosím jiný den"
+    slot_registration_limit_reached:
+      "na %{date}, %{slot} již není možné se registrovat - bylo dosaženo limitu registrací, vyberte si prosím jiný den nebo časový slot"
     success_email_subject:
       "Registrace k testu na COVID-19"
     success_email_body:

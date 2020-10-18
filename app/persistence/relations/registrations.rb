@@ -26,6 +26,10 @@ module CovidForm
           where(exam_date: date)
         end
 
+        def by_date_and_slot(date, slot)
+          where(exam_date: date, time_slot_id: slot.id)
+        end
+
         def for_client(client)
           where(client_id: client.id)
         end
