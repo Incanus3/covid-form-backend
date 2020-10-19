@@ -2,13 +2,13 @@ require 'spec_helper'
 require 'app/dependencies'
 require_relative 'helpers'
 
-RSpec.feature 'POST /register route' do # rubocop:disable Metrics/BlockLength
+RSpec.feature 'POST /register route - validations' do # rubocop:disable Metrics/BlockLength
   include CovidForm::TestHelpers::Registration
   include CovidForm::Import[:db]
 
-  let(:client_data ) { attributes_for(:client)      }
-  let(:exam_data   ) { attributes_for(:exam)        }
-  let(:request_data) { client_data.merge(exam_data) }
+  let(:client_data ) { attributes_for(:client)                  }
+  let(:exam_data   ) { attributes_for(:exam)                    }
+  let(:request_data) { { client: client_data, exam: exam_data } }
 
   let(:allow_registration_for_weekends)       { true }
   let(:allow_registration_for_today_after_10) { true }
@@ -33,7 +33,7 @@ RSpec.feature 'POST /register route' do # rubocop:disable Metrics/BlockLength
 
         expect(last_response).to be_unprocessable
         expect(response_data[:status]).to eq 'ERROR'
-        expect(response_data[:email] ).to include 'is in invalid format'
+        expect(response_data[:client][:email] ).to include 'is in invalid format'
       end
     end
 
@@ -47,7 +47,7 @@ RSpec.feature 'POST /register route' do # rubocop:disable Metrics/BlockLength
 
         expect(last_response).to be_unprocessable
         expect(response_data[:status]).to eq 'ERROR'
-        expect(response_data[:exam_date]).to include 'must not be in the past'
+        expect(response_data[:exam][:exam_date]).to include 'must not be in the past'
       end
     end
 
@@ -110,27 +110,29 @@ RSpec.feature 'POST /register route' do # rubocop:disable Metrics/BlockLength
   describe 'disallow registration for weekends' do
     let(:allow_registration_for_weekends) { false }
 
-    it 'registration for saturday is rejected' do
-      exam_data    = attributes_for(:exam, exam_date: Date.new(2050, 1, 1))
-      request_data = client_data.merge(exam_data)
+    context 'registration for saturday' do
+      let(:exam_data) { attributes_for(:exam, exam_date: Date.new(2050, 1, 1)) }
 
-      post_json '/register', request_data
+      it 'is rejected' do
+        post_json '/register', request_data
 
-      response_data = last_response.symbolized_json
+        response_data = last_response.symbolized_json
 
-      expect(last_response).to be_unprocessable
-      expect(response_data[:status]).to eq 'ERROR'
-      expect(response_data[:error] )
-        .to include 'registration for examination is only possible for workdays'
+        expect(last_response).to be_unprocessable
+        expect(response_data[:status]).to eq 'ERROR'
+        expect(response_data[:error] )
+          .to include 'registration for examination is only possible for workdays'
+      end
     end
 
-    it 'registration for monday is accepted' do
-      exam_data    = attributes_for(:exam, exam_date: Date.new(2050, 1, 3))
-      request_data = client_data.merge(exam_data)
+    context 'registration for monday' do
+      let(:exam_data) { attributes_for(:exam, exam_date: Date.new(2050, 1, 3)) }
 
-      post_json '/register', request_data
+      it 'is accepted' do
+        post_json '/register', request_data
 
-      expect(last_response).to be_ok
+        expect(last_response).to be_ok
+      end
     end
   end
 

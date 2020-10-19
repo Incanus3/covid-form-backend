@@ -50,7 +50,10 @@ module CovidForm
             validation_result = RegistrationContract.new.call(request.params)
 
             if validation_result.success?
-              result     = Services::Registration.perform(validation_result.to_h)
+              client_data, exam_data = validation_result.to_h.values_at(:client, :exam)
+
+              result     = Services::Registration.new(client_data: client_data,
+                                                      exam_data:   exam_data).perform
               serializer = RegistrationResultSerializer
             else
               result     = validation_result.errors

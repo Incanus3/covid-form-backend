@@ -14,14 +14,12 @@ module CovidForm
       static_facade :perform, [:db, :start_date, :end_date]
 
       def perform
-        select_sql = db.registrations.sql_for_export(start_date, end_date)
-
+        select_sql             = db.registrations.sql_for_export(start_date, end_date)
         stdout, stderr, status = Open3.capture3(export_command_for(select_sql))
 
         return Failure(stderr) unless status.success?
 
-        lines = stdout.lines
-
+        lines  = stdout.lines
         output =
           if lines.size < 2 || lines[0].count(DELIMITER) == lines[1].count(DELIMITER)
             # :nocov:

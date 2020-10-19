@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'app/dependencies'
 require_relative 'helpers'
 
-RSpec.feature 'POST /register route' do
+RSpec.feature 'POST /register route - success effects' do
   include CovidForm::TestHelpers::Registration
   include CovidForm::Import[:db]
 
@@ -15,9 +15,9 @@ RSpec.feature 'POST /register route' do
     populate_time_slots
   end
 
-  let(:client_data)  { attributes_for(:client)      }
-  let(:exam_data)    { attributes_for(:exam)        }
-  let(:request_data) { client_data.merge(exam_data) }
+  let(:client_data)  { attributes_for(:client)                  }
+  let(:exam_data)    { attributes_for(:exam)                    }
+  let(:request_data) { { client: client_data, exam: exam_data } }
 
   context 'with a new client' do
     it 'creates the client' do
@@ -66,7 +66,7 @@ RSpec.feature 'POST /register route' do
     it 'updates the client' do
       client = db.clients.create(clean_client_data(client_data))
 
-      request_data[:first_name] = 'Updated'
+      client_data[:first_name] = 'Updated'
 
       post_json '/register', request_data
 

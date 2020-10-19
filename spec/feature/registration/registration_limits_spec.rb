@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'app/dependencies'
 require_relative 'helpers'
 
-RSpec.feature 'POST /register route' do
+RSpec.feature 'POST /register route - registration limits' do
   include CovidForm::TestHelpers::Registration
   include CovidForm::Import[:db]
 
@@ -37,7 +37,7 @@ RSpec.feature 'POST /register route' do
 
   shared_examples('rejected by daily limit') do |limit_type|
     it 'request is rejected' do
-      post_json '/register', client_data.merge(exam_data)
+      post_json '/register', { client: client_data, exam: exam_data }
 
       expect(last_response     ).to be_unprocessable
       expect(last_response.json).to match({

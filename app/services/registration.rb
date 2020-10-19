@@ -1,14 +1,14 @@
-require 'mail'
 require 'dry/monads'
 require 'dry/monads/do'
 
 require 'lib/utils'
 require 'app/dependencies'
+require 'app/mailers/registration_confirmation'
 
 module CovidForm
   module Services
     class Registration
-      include Import[:config, :db, :mail_sender]
+      include Import[:config, :db]
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:perform)
 
@@ -40,17 +40,15 @@ module CovidForm
         new(data: data).perform
       end
 
-      def initialize(config:, db:, mail_sender:, data:)
-        @config      = config
-        @db          = db
-        @mail_sender = mail_sender
+      def initialize(config:, db:, client_data:, exam_data:)
+        @config = config
+        @db     = db
 
-        @client_data = data.slice(:first_name, :last_name, :municipality, :zip_code,
-                                  :email, :phone_number, :insurance_number, :insurance_company)
-        @registration_data = data.slice(:requestor_type, :exam_type, :exam_date, :time_slot_id)
+        @client_data = client_data
+        @exam_data   = exam_data
 
         @all_time_slots = db.time_slots.all_with_time_ranges
-        @time_slot      = all_time_slots.find { _1.id == registration_data[:time_slot_id] }
+        @time_slot      = all_time_slots.find { _1.id == exam_data[:time_slot_id] }
       end
 
       def perform
@@ -66,8 +64,7 @@ module CovidForm
 
       private
 
-      attr_reader(:config, :db, :mail_sender, :client_data,
-                  :registration_data, :all_time_slots, :time_slot)
+      attr_reader :config, :db, :client_data, :exam_data, :all_time_slots, :time_slot
 
       def create_or_update_client
         existing = db.clients.lock_by_insurance_number(client_data[:insurance_number])
@@ -85,9 +82,9 @@ module CovidForm
       end
 
       def create_registration(client)
-        exam_date = registration_data[:exam_date]
+        exam_date = exam_data[:exam_date]
 
-        return NonexistentTimeSlot.new(registration_data[:time_slot_id]) unless time_slot
+        return NonexistentTimeSlot.new(exam_data[:time_slot_id]) unless time_slot
 
         existing_count_for_day, existing_count_for_slot = existing_counts_for(exam_date, time_slot)
         daily_limit, slot_limit                         = limits_for(exam_date, time_slot)
@@ -99,40 +96,21 @@ module CovidForm
         end
 
         begin
-          Success.new(db.registrations.create_for_client(registration_data, client))
+          Success.new(db.registrations.create_for_client(exam_data, client))
         rescue ROM::SQL::UniqueConstraintError # FIXME: this is an abstraciton leak
-          ClientAlreadyRegisteredForDate.new(client: client, date: registration_data[:exam_date])
+          ClientAlreadyRegisteredForDate.new(client: client, date: exam_data[:exam_date])
         end
       end
 
       def send_mail(client)
-        exam_date, exam_type = registration_data.values_at(:exam_date, :exam_type)
+        mailer = Mailers::RegistrationConfirmation.new(client:     client,
+                                                       exam_type:  exam_data[:exam_type],
+                                                       exam_date:  exam_data[:exam_date],
+                                                       time_range: time_slot.time_range)
 
-        Success.new(mail_sender.deliver(mail_for(client:     client,
-                                                 exam_date:  exam_date,
-                                                 exam_type:  exam_type,
-                                                 time_range: time_slot.time_range)))
+        Success.new(mailer.send)
       end
 
-
-      def mail_for(client:, exam_date:, exam_type:, time_range:)
-        exam_info = { date: I18n.l(exam_date), time_range: time_range, exam_type: exam_type.upcase }
-
-        Mail.new {
-          to      client.email
-          subject I18n.t('registration.success_email_subject')
-
-          text_part do
-            content_type 'text/plain; charset=UTF-8'
-            body         I18n.t('registration.success_email_body', **exam_info)
-          end
-
-          html_part do
-            content_type 'text/html; charset=UTF-8'
-            body         I18n.t('registration.success_email_html_body', **exam_info)
-          end
-        }
-      end
 
       def existing_counts_for(date, time_slot)
         for_day  = db.registrations.count_for_date(date)

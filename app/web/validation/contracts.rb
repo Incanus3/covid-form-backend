@@ -58,9 +58,12 @@ module CovidForm
           ].join(' ')
         end
 
-        json(ClientSchema, ExamSchema)
+        json do
+          required(:client).value(ClientSchema)
+          required(:exam  ).value(ExamSchema)
+        end
 
-        rule(:exam_date) do
+        rule(exam: :exam_date) do
           key.failure(I18n.t('validation.must_not_be_in_past')) if value < Date.today
 
           unless RegistrationContract.valid_workday?(value)
@@ -74,8 +77,8 @@ module CovidForm
       end
 
       ExportSchema = Dry::Schema.JSON {
-        required(:start_date).filled(Types::JSON::Date.default(Date.today))
-        required(:end_date  ).filled(Types::JSON::Date.default(Date.today + 7))
+        required(:start_date).filled(Types::JSON::Date.default { Date.today     })
+        required(:end_date  ).filled(Types::JSON::Date.default { Date.today + 7 })
       }
 
       class ExportContract < Contract
