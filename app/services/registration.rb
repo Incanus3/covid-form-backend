@@ -1,3 +1,4 @@
+require 'mail'
 require 'dry/monads'
 require 'dry/monads/do'
 
@@ -106,11 +107,18 @@ module CovidForm
 
       def send_mail(client)
         exam_date, exam_type = registration_data.values_at(:exam_date, :exam_type)
-        time_range           = time_slot.time_range
 
+        Success.new(mail_sender.deliver(mail_for(client:     client,
+                                                 exam_date:  exam_date,
+                                                 exam_type:  exam_type,
+                                                 time_range: time_slot.time_range)))
+      end
+
+
+      def mail_for(client:, exam_date:, exam_type:, time_range:)
         exam_info = { date: I18n.l(exam_date), time_range: time_range, exam_type: exam_type.upcase }
 
-        mail = mail_sender.deliver {
+        Mail.new {
           to      client.email
           subject I18n.t('registration.success_email_subject')
 
@@ -124,10 +132,7 @@ module CovidForm
             body         I18n.t('registration.success_email_html_body', **exam_info)
           end
         }
-
-        Success.new(mail)
       end
-
 
       def existing_counts_for(date, time_slot)
         for_day  = db.registrations.count_for_date(date)

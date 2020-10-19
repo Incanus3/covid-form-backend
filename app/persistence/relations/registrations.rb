@@ -39,18 +39,24 @@ module CovidForm
 
           join(clients).join(slots_with_ranges)
             .where { (exam_date >= start_date) & (exam_date <= end_date) }
-            .select(
-              *translated_columns_from(
-                registrations,
-                %i[registered_at requestor_type exam_type exam_date],
-              ),
-              translated_column_from(slots_with_ranges, :time_range),
-              *translated_columns_from(
-                clients,
-                %i[last_name first_name insurance_number insurance_company] +
-                %i[zip_code municipality phone_number email],
-              ),
-            )
+            .select(*columns_for_export(slots_with_ranges))
+        end
+
+        private
+
+        def columns_for_export(slots_with_ranges)
+          [
+            translated_column_from(registrations, :registered_at),
+            translated_column_from(clients,       :email),
+            *translated_columns_from(registrations, [:requestor_type, :exam_type]),
+            *translated_columns_from(
+              clients,
+              %i[last_name first_name insurance_number insurance_company] +
+              %i[zip_code municipality phone_number],
+            ),
+            translated_column_from(slots_with_ranges, :time_range),
+            translated_column_from(registrations,     :exam_date),
+          ]
         end
       end
     end

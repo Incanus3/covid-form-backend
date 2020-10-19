@@ -55,9 +55,8 @@ cz:
 
   column_translations:
     clients:
-      last_name:         'krestni_jmeno'
-      last_name:         'krestni_jmeno'
-      first_name:        'prijmeni'
+      first_name:        'krestni_jmeno'
+      last_name:         'prijmeni'
       municipality:      'mesto'
       zip_code:          'PSC'
       email:             'email'

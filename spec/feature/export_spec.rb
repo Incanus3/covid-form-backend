@@ -22,38 +22,6 @@ RSpec.feature 'GET /export route' do
     end
   end
 
-  context 'with malformed authentication header' do
-    it 'returns an appropriate error response' do
-      header 'Authorization', 'XXX'
-      get    '/export'
-
-      expect(last_response).to be_unauthorized
-      expect(last_response.json['error'])
-        .to eq 'authentication failed: malformed Authorization header'
-    end
-  end
-
-  context 'with unrecognized authentication method' do
-    it 'returns an appropriate error response' do
-      header 'Authorization', 'MagicToken XXX'
-      get    '/export'
-
-      expect(last_response).to be_unauthorized
-      expect(last_response.json['error'])
-        .to eq "authentication failed: unrecognized authentication method 'MagicToken'"
-    end
-  end
-
-  context 'with bad password' do
-    it 'returns an appropriate error response' do
-      header 'Authorization', 'Password XXX'
-      get    '/export'
-
-      expect(last_response).to be_unauthorized
-      expect(last_response.json['error']).to eq 'authentication failed: bad credentials'
-    end
-  end
-
   context 'with valid authentication' do
     context 'on successful export' do
       it 'returns a CSV with exported data', :no_transaction do
@@ -72,9 +40,9 @@ RSpec.feature 'GET /export route' do
         data       = last_response.json['csv'].split("\n")
         time_range = formatted_time_range(time_slot)
 
-        expect(data[0]).to match(/;requestor_type;.*;time_range;.*;email/)
+        expect(data[0]).to match(/;email;requestor_type;.*;time_range;/)
         expect(data[1]).to match(
-          /;"#{exam_data[:requestor_type]}";.*;"#{time_range}";.*;"#{client_data[:email]}"/,
+          /;"#{client_data[:email]}";"#{exam_data[:requestor_type]}";.*;"#{time_range}";/,
         )
       end
     end
@@ -94,6 +62,19 @@ RSpec.feature 'GET /export route' do
         expect(last_response).to be_unprocessable
         expect(last_response.json['status']  ).to eq 'ERROR'
         expect(last_response.json['error'][0]).to match(/could not connect to server/)
+      end
+    end
+
+    context 'with bad date params' do
+      it 'returns a proper validation error' do
+        header 'Authorization', 'Password admin'
+        get    '/export', start_date: 'xxx'
+
+        expect(last_response).to be_unprocessable
+        expect(last_response.symbolized_json).to match({
+          status:     'ERROR',
+          start_date: a_collection_including('must be a date'),
+        })
       end
     end
   end
