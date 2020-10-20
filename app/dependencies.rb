@@ -60,7 +60,10 @@ module CovidForm
         })
         options[:database] += '_test' if container[:env] == :test
 
-        container.register(:db, CovidForm::Persistence::Container.new(options))
+        db = CovidForm::Persistence::Container.new(options)
+        db.start_connection_validator_with(timeout: 300)
+
+        container.register(:db, db)
       end
 
       # start do

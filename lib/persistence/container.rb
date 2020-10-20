@@ -32,6 +32,12 @@ module Utils
         self.rom_container.gateways
       end
 
+      def start_connection_validator_with(timeout: 300, gateway: :default)
+        sequel_db = rom_container.gateways[gateway].connection
+        sequel_db.extension(:connection_validator)
+        sequel_db.pool.connection_validation_timeout = timeout
+      end
+
       private
 
       attr_reader :rom_container
