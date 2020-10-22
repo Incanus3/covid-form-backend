@@ -6,7 +6,7 @@ module CovidForm
     DEFAULT_CONFIG_OPTIONS = {
       allow_registration_for_weekends:       false,
       allow_registration_for_today_after_10: false,
-      daily_registration_limit:              ENV.fetch('DAILY_REGISTRATION_LIMIT', 250),
+      daily_registration_limit:              Integer(ENV.fetch('DAILY_REGISTRATION_LIMIT', 250)),
       enable_time_slot_registraiton_limit:   true,
     }.freeze
 
