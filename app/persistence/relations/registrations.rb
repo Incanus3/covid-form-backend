@@ -40,6 +40,10 @@ module CovidForm
           join(clients).join(slots_with_ranges)
             .where { (exam_date >= start_date) & (exam_date <= end_date) }
             .select(*columns_for_export(slots_with_ranges))
+            .order(
+              translated_column_name_from(registrations, :exam_date),
+              *translated_column_names_from(clients, [:last_name, :first_name]),
+            )
         end
 
         private
