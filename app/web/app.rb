@@ -3,6 +3,7 @@ require 'roda'
 
 require 'app/dependencies'
 require 'app/services/export'
+require 'app/services/capacity'
 require 'app/services/registration'
 require 'app/web/validation'
 require 'app/web/serialization'
@@ -20,18 +21,15 @@ module CovidForm
       plugin :request_headers
       plugin :symbol_status
 
-      include Validation
-      include Serialization
-
       Dependencies.start(:persistence) # TODO: stop persistence on exit
       Dependencies.start(:mail_sender)
 
       def authenticate!(request)
-        result = Authentication.perform(request)
+        result = Authentication.new(request: request).perform
 
         return unless result.failure?
 
-        status, body = AuthenticationFailureSerializer.serialize(result)
+        status, body = Serializers::AuthenticationFailure.serialize(result)
         request.halt(status, body)
       end
 
@@ -47,17 +45,17 @@ module CovidForm
 
         r.is 'register' do
           r.post do # POST /register
-            validation_result = RegistrationContract.new.call(request.params)
+            validation_result = Validation::Contracts::Registration.new.call(request.params)
 
             if validation_result.success?
               client_data, exam_data = validation_result.to_h.values_at(:client, :exam)
 
               result     = Services::Registration.new(client_data: client_data,
                                                       exam_data:   exam_data).perform
-              serializer = RegistrationResultSerializer
+              serializer = Serializers::RegistrationResult
             else
               result     = validation_result.errors
-              serializer = ValidationErrorsSerializer
+              serializer = Serializers::ValidationErrors
             end
 
             response.status, body = serializer.serialize(result)
@@ -66,18 +64,38 @@ module CovidForm
           end
         end
 
+        r.on 'capacity' do
+          r.is 'full_dates' do
+            r.get do # GET /capacity/full_dates
+              validation_result = Validation::Contracts::FullDates.new.call(request.params)
+
+              if validation_result.success?
+                result     = Services::Capacity.new(validation_result.to_h).full_dates
+                serializer = Serializers::FullDatesResult
+              else
+                result     = validation_result.errors
+                serializer = Serializers::ValidationErrors
+              end
+
+              response.status, body = serializer.serialize(result)
+
+              body
+            end
+          end
+        end
+
         r.is 'export' do
-          r.get do
+          r.get do # GET /export
             authenticate!(request)
 
-            validation_result = ExportContract.new.call(request.params)
+            validation_result = Validation::Contracts::Export.new.call(request.params)
 
             if validation_result.success?
-              result     = Services::Export.perform(validation_result.to_h)
-              serializer = ExportResultSerializer
+              result     = Services::Export.new(validation_result.to_h).perform
+              serializer = Serializers::ExportResult
             else
               result     = validation_result.errors
-              serializer = ValidationErrorsSerializer
+              serializer = Serializers::ValidationErrors
             end
 
             response.status, body = serializer.serialize(result)
@@ -88,10 +106,10 @@ module CovidForm
 
         r.on 'crud' do
           r.is 'time_slots' do
-            r.get do
-              time_slots = CRUD::TimeSlots.all_with_time_ranges
+            r.get do # GET /crud/time_slots
+              time_slots = CRUD::TimeSlots.new.all_with_time_ranges
 
-              response.status, body = TimeSlotSerializer.serialize_many(time_slots)
+              response.status, body = Serializers::TimeSlot.serialize_many(time_slots)
 
               body
             end

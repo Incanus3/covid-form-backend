@@ -6,7 +6,7 @@ module CovidForm
       class TimeSlots
         include Import[:db]
 
-        static_facade :all_with_time_ranges, [:db]
+        attr_private_initialize [:db]
 
         def all_with_time_ranges
           db.time_slots.all_with_time_ranges

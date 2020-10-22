@@ -27,7 +27,7 @@ group :development do # rubocop:disable Metrics/BlockLength
   gem 'guard'
   gem 'guard-bundler'
   gem 'guard-rspec'
-  gem 'guard-rubocop'
+  gem 'guard-rubocop', github: 'Incanus3/guard-rubocop'
   gem 'rack-test'
   gem 'rerun'
   gem 'rspec'

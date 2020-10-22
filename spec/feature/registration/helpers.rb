@@ -7,7 +7,7 @@ module CovidForm
       include Generic
 
       def clean_client_data(data)
-        CovidForm::Web::Validation::ClientSchema.call(data).to_h
+        CovidForm::Web::Validation::Schemas::Client.call(data).to_h
       end
 
       def serialize(entity)

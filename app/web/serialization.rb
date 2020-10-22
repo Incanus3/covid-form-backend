@@ -4,7 +4,7 @@ require 'app/web/services/authentication'
 
 module CovidForm
   module Web
-    module Serialization
+    module Serializers
       class Serializer
         BASE_SUCCESS_BODY = { status: 'OK'    }.freeze
         BASE_ERROR_BODY   = { status: 'ERROR' }.freeze
@@ -19,7 +19,7 @@ module CovidForm
         end
       end
 
-      class ValidationErrorsSerializer < Serializer
+      class ValidationErrors < Serializer
         def self.serialize(errors)
           errors_hash = Utils::Hash.map_keys(errors.to_h, ->(key) { key.nil? ? 'error' : key })
 
@@ -27,7 +27,7 @@ module CovidForm
         end
       end
 
-      class AuthenticationFailureSerializer < Serializer
+      class AuthenticationFailure < Serializer
         ERROR_STATUS = :unauthorized
 
         def self.error_response_with(...)
@@ -52,7 +52,7 @@ module CovidForm
         end
       end
 
-      class RegistrationResultSerializer < Serializer
+      class RegistrationResult < Serializer
         def self.serialize(result) # rubocop:disable Metrics/MethodLength
           case result
           in Services::Registration::Success({ client: client, registration: registration })
@@ -69,7 +69,7 @@ module CovidForm
           in Services::Registration::SlotRegistrationLimitReached({ date: date, slot: slot })
             message = I18n.t(
               'registration.slot_registration_limit_reached',
-              date: I18n.l(date), slot: TimeSlotSerializer.formatted_time_range(slot),
+              date: I18n.l(date), slot: TimeSlot.formatted_time_range(slot),
             )
 
             error_response_with(error: [message])
@@ -85,7 +85,7 @@ module CovidForm
         end
       end
 
-      class ExportResultSerializer < Serializer
+      class ExportResult < Serializer
         def self.serialize(result)
           case result
           in Services::Export::Success(output)
@@ -100,7 +100,22 @@ module CovidForm
         end
       end
 
-      class TimeSlotSerializer < Serializer
+      class FullDatesResult < Serializer
+        def self.serialize(result)
+          case result
+          in Services::Capacity::Success(dates: dates)
+            success_response_with(dates: dates)
+          # in Services::Capacity::Failure(message)
+          #   error_response_with(error: [message])
+          else
+            # :nocov:
+            raise "invalid export result to serialize: #{result.inspect}"
+            # :nocov:
+          end
+        end
+      end
+
+      class TimeSlot < Serializer
         class << self
           def serialize_many(time_slots)
             success_response_with(time_slots: time_slots.map { do_serialize(_1) })

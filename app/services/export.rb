@@ -11,7 +11,7 @@ module CovidForm
 
       DELIMITER = ';'.freeze
 
-      static_facade :perform, [:db, :start_date, :end_date]
+      attr_private_initialize [:db, :start_date, :end_date]
 
       def perform
         select_sql             = db.registrations.sql_for_export(start_date, end_date)
@@ -26,6 +26,7 @@ module CovidForm
             stdout
             # :nocov:
           else
+            # in some cases the command first prints some debugging line - remove it
             lines[1..].join
           end
 

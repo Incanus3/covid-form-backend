@@ -36,20 +36,12 @@ module CovidForm
         end
       end
 
-      def self.perform(data)
-        new(data: data).perform
-      end
-
-      def initialize(config:, db:, client_data:, exam_data:)
-        @config = config
-        @db     = db
-
-        @client_data = client_data
-        @exam_data   = exam_data
-
+      attr_private_initialize [:config, :db, :client_data, :exam_data] do
         @all_time_slots = db.time_slots.all_with_time_ranges
         @time_slot      = all_time_slots.find { _1.id == exam_data[:time_slot_id] }
       end
+
+      attr_private :all_time_slots, :time_slot
 
       def perform
         db.clients.transaction do
@@ -63,8 +55,6 @@ module CovidForm
       end
 
       private
-
-      attr_reader :config, :db, :client_data, :exam_data, :all_time_slots, :time_slot
 
       def create_or_update_client
         existing = db.clients.lock_by_insurance_number(client_data[:insurance_number])

@@ -17,10 +17,6 @@ module CovidForm
 
       attr_private_initialize [:auth, :request]
 
-      def self.perform(request)
-        new(request: request).perform
-      end
-
       def perform
         auth_header = request.headers['authorization']
 
