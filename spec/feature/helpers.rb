@@ -14,8 +14,10 @@ module CovidForm
         # rubocop:enable Layout/LineLength
       end
 
-      def formatted_time_range(time_slot)
-        "#{Utils::Time.format(time_slot.start_time)}-#{Utils::Time.format(time_slot.end_time)}"
+      def formatted_time_range(time_slot, remove_leading_zeros: true)
+        format = ->(time) { Utils::Time.format(time, remove_leading_zeros: remove_leading_zeros) }
+
+        "#{format.call(time_slot.start_time)}-#{format.call(time_slot.end_time)}"
       end
     end
   end

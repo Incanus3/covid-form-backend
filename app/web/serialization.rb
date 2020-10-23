@@ -135,9 +135,7 @@ module CovidForm
               end_time:   Utils::Time.format(time_slot.end_time),
             }
 
-            if time_slot.respond_to?(:time_range)
-              output[:time_range] = formatted_time_range(time_slot)
-            end
+            output[:time_range] = time_slot.time_range if time_slot.respond_to?(:time_range)
 
             output
           end

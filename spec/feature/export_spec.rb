@@ -38,7 +38,7 @@ RSpec.feature 'GET /export route' do
         expect(last_response).to be_ok
 
         data       = last_response.json['csv'].split("\n")
-        time_range = formatted_time_range(time_slot)
+        time_range = formatted_time_range(time_slot, remove_leading_zeros: false)
 
         expect(data[0]).to match(/;email;requestor_type;.*;time_range;/)
         expect(data[1]).to match(

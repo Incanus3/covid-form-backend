@@ -23,7 +23,7 @@ module Utils
       ::Time.local(today.year, today.month, today.day, hour, minute, second)
     end
 
-    def format(time, remove_leading_zeros: false)
+    def format(time, remove_leading_zeros: true)
       time_str = I18n.l(time, format: :time_only)
       time_str.delete_prefix!('0') if remove_leading_zeros
       time_str
