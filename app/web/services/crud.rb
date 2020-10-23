@@ -9,7 +9,7 @@ module CovidForm
         attr_private_initialize [:db]
 
         def all_with_time_ranges
-          db.time_slots.all_with_time_ranges
+          db.time_slots.all_with_time_ranges(remove_leading_zeros: true)
         end
       end
     end

@@ -18,8 +18,8 @@ module CovidForm
           end
         end
 
-        def with_time_range
-          time_format = 'FMHH24:MI'
+        def with_time_range(remove_leading_zeros: false)
+          time_format = "#{remove_leading_zeros ? 'FM' : ''}HH24:MI"
 
           select_append {
             string.concat(
