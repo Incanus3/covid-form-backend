@@ -126,7 +126,7 @@ module CovidForm
       def registration_limit_for_slot(daily_limit, slot)
         coeff_sum = all_time_slots.map(&:limit_coefficient).sum
 
-        ((daily_limit / coeff_sum) * slot.limit_coefficient).ceil
+        ((Float(daily_limit) / coeff_sum) * slot.limit_coefficient).ceil
       end
     end
   end
