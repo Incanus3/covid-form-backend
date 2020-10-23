@@ -20,27 +20,24 @@ RSpec.feature 'GET /capacity/full_dates route' do
 
   context 'with valid params' do
     it 'returns dates with capacity limit reached' do
-      get '/capacity/full_dates', start_date: Date.today, end_date: Date.today + 7
-
-      p last_response
+      get '/capacity/full_dates', start_date: Date.today, end_date: Date.today + 10
 
       expect(last_response).to be_ok
       expect(last_response.symbolized_json).to match({
         status: 'OK',
-        dates:  [],
-        # dates:  a_collection_including(exam_date.iso8601),
+        dates:  a_collection_including(exam_date.iso8601),
       })
     end
   end
 
   context 'with invalid params' do
     it 'returns a proper validation error' do
-      get '/capacity/full_dates', start_date: 'xxx'
+      get '/capacity/full_dates', start_date: Date.today, end_date: Date.today - 10
 
       expect(last_response).to be_unprocessable
       expect(last_response.symbolized_json).to match({
-        status:     'ERROR',
-        start_date: a_collection_including('must be a date'),
+        status: 'ERROR',
+        error:  a_collection_including('end_date must be after start_date'),
       })
     end
   end

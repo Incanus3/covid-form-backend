@@ -4,6 +4,17 @@ module CovidForm
   module Persistence
     module Relations
       class Registrations < Utils::Persistence::Relation
+        DATES_WITH_FULL_CAPACITY_RAW_QUERY = <<~RAW.freeze
+          with
+            date_seq   as (select '%{start_date}'::date + seq.num as date from generate_series(0, %{number_of_days}) as seq(num)),
+            reg_counts as (select exam_date, count(id) as reg_count from registrations group by exam_date)
+          select date_seq.date from date_seq
+          left outer join reg_counts      on date_seq.date = reg_counts.exam_date
+          left outer join daily_overrides on date_seq.date = daily_overrides.date
+          where coalesce(reg_counts.reg_count, 0) >= coalesce(daily_overrides.registration_limit, %{global_registration_limit})
+          order by date_seq.date;
+        RAW
+
         schema(:registrations) do
           attribute :id,             Types::Integer
           attribute :client_id,      Types::ForeignKey(:clients)
@@ -44,6 +55,16 @@ module CovidForm
               translated_column_name_from(registrations, :exam_date),
               *translated_column_names_from(clients, [:last_name, :first_name]),
             )
+        end
+
+        def dates_with_full_capacity(start_date, end_date, global_registration_limit:)
+          sql = format(DATES_WITH_FULL_CAPACITY_RAW_QUERY, {
+            start_date:                start_date,
+            number_of_days:            Integer(end_date - start_date),
+            global_registration_limit: global_registration_limit,
+          })
+
+          read(sql)
         end
 
         private

@@ -63,10 +63,22 @@ module CovidForm
 
         class Export < Contract
           json(Schemas::Export)
+
+          rule(:start_date, :end_date) do
+            if values[:start_date] > values[:end_date]
+              base.failure('end_date must be after start_date')
+            end
+          end
         end
 
         class FullDates < Contract
           json(Schemas::FullDates)
+
+          rule(:start_date, :end_date) do
+            if values[:start_date] > values[:end_date]
+              base.failure('end_date must be after start_date')
+            end
+          end
         end
       end
     end

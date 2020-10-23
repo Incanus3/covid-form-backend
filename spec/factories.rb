@@ -25,12 +25,13 @@ FactoryBot.define do
 
   factory :exam, class: CovidForm::Entities::Registration do
     transient do
-      db { CovidForm::Dependencies[:db] }
+      db               { CovidForm::Dependencies[:db] }
+      max_days_forward { 7                            }
     end
 
     requestor_type { CovidForm::Web::Validation::Types::RequestorType.values.sample }
     exam_type      { CovidForm::Web::Validation::Types::ExamType.values.sample      }
-    exam_date      { Faker::Date.forward(days: 7)                                   }
+    exam_date      { Faker::Date.forward(days: max_days_forward)                    }
     time_slot_id   { db.time_slots.ids.sample                                       }
 
     trait :past_date do

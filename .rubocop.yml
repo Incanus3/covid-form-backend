@@ -107,6 +107,9 @@ Style/DocumentationMethod:
 Style/EmptyMethod:
   EnforcedStyle: expanded
 
+Style/FormatStringToken:
+  EnforcedStyle: template
+
 Style/FrozenStringLiteralComment:
   Enabled: false
 
@@ -124,6 +127,7 @@ Style/MethodCallWithArgsParentheses:
     - delivery_method
     - gem
     - 'on'
+    - include
     - is
     - p
     - pp

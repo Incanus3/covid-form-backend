@@ -68,12 +68,12 @@ RSpec.feature 'GET /export route' do
     context 'with bad date params' do
       it 'returns a proper validation error' do
         header 'Authorization', 'Password admin'
-        get    '/export', start_date: 'xxx'
+        get    '/export', start_date: Date.today, end_date: Date.today - 10
 
         expect(last_response).to be_unprocessable
         expect(last_response.symbolized_json).to match({
-          status:     'ERROR',
-          start_date: a_collection_including('must be a date'),
+          status: 'ERROR',
+          error:  a_collection_including('end_date must be after start_date'),
         })
       end
     end
