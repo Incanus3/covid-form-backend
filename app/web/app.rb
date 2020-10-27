@@ -39,6 +39,9 @@ module CovidForm
             <h1>Seznam rout</h1>
             <ul>
               <li>POST /register</li>
+              <li>GET /export</li>
+              <li>GET /crud/time_slots</li>
+              <li>GET /capacity/full_dates</li>
             </ul>
           TXT
         end
