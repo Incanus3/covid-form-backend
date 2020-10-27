@@ -28,9 +28,6 @@ module CovidForm
           registrations
             .dates_with_full_capacity(start_date, end_date,
                                       global_registration_limit: global_registration_limit)
-            .with(auto_struct: false)
-            .to_a
-            .map { _1[:date] }
         end
 
         def sql_for_export(start_date, end_date)
