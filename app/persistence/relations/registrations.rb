@@ -52,24 +52,6 @@ module CovidForm
             )
         end
 
-        def dates_with_full_capacity(start_date, end_date, global_registration_limit:)
-          # rubocop:disable Lint/NumberConversion, Style/MultilineBlockChain
-          # rubocop:disable Layout/MultilineBlockLayout, Layout/BlockEndNewline
-          dataset.db
-            .from   { generate_series(0, (end_date - start_date).to_i).as(:number) }
-            .select { (Sequel.cast(start_date, Date) + number).as(:date)           }
-            .from_self(alias: :dates)
-            .left_join(counts_by_dates.dataset, { exam_date: :date },
-                       table_alias: :reg_counts)
-            .left_join(daily_overrides.dataset, { date: Sequel.qualify(:dates, :date) },
-                       table_alias: :reg_limits)
-            .where { (coalesce(registration_count, 0) >=
-                      coalesce(registration_limit, global_registration_limit)) }
-            .select_map { Sequel.qualify(:dates, :date) }
-          # rubocop:enable Lint/NumberConversion, Style/MultilineBlockChain
-          # rubocop:enable Layout/MultilineBlockLayout, Layout/BlockEndNewline
-        end
-
         private
 
         def columns_for_export(slots_with_ranges)

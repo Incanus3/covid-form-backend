@@ -1,4 +1,5 @@
 require 'lib/persistence/repository'
+require 'app/persistence/queries/registration_limits'
 
 module CovidForm
   module Persistence
@@ -25,9 +26,14 @@ module CovidForm
         end
 
         def dates_with_full_capacity(start_date, end_date, global_registration_limit:)
-          registrations
-            .dates_with_full_capacity(start_date, end_date,
-                                      global_registration_limit: global_registration_limit)
+          query = Queries::RegistrationCapacity.new(
+            db:              default_gateway.connection,
+            registrations:   registrations,
+            daily_overrides: daily_overrides,
+          )
+
+          query.dates_with_full_capacity(start_date, end_date,
+                                         global_registration_limit: global_registration_limit)
         end
 
         def sql_for_export(start_date, end_date)

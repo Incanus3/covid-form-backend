@@ -24,6 +24,12 @@ module Utils
       def create_many(tuples)
         root.command(:create, result: :many).call(tuples)
       end
+
+      private
+
+      def default_gateway
+        container.gateways[:default]
+      end
     end
   end
 end
