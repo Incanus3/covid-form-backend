@@ -21,9 +21,9 @@ module CovidForm
         db.registrations.create_for_client(exam_data, client)
       end
 
-      def create_many_clients_with_registrations(count, exam_overrides: {})
+      def create_many_clients_with_registrations(count, client_overrides: {}, exam_overrides: {})
         client_records = db.clients.create_many(
-          attributes_for_list(:client, count).map { clean_client_data(_1) },
+          attributes_for_list(:client, count, **client_overrides).map { clean_client_data(_1) },
         )
 
         # rubocop:disable Performance/ChainArrayAllocation
