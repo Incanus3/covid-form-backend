@@ -14,7 +14,7 @@ module CovidForm
     include FactoryBot::Syntax::Methods
     include TestHelpers::Registration
 
-    EXAM_OVERRIDE_DEFAULTS = { max_days_forward: 7 }
+    EXAM_OVERRIDE_DEFAULTS = { max_days_forward: 7 }.freeze
 
     def self.with_db
       require 'app/dependencies'
@@ -39,7 +39,7 @@ module CovidForm
       create_many_clients_with_registrations(
         count,
         client_overrides: client_overrides,
-        exam_overrides: EXAM_OVERRIDE_DEFAULTS.merge(exam_overrides),
+        exam_overrides:   EXAM_OVERRIDE_DEFAULTS.merge(exam_overrides),
       )
     end
 
@@ -67,11 +67,11 @@ if __FILE__ == $PROGRAM_NAME
   seeder.seed_registrations(
     47,
     client_overrides: { first_name: 'filly', last_name: 'filler' },
-    exam_overrides:   { exam_date: Date.new(2020, 10, 28), time_slot_id: 1 }
+    exam_overrides:   { exam_date: Date.new(2020, 10, 28), time_slot_id: 1 },
   )
   seeder.seed_registrations(
     47,
     client_overrides: { first_name: 'filly', last_name: 'filler' },
-    exam_overrides:   { exam_date: Date.new(2020, 10, 28), time_slot_id: 2 }
+    exam_overrides:   { exam_date: Date.new(2020, 10, 28), time_slot_id: 2 },
   )
 end

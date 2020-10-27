@@ -56,8 +56,8 @@ module CovidForm
           # rubocop:disable Lint/NumberConversion, Style/MultilineBlockChain
           # rubocop:disable Layout/MultilineBlockLayout, Layout/BlockEndNewline
           dataset.db
-            .from   { generate_series(0, (end_date - start_date).to_i).as(:number)     }
-            .select { (Sequel.lit("'#{start_date.iso8601}'::date") + number).as(:date) }
+            .from   { generate_series(0, (end_date - start_date).to_i).as(:number) }
+            .select { (Sequel.cast(start_date, Date) + number).as(:date)           }
             .from_self(alias: :dates)
             .left_join(counts_by_dates.dataset, { exam_date: :date },
                        table_alias: :reg_counts)
