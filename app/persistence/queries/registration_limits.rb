@@ -4,13 +4,15 @@ module CovidForm
       class RegistrationCapacity
         attr_private :db, :daily_overrides, :registration_counts_by_dates
 
+        # @param db              [Sequel::Database]
+        # @param registrations   [ROM::SQL::Relation]
+        # @param daily_overrides [ROM::SQL::Relation]
         def initialize(db:, registrations:, daily_overrides:)
           @db                           = db
           @daily_overrides              = daily_overrides.dataset
           @registration_counts_by_dates = registrations.counts_by_dates.dataset
         end
 
-        # rubocop:disable Style/MultilineBlockChain
         # rubocop:disable Layout/MultilineBlockLayout, Layout/BlockEndNewline
         def dates_with_full_capacity(start_date, end_date, global_registration_limit:)
           date_sequence(start_date, end_date)
@@ -22,7 +24,6 @@ module CovidForm
                       coalesce(registration_limit, global_registration_limit)) }
             .select_map { Sequel.qualify(:date_seq, :date) }
         end
-        # rubocop:enable Style/MultilineBlockChain
         # rubocop:enable Layout/MultilineBlockLayout, Layout/BlockEndNewline
 
         private
