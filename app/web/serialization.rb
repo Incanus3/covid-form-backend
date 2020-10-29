@@ -135,7 +135,9 @@ module CovidForm
               end_time:   Utils::Time.format(time_slot.end_time),
             }
 
+            # :nocov:
             output[:time_range] = time_slot.time_range if time_slot.respond_to?(:time_range)
+            # :nocov:
 
             output
           end

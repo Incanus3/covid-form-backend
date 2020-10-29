@@ -12,12 +12,28 @@ cz:
       "špatné přihlašovací údaje"
 
   validation:
+    not_a_valid:
+      "%{value} není validní %{what}"
+    must_only_contain:
+      "musí obsahovat pouze %{what}"
     must_be_a_workday:
       "je možná pouze na pracovní dny"
-    must_not_be_in_past:
-      "nesmí být v minulosti"
+    must_be_divisible_by:
+      "musí být dělitelné %{divisor}"
     only_possible_before:
       "je možná pouze před %{time}"
+    must_not_be_both:
+      "nesmí být zároveň %{variant1} a %{variant2}"
+    must_not_be_longer:
+      "nesmí být delší než %{than} znaků"
+    must_not_be_shorter:
+      "nesmí být kratší než %{than} znaků"
+    must_not_end_with:
+      "nesmí končit %{suffix}"
+    must_not_be_before:
+      "nesmí být před %{time}"
+    must_not_be_in_past:
+      "nesmí být v minulosti"
 
   registration:
     registration:
@@ -75,3 +91,16 @@ cz:
       start_time: 'cas_pocatku'
       end_time:   'cas_konce'
       time_range: 'casovy_slot'
+
+  entities:
+    client:
+      birth_year:
+        "rok narození"
+
+    date:
+      parts:
+        month: "měsíc"
+        day_of_month: "den v měsíci"
+
+    number:
+      plural: "čísla"

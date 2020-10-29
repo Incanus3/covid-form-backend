@@ -12,12 +12,28 @@ en:
       "bad credentials"
 
   validation:
+    not_a_valid:
+      "%{value} is not a valid %{what}"
+    must_only_contain:
+      "must only contain %{what}"
     must_be_a_workday:
       "is only possible for workdays"
-    must_not_be_in_past:
-      "must not be in the past"
+    must_be_divisible_by:
+      "must be divisible by %{divisor}"
     only_possible_before:
       "is only possible before %{time}"
+    must_not_be_both:
+      "must not be both %{variant1} and %{variant2}"
+    must_not_be_longer:
+      "must not be longer than %{than} characters"
+    must_not_be_shorter:
+      "must not be shorter than %{than} characters"
+    must_not_end_with:
+      "must not end with %{suffix}"
+    must_not_be_before:
+      "must not be before %{time}"
+    must_not_be_in_past:
+      "must not be in the past"
 
   registration:
     registration:
@@ -42,3 +58,16 @@ en:
   column_translations:
     clients:
       municipality: 'city'
+
+  entities:
+    client:
+      birth_year:
+        "birth year"
+
+    date:
+      parts:
+        month: "month"
+        day_of_month: "day of month"
+
+    number:
+      plural: "numbers"

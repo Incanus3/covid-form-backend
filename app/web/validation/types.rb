@@ -13,6 +13,7 @@ module CovidForm
 
         ExamType      = Strict::String.constructor(&:downcase).enum('pcr', 'rapid')
         RequestorType = Strict::String.constructor(&:downcase).enum('pl', 'khs', 'samopl')
+
         Email         = Strict::String.constrained(format: EMAIL_REGEX)
         PhoneNumber   = Coercible::String.constrained(format: PHONE_REGEX)
           .constructor { _1.gsub(/[\s()]/, '') }

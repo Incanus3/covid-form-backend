@@ -79,6 +79,9 @@ Naming/MemoizedInstanceVariableName:
 Naming/MethodParameterName:
   AllowedNames: [as, db, pk]
 
+Performance/ChainArrayAllocation:
+  Enabled: false
+
 Style/AccessModifierDeclarations:
   Enabled: false
 

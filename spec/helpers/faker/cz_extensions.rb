@@ -7,12 +7,6 @@ module Faker
     end
   end
 
-  class CZIDNumber < IDNumber
-    def self.valid
-      "#{Faker::Date.birthday.strftime('%y%m%d')} #{Faker::Number.number(digits: 4)}"
-    end
-  end
-
   class CEPhoneNumber < PhoneNumber
     class << self
       alias bare_phone_number phone_number

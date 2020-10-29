@@ -13,8 +13,8 @@ FactoryBot.define do
     email             { Faker::Internet.email(name: "#{first_name} #{last_name}") }
     phone_number      { Faker::CEPhoneNumber.phone_number                         }
 
-    insurance_number  { Faker::CZIDNumber.valid         }
-    insurance_company { Faker::Number.number(digits: 3) }
+    insurance_company           { Faker::Number.number(digits: 3)             }
+    sequence(:insurance_number) { |n| "500101#{(n % 600).to_s.rjust(3, '0')}" }
 
     trait :invalid_email do
       email { 'xxx' }

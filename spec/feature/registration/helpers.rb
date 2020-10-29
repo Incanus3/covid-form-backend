@@ -26,13 +26,11 @@ module CovidForm
           attributes_for_list(:client, count, **client_overrides).map { clean_client_data(_1) },
         )
 
-        # rubocop:disable Performance/ChainArrayAllocation
         db.registrations.create_many(client_records
           .zip(attributes_for_list(:exam, count, **exam_overrides))
           .map { |(client_record, exam_attrs)|
             exam_attrs.merge(client_id: client_record[:id], registered_at: Time.now)
           })
-        # rubocop:enable Performance/ChainArrayAllocation
       end
     end
   end

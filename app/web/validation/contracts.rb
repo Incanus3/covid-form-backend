@@ -1,5 +1,7 @@
 require 'dry-validation'
+require 'lib/utils'
 require_relative 'schemas'
+require_relative 'messages'
 
 module CovidForm
   module Web
@@ -14,6 +16,9 @@ module CovidForm
         end
 
         class Registration < Contract
+          INSURANCE_NUMBER_REGEX =
+            /^(?<year>\d\d)(?<month>\d\d)(?<day>\d\d)(?<suffix>\d{3,4})$/.freeze
+
           def self.cf_config
             CovidForm::Dependencies[:config]
           end
@@ -28,37 +33,67 @@ module CovidForm
               || time.hour < 10
           end
 
-          def self.invalid_workday_message
-            [
-              I18n.t('registration.registration'),
-              I18n.t('validation.must_be_a_workday'),
-            ].join(' ')
-          end
-
-          def self.invalid_registration_time_message
-            [
-              I18n.t('registration.registration_for_today'),
-              I18n.t('validation.only_possible_before',
-                     time: I18n.l(Utils::Time.today_at(10, 0), format: :time_only)),
-            ].join(' ')
-          end
-
           json do
             required(:client).value(Schemas::Client)
             required(:exam  ).value(Schemas::Exam)
           end
 
           rule(exam: :exam_date) do
-            key.failure(I18n.t('validation.must_not_be_in_past')) if value < Date.today
-
-            unless Registration.valid_workday?(value)
-              base.failure(Registration.invalid_workday_message)
-            end
+            key.failure( Messages.must_not_be_in_past) if     value < Date.today
+            base.failure(Messages.not_a_valid_workday) unless Registration.valid_workday?(value)
 
             unless Registration.valid_registration_time_for?(value)
-              base.failure(Registration.invalid_registration_time_message)
+              base.failure(Messages.not_a_valid_registration_time)
             end
           end
+
+          # rubocop:disable Metrics/BlockLength, Metrics/BlockNesting
+          rule(client: :insurance_number) do
+            unless values[:client][:insurance_company] == 999
+              key.failure(Messages.must_not_be_shorter(than: 9 )) if value.length < 9
+              key.failure(Messages.must_not_be_longer( than: 10)) if value.length > 10
+              key.failure(Messages.must_only_contain_numbers) unless value.match?(/^\d+$/)
+
+              if (match = value.match(INSURANCE_NUMBER_REGEX))
+                year, month, day, suffix =
+                  [*match.values_at(:year, :month, :day).map { Integer(_1) }, match[:suffix]]
+
+                month -= 50 if month > 50
+
+                if month > 20
+                  rc_plus = true
+                  month  -= 20
+                end
+
+                if day > 40
+                  ecp  = true
+                  day -= 40
+                end
+
+                if month < 1 || month > 12
+                  key.failure(Messages.not_a_valid_month(month))
+                elsif day < 1 || day > Utils::Date.days_in_month(month: month, year: year)
+                  key.failure(Messages.not_a_valid_day_of_month(day, month))
+                end
+
+                if value.length == 9
+                  key.failure(Messages.must_not_end_with('000'))            if suffix == '000'
+                  key.failure(Messages.birth_year_must_not_be_before(1900)) if year > 53
+                else
+                  unless Utils::Number.divisible_by?(Integer(value), 11)
+                    key.failure(Messages.must_be_divisible_by(11))
+                  end
+                end
+
+                if ecp && Integer(suffix[...3]) < 600
+                  key.failure(Messages.must_not_end_with(suffix))
+                end
+
+                key.failure(Messages.must_not_be_both('RČ+', 'EČP')) if rc_plus && ecp
+              end
+            end
+          end
+          # rubocop:enable Metrics/BlockLength, Metrics/BlockNesting
         end
 
         class Export < Contract
