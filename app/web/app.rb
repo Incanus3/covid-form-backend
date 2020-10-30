@@ -33,9 +33,25 @@ module CovidForm
         request.halt(status, body)
       end
 
+      def action(request, validation_contract:, result_serializer:)
+        validation_result = validation_contract.new.call(request.params)
+
+        if validation_result.success?
+          result     = yield validation_result.to_h
+          serializer = result_serializer
+        else
+          result     = validation_result.errors
+          serializer = Serializers::ValidationErrors
+        end
+
+        response.status, body = serializer.serialize(result)
+
+        body
+      end
+
       route do |r| # rubocop:disable Metrics/BlockLength
         r.root do # GET /
-          <<~TXT
+          <<~HTML
             <h1>Seznam rout</h1>
             <ul>
               <li>POST /register</li>
@@ -43,46 +59,32 @@ module CovidForm
               <li>GET /crud/time_slots</li>
               <li>GET /capacity/full_dates</li>
             </ul>
-          TXT
+          HTML
         end
 
         r.is 'register' do
           r.post do # POST /register
-            validation_result = Validation::Contracts::Registration.new.call(request.params)
-
-            if validation_result.success?
-              client_data, exam_data = validation_result.to_h.values_at(:client, :exam)
-
-              result     = Services::Registration.new(client_data: client_data,
-                                                      exam_data:   exam_data).perform
-              serializer = Serializers::RegistrationResult
-            else
-              result     = validation_result.errors
-              serializer = Serializers::ValidationErrors
+            action(
+              request,
+              validation_contract: Validation::Contracts::Registration,
+              result_serializer:   Serializers::RegistrationResult,
+            ) do |params|
+              Services::Registration.new(client_data: params[:client],
+                                         exam_data:   params[:exam]).perform
             end
-
-            response.status, body = serializer.serialize(result)
-
-            body
           end
         end
 
         r.on 'capacity' do
           r.is 'full_dates' do
             r.get do # GET /capacity/full_dates
-              validation_result = Validation::Contracts::FullDates.new.call(request.params)
-
-              if validation_result.success?
-                result     = Services::Capacity.new(validation_result.to_h).full_dates
-                serializer = Serializers::FullDatesResult
-              else
-                result     = validation_result.errors
-                serializer = Serializers::ValidationErrors
+              action(
+                request,
+                validation_contract: Validation::Contracts::FullDates,
+                result_serializer:   Serializers::FullDatesResult,
+              ) do |params|
+                Services::Capacity.new(params).full_dates
               end
-
-              response.status, body = serializer.serialize(result)
-
-              body
             end
           end
         end
@@ -91,19 +93,13 @@ module CovidForm
           r.get do # GET /export
             authenticate!(request)
 
-            validation_result = Validation::Contracts::Export.new.call(request.params)
-
-            if validation_result.success?
-              result     = Services::Export.new(validation_result.to_h).perform
-              serializer = Serializers::ExportResult
-            else
-              result     = validation_result.errors
-              serializer = Serializers::ValidationErrors
+            action(
+              request,
+              validation_contract: Validation::Contracts::Export,
+              result_serializer:   Serializers::ExportResult,
+            ) do |params|
+              Services::Export.new(params).perform
             end
-
-            response.status, body = serializer.serialize(result)
-
-            body
           end
         end
 

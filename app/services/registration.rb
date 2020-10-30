@@ -46,9 +46,9 @@ module CovidForm
       def perform
         db.clients.transaction do
           client       = yield create_or_update_client
-          registration = yield create_registration(client)
+          registration = yield create_registration_for(client)
 
-          yield send_mail(client)
+          yield send_mail_to(client)
 
           Success.new({ client: client, registration: registration })
         end
@@ -71,7 +71,7 @@ module CovidForm
         Success.new(client)
       end
 
-      def create_registration(client)
+      def create_registration_for(client)
         exam_date = exam_data[:exam_date]
 
         return NonexistentTimeSlot.new(exam_data[:time_slot_id]) unless time_slot
@@ -92,7 +92,7 @@ module CovidForm
         end
       end
 
-      def send_mail(client)
+      def send_mail_to(client)
         mailer = Mailers::RegistrationConfirmation.new(client:     client,
                                                        exam_type:  exam_data[:exam_type],
                                                        exam_date:  exam_data[:exam_date],

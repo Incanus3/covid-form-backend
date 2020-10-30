@@ -32,6 +32,14 @@ module Utils
         self.rom_container.gateways
       end
 
+      def default_gateway
+        gateways[:default]
+      end
+
+      def options
+        default_gateway.options
+      end
+
       def start_connection_validator_with(timeout: 300, gateway: :default)
         sequel_db = rom_container.gateways[gateway].connection
         sequel_db.extension(:connection_validator)

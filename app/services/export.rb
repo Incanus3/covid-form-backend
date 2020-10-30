@@ -36,13 +36,12 @@ module CovidForm
       private
 
       def export_command_for(select_sql)
-        db_options   = db.gateways[:default].options
         psql_command = ("\\copy (#{select_sql}) to STDOUT CSV DELIMITER '#{DELIMITER}' " \
                         'HEADER FORCE QUOTE *')
 
-        "PGPASSWORD=#{db_options[:password]} psql "           \
-          "-h #{db_options[:host]} -p #{db_options[:port]} "  \
-          "-U #{db_options[:user]} #{db_options[:database]} " \
+        "PGPASSWORD=#{db.options[:password]} psql "           \
+          "-h #{db.options[:host]} -p #{db.options[:port]} "  \
+          "-U #{db.options[:user]} #{db.options[:database]} " \
           "-c \"#{psql_command}\""
       end
     end
