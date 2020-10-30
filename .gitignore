@@ -2,5 +2,6 @@
 .rbenv-gemsets
 .rspec.status
 /coverage
+/tmp
 /log/*
 !/log/.keep

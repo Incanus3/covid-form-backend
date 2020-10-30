@@ -21,6 +21,7 @@ gem 'sequel'
 gem 'sequel_pg'
 
 group :development do # rubocop:disable Metrics/BlockLength
+  gem 'bundler-audit'
   gem 'database_cleaner-sequel'
   gem 'factory_bot'
   gem 'faker'
@@ -36,6 +37,7 @@ group :development do # rubocop:disable Metrics/BlockLength
   gem 'rubocop-performance'
   gem 'rubocop-rake'
   gem 'rubocop-rspec'
+  gem 'rubycritic'
   gem 'simplecov'
   gem 'sqlite3'
   gem 'timecop'
