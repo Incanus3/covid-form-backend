@@ -56,7 +56,7 @@ module CovidForm
 
               if (match = value.match(INSURANCE_NUMBER_REGEX))
                 year, month, day, suffix =
-                  [*match.values_at(:year, :month, :day).map { Integer(_1) }, match[:suffix]]
+                  [*match.values_at(:year, :month, :day).map(&:to_i), match[:suffix]]
 
                 month -= 50 if month > 50
 
@@ -80,15 +80,12 @@ module CovidForm
                   key.failure(Messages.must_not_end_with('000'))            if suffix == '000'
                   key.failure(Messages.birth_year_must_not_be_before(1900)) if year > 53
                 else
-                  unless Utils::Number.divisible_by?(Integer(value), 11)
+                  unless Utils::Number.divisible_by?(value.to_i, 11)
                     key.failure(Messages.must_be_divisible_by(11))
                   end
                 end
 
-                if ecp && Integer(suffix[...3]) < 600
-                  key.failure(Messages.must_not_end_with(suffix))
-                end
-
+                key.failure(Messages.must_not_end_with(suffix)) if ecp && suffix[...3].to_i < 600
                 key.failure(Messages.must_not_be_both('RČ+', 'EČP')) if rc_plus && ecp
               end
             end
