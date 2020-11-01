@@ -12,19 +12,22 @@ FactoryBot/FactoryClassName:
   Enabled: false
 
 Metrics/BlockLength:
-  Max: 80
+  Max: 100
 
 RSpec/ExampleLength:
   Max: 15
 
-RSpec/ImplicitSubject:
+RSpec/ContextWording:
   Enabled: false
 
-RSpec/ContextWording:
+RSpec/ImplicitSubject:
   Enabled: false
 
 RSpec/MultipleExpectations:
   Max: 5
+
+RSpec/NestedGroups:
+  Max: 4
 
 Style/MethodCallWithArgsParentheses:
   IgnoredMethods:

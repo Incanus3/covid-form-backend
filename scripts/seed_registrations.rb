@@ -4,6 +4,7 @@ APP_ROOT = File.expand_path('..', __dir__)
 
 $LOAD_PATH.unshift APP_ROOT
 
+require 'attr_extras'
 require 'factory_bot'
 require 'database_cleaner/sequel'
 require 'spec/helpers/faker/cz_extensions'
@@ -19,7 +20,7 @@ module CovidForm
     def self.with_db
       require 'app/dependencies'
 
-      CovidForm::Dependencies.start(:persistence)
+      Dependencies.start(:persistence)
 
       include Import[:db]
 
@@ -29,7 +30,7 @@ module CovidForm
     end
 
     def clean_db
-      default_db_gateway = CovidForm::Dependencies[:db].gateways[:default]
+      default_db_gateway = Dependencies[:db].gateways[:default]
 
       DatabaseCleaner[:sequel].db = default_db_gateway.connection
       DatabaseCleaner[:sequel].clean_with(:truncation)

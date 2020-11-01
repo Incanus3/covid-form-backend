@@ -30,19 +30,23 @@ module CovidForm
             lines[1..].join
           end
 
-        Success(output)
+        Success({ csv: output, encoding: encoding })
       end
 
       private
 
       def export_command_for(select_sql)
         psql_command = ("\\copy (#{select_sql}) to STDOUT CSV DELIMITER '#{DELIMITER}' " \
-                        'HEADER FORCE QUOTE *')
+                        "ENCODING '#{encoding}' HEADER FORCE QUOTE *")
 
         "PGPASSWORD=#{db.options[:password]} psql "           \
           "-h #{db.options[:host]} -p #{db.options[:port]} "  \
           "-U #{db.options[:user]} #{db.options[:database]} " \
           "-c \"#{psql_command}\""
+      end
+
+      def encoding
+        ENV.fetch('CSV_ENCODING', 'UTF-8')
       end
     end
   end

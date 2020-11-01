@@ -28,14 +28,12 @@ module CovidForm
 
         private
 
-        # rubocop:disable Lint/NumberConversion
         def date_sequence(start_date, end_date)
           db
             .from   { generate_series(0, (end_date - start_date).to_i).as(:number) }
             .select { (Sequel.cast(start_date, Date) + number).as(:date)           }
             .from_self(alias: :date_seq)
         end
-        # rubocop:enable Lint/NumberConversion
       end
     end
   end

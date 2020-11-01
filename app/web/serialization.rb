@@ -11,11 +11,11 @@ module CovidForm
         ERROR_STATUS      = :unprocessable_entity
 
         def self.success_response_with(fields)
-          [:ok, self::BASE_SUCCESS_BODY.merge(fields.to_h)]
+          [:ok, self::BASE_SUCCESS_BODY.merge(fields.to_h), {}]
         end
 
         def self.error_response_with(fields)
-          [self::ERROR_STATUS, self::BASE_ERROR_BODY.merge(fields.to_h)]
+          [self::ERROR_STATUS, self::BASE_ERROR_BODY.merge(fields.to_h), {}]
         end
       end
 
@@ -88,8 +88,8 @@ module CovidForm
       class ExportResult < Serializer
         def self.serialize(result)
           case result
-          in Services::Export::Success(output)
-            success_response_with({ csv: output })
+          in Services::Export::Success({ csv: csv, encoding: encoding })
+            [:ok, csv, { 'Content-Type' => "text/csv;charset=#{encoding}" }]
           in Services::Export::Failure(output)
             error_response_with(error: [output])
           else

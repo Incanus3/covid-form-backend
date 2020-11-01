@@ -58,6 +58,9 @@ Layout/TrailingEmptyLines:
 Lint/ConstantResolution:
   Enabled: false
 
+Lint/NumberConversion:
+  Enabled: false
+
 Metrics/AbcSize:
   Max: 35
 

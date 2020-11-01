@@ -9,8 +9,8 @@ RSpec.feature 'GET /export route' do
     populate_time_slots
   end
 
-  let(:client_data) { attributes_for(:client) }
-  let(:exam_data)   { attributes_for(:exam)   }
+  let(:client_data) { attributes_for(:client, last_name: 'Ěščřžýáíé') }
+  let(:exam_data)   { attributes_for(:exam)                           }
 
   context 'without authentication' do
     it 'returns an appropriate error response' do
@@ -24,26 +24,62 @@ RSpec.feature 'GET /export route' do
 
   context 'with valid authentication' do
     context 'on successful export' do
-      it 'returns a CSV with exported data', :no_transaction do
-        client    = db.clients.create(clean_client_data(client_data))
-        time_slot = db.time_slots.find(exam_data[:time_slot_id])
+      let(:client)    { db.clients.create(clean_client_data(client_data)) }
+      let(:time_slot) { db.time_slots.find(exam_data[:time_slot_id])      }
 
+      before do
         db.registrations.create(
           exam_data.merge({ client_id: client.id, registered_at: Time.now }),
         )
+      end
 
-        header 'Authorization', 'Password admin'
-        get    '/export'
+      context 'with CSV_ENCODING unset' do
+        it 'returns UTF-8 encoded CSV with exported data', :no_transaction do
+          header 'Authorization', 'Password admin'
+          get    '/export'
 
-        expect(last_response).to be_ok
+          expect(last_response).to be_ok
 
-        data       = last_response.json['csv'].split("\n")
-        time_range = formatted_time_range(time_slot, remove_leading_zeros: false)
+          data       = last_response.body.split("\n")
+          time_range = formatted_time_range(time_slot, remove_leading_zeros: false)
 
-        expect(data[0]).to match(/;email;requestor_type;.*;time_range;/)
-        expect(data[1]).to match(
-          /;"#{client_data[:email]}";"#{exam_data[:requestor_type]}";.*;"#{time_range}";/,
-        )
+          expect(last_response.headers['Content-Type']).to eq 'text/csv;charset=UTF-8'
+          expect(last_response.body.is_utf8?).to be true
+          expect(data[0]).to match(/;email;requestor_type;.*;time_range;/)
+          expect(data[1]).to match(
+            /;"#{client_data[:email]}";"#{exam_data[:requestor_type]}";.*;"#{time_range}";/,
+          )
+        end
+      end
+
+      context 'with CSV_ENCODING set' do
+        let(:postgres_encoding) { 'WIN1250'      }
+        let(:ruby_encoding)     { 'Windows-1250' }
+
+        before do
+          ENV['CSV_ENCODING'] = postgres_encoding
+        end
+
+        after do
+          ENV.delete('CSV_ENCODING')
+        end
+
+        it 'returns UTF-8 encoded CSV with exported data', :no_transaction do
+          header 'Authorization', 'Password admin'
+          get    '/export'
+
+          expect(last_response).to be_ok
+
+          data       = last_response.body.encode('UTF-8', ruby_encoding).split("\n")
+          time_range = formatted_time_range(time_slot, remove_leading_zeros: false)
+
+          expect(last_response.headers['Content-Type']).to eq "text/csv;charset=#{postgres_encoding}"
+          expect(last_response.body.is_utf8?).to be false
+          expect(data[0]).to match(/;email;.*;last_name;.*;time_range;/)
+          expect(data[1]).to match(
+            /;"#{client_data[:email]}";.*;"#{client_data[:last_name]}";.*;"#{time_range}";/,
+          )
+        end
       end
     end
 

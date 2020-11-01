@@ -1,4 +1,3 @@
-require 'attr_extras'
 require 'roda'
 
 require 'app/dependencies'
@@ -44,7 +43,9 @@ module CovidForm
           serializer = Serializers::ValidationErrors
         end
 
-        response.status, body = serializer.serialize(result)
+        response.status, body, headers = serializer.serialize(result)
+
+        response.headers.merge!(headers)
 
         body
       end

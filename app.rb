@@ -1,3 +1,4 @@
+require 'attr_extras'
 require 'i18n'
 
 APP_ROOT = __dir__
