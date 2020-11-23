@@ -39,9 +39,9 @@ module CovidForm
         psql_command = ("\\copy (#{select_sql}) to STDOUT CSV DELIMITER '#{DELIMITER}' " \
                         "ENCODING '#{encoding}' HEADER FORCE QUOTE *")
 
-        "PGPASSWORD=#{db.options[:password]} psql "           \
-          "-h #{db.options[:host]} -p #{db.options[:port]} "  \
-          "-U #{db.options[:user]} #{db.options[:database]} " \
+        "PGPASSWORD='#{db.options[:password]}' psql "             \
+          "-h '#{db.options[:host]}' -p '#{db.options[:port]}' "  \
+          "-U '#{db.options[:user]}' '#{db.options[:database]}' " \
           "-c \"#{psql_command}\""
       end
 

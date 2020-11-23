@@ -40,5 +40,6 @@ group :development do # rubocop:disable Metrics/BlockLength
   gem 'rubycritic'
   gem 'simplecov'
   gem 'sqlite3'
+  gem 'super_diff'
   gem 'timecop'
 end

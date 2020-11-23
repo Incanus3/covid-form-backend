@@ -1,4 +1,5 @@
 require 'rspec/collection_matchers'
+require 'super_diff/rspec'
 
 # rubocop:disable Style/MethodCallWithArgsParentheses
 RSpec.configure do |config|

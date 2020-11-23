@@ -73,7 +73,8 @@ RSpec.feature 'GET /export route' do
           data       = last_response.body.encode('UTF-8', ruby_encoding).split("\n")
           time_range = formatted_time_range(time_slot, remove_leading_zeros: false)
 
-          expect(last_response.headers['Content-Type']).to eq "text/csv;charset=#{postgres_encoding}"
+          expect(last_response.headers['Content-Type'])
+            .to eq "text/csv;charset=#{postgres_encoding}"
           expect(last_response.body.is_utf8?).to be false
           expect(data[0]).to match(/;email;.*;last_name;.*;time_range;/)
           expect(data[1]).to match(
@@ -97,7 +98,8 @@ RSpec.feature 'GET /export route' do
 
         expect(last_response).to be_unprocessable
         expect(last_response.json['status']  ).to eq 'ERROR'
-        expect(last_response.json['error'][0]).to match(/could not connect to server/)
+        expect(last_response.json['error'][0])
+          .to match(/could not connect to server|database .* does not exist/)
       end
     end
 
