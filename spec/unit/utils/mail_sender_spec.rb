@@ -63,7 +63,7 @@ RSpec.describe Utils::MailSender do
 
   it 'handles case when both mail and block are given' do
     expect {
-      mail_sender.deliver(:mail) {}
+      mail_sender.deliver(:mail) {} # dummy block
     }.to raise_exception(/either.*message.*or a block/i)
   end
 end

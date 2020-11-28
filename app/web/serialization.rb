@@ -5,7 +5,7 @@ require 'app/web/services/authentication'
 module CovidForm
   module Web
     module Serializers
-      class Serializer
+      class Serializer # rubocop:disable Style/StaticClass
         BASE_SUCCESS_BODY = { status: 'OK'    }.freeze
         BASE_ERROR_BODY   = { status: 'ERROR' }.freeze
         ERROR_STATUS      = :unprocessable_entity

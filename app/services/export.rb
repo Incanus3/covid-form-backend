@@ -27,7 +27,7 @@ module CovidForm
             # :nocov:
           else
             # in some cases the command first prints some debugging line - remove it
-            lines[1..].join
+            lines.drop(1).join
           end
 
         Success({ csv: output, encoding: encoding })

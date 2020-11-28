@@ -2,6 +2,7 @@ require:
   - rubocop-performance
   - rubocop-rake
   - rubocop-rspec
+  - rubocop-sequel
 
 AllCops:
   EnabledByDefault: true
@@ -28,6 +29,9 @@ Layout/FirstHashElementIndentation:
   EnforcedStyle: consistent
 
 Layout/FirstMethodArgumentLineBreak:
+  Enabled: false
+
+Layout/FirstMethodParameterLineBreak:
   Enabled: false
 
 Layout/HashAlignment:
@@ -81,6 +85,9 @@ Naming/MemoizedInstanceVariableName:
 
 Naming/MethodParameterName:
   AllowedNames: [as, db, pk]
+
+Naming/VariableNumber:
+  Enabled: false
 
 Performance/ChainArrayAllocation:
   Enabled: false

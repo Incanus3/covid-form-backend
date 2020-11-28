@@ -1,7 +1,7 @@
 require 'faker'
 
 module Faker
-  class Base
+  class Base # rubocop:disable Style/StaticClass
     def self.random_bool
       [true, false].sample
     end

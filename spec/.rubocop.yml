@@ -5,19 +5,19 @@ inherit_mode:
   merge:
     - IgnoredMethods
 
-Capybara/FeatureMethods:
-  EnabledMethods: [feature]
-
-FactoryBot/FactoryClassName:
-  Enabled: false
-
 Metrics/BlockLength:
   Max: 100
 
 RSpec/ExampleLength:
-  Max: 15
+  Max: 20
+
+RSpec/Capybara/FeatureMethods:
+  EnabledMethods: [feature]
 
 RSpec/ContextWording:
+  Enabled: false
+
+RSpec/FactoryBot/FactoryClassName:
   Enabled: false
 
 RSpec/ImplicitSubject:

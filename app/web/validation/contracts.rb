@@ -85,7 +85,7 @@ module CovidForm
                   end
                 end
 
-                key.failure(Messages.must_not_end_with(suffix)) if ecp && suffix[...3].to_i < 600
+                key.failure(Messages.must_not_end_with(suffix)) if ecp && suffix[0, 3].to_i < 600
                 key.failure(Messages.must_not_be_both('RČ+', 'EČP')) if rc_plus && ecp
               end
             end

@@ -48,7 +48,7 @@ module Utils
     end
 
     def deliver(mail = nil, &block)
-      if (mail && block_given?) || (!mail && !block_given?)
+      if (mail && block) || (!mail && !block)
         raise 'you must either supply a Mail::Message object or a block, not both'
       end
 
