@@ -5,8 +5,9 @@ RSpec.configure do |config|
   config.before(:suite) do
     CovidForm::Dependencies.start(:persistence)
 
-    default_db_gateway = CovidForm::Dependencies[:db].gateways[:default]
+    default_db_gateway = CovidForm::Dependencies[:db].default_gateway
 
+    default_db_gateway.run_migrations(target: 0)
     default_db_gateway.run_migrations
 
     DatabaseCleaner[:sequel].db = default_db_gateway.connection

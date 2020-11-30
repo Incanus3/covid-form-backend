@@ -13,12 +13,6 @@ require_relative 'helpers/mail'
 require_relative 'helpers/simplecov'
 require_relative 'helpers/web'
 
-RSpec.configure do
-  def app
-    CovidForm::Web::App
-  end
-end
-
 SimpleCov.start
 
 require 'lib/utils'

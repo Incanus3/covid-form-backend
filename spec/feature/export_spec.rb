@@ -43,7 +43,7 @@ RSpec.feature 'GET /export route' do
           data       = last_response.body.split("\n")
           time_range = formatted_time_range(time_slot, remove_leading_zeros: false)
 
-          expect(last_response.headers['Content-Type']).to eq 'text/csv;charset=UTF-8'
+          expect(last_response.headers['Content-Type']).to eq 'text/csv;charset=utf-8'
           expect(last_response.body.is_utf8?).to be true
           expect(data[0]).to match(/;email;requestor_type;.*;time_range;/)
           expect(data[1]).to match(
@@ -64,7 +64,7 @@ RSpec.feature 'GET /export route' do
           ENV.delete('CSV_ENCODING')
         end
 
-        it 'returns UTF-8 encoded CSV with exported data', :no_transaction do
+        it 'returns CSV with exported data encoded as desired', :no_transaction do
           header 'Authorization', 'Password admin'
           get    '/export'
 
@@ -74,7 +74,7 @@ RSpec.feature 'GET /export route' do
           time_range = formatted_time_range(time_slot, remove_leading_zeros: false)
 
           expect(last_response.headers['Content-Type'])
-            .to eq "text/csv;charset=#{postgres_encoding}"
+            .to eq "text/csv;charset=#{ruby_encoding.downcase}"
           expect(last_response.body.is_utf8?).to be false
           expect(data[0]).to match(/;email;.*;last_name;.*;time_range;/)
           expect(data[1]).to match(
@@ -99,7 +99,7 @@ RSpec.feature 'GET /export route' do
         expect(last_response).to be_unprocessable
         expect(last_response.json['status']  ).to eq 'ERROR'
         expect(last_response.json['error'][0])
-          .to match(/could not connect to server|database .* does not exist/)
+          .to match(/could not connect to server|database .* does not exist|no password supplied/)
       end
     end
 

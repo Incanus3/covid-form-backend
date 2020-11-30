@@ -9,7 +9,8 @@ module CovidForm
       include Import[:db]
       include Dry::Monads[:result]
 
-      DELIMITER = ';'.freeze
+      DELIMITER        = ';'.freeze
+      ENCODINGS_TO_TRY = ['UTF-8', 'Windows-1250'].freeze
 
       attr_private_initialize [:db, :start_date, :end_date]
 
@@ -19,34 +20,39 @@ module CovidForm
 
         return Failure(stderr) unless status.success?
 
-        lines  = stdout.lines
-        output =
-          if lines.size < 2 || lines[0].count(DELIMITER) == lines[1].count(DELIMITER)
-            # :nocov:
-            stdout
-            # :nocov:
-          else
-            # in some cases the command first prints some debugging line - remove it
-            lines.drop(1).join
-          end
+        lines = force_encoding(stdout).lines
 
-        Success({ csv: output, encoding: encoding })
+        if lines.size > 1 && lines[0].count(DELIMITER) != lines[1].count(DELIMITER)
+          lines = lines.drop(1)
+        end
+
+        output = lines.join
+
+        Success({ csv: output, encoding: output.encoding.name })
       end
 
       private
 
       def export_command_for(select_sql)
         psql_command = ("\\copy (#{select_sql}) to STDOUT CSV DELIMITER '#{DELIMITER}' " \
-                        "ENCODING '#{encoding}' HEADER FORCE QUOTE *")
+                        "ENCODING '#{postgres_encoding}' HEADER FORCE QUOTE *")
 
         "PGPASSWORD='#{db.options[:password]}' psql "             \
           "-h '#{db.options[:host]}' -p '#{db.options[:port]}' "  \
-          "-U '#{db.options[:user]}' '#{db.options[:database]}' " \
+          "-U '#{db.options[:user]}' -w '#{db.options[:database]}' " \
           "-c \"#{psql_command}\""
       end
 
-      def encoding
+      def postgres_encoding
         ENV.fetch('CSV_ENCODING', 'UTF-8')
+      end
+
+      def force_encoding(string)
+        ENCODINGS_TO_TRY.each do |encoding|
+          updated = string.clone.force_encoding(encoding)
+
+          return updated if updated.valid_encoding?
+        end
       end
     end
   end

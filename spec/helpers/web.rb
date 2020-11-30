@@ -38,4 +38,8 @@ end
 RSpec.configure do |config|
   config.include Rack::Test::Methods
   config.include JSONRequests
+
+  def app
+    CovidForm::Web::App
+  end
 end

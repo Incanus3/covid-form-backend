@@ -2,6 +2,7 @@ APP_ROOT = File.expand_path(__dir__)
 
 $LOAD_PATH.unshift(APP_ROOT)
 
+require 'attr_extras'
 require 'rom/sql/rake_task'
 require 'app/dependencies'
 
