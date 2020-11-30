@@ -16,6 +16,7 @@ RSpec.feature 'POST /register route - lock after deadline' do
       allow_registration_for_today_after_10: false,
     )
 
+    populate_exam_types
     populate_time_slots
   end
 

@@ -24,6 +24,7 @@ RSpec.feature 'POST /register route - registration limits' do
   }
 
   before do
+    populate_exam_types
     populate_time_slots
 
     mock_config_with(configuration)

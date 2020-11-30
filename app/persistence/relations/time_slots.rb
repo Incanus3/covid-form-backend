@@ -15,7 +15,13 @@ module CovidForm
 
           associations do
             has_many :registrations
+            has_many :time_slot_exam_types
+            has_many :exam_types, through: :time_slot_exam_types
           end
+        end
+
+        def for_exam_type(exam_type)
+          join(:exam_types).where(exam_types[:id] => exam_type)
         end
 
         def with_time_range(remove_leading_zeros: false)

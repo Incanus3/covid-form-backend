@@ -12,6 +12,7 @@ RSpec.feature 'POST /register route - success effects' do
       allow_registration_for_today_after_10: true,
     )
 
+    populate_exam_types
     populate_time_slots
   end
 

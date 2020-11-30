@@ -1,5 +1,5 @@
 require 'spec_helper'
-require_relative 'registration/helpers'
+require 'spec/feature/registration/helpers'
 
 RSpec.feature 'GET /capacity/full_dates route' do
   include CovidForm::TestHelpers::Registration
@@ -10,6 +10,7 @@ RSpec.feature 'GET /capacity/full_dates route' do
   let(:daily_registration_limit) { 10             }
 
   before do
+    populate_exam_types
     populate_time_slots
 
     mock_config_with(daily_registration_limit:        daily_registration_limit,

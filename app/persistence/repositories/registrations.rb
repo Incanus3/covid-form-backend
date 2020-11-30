@@ -18,12 +18,28 @@ module CovidForm
         end
 
         def count_for_date(date)
-          registrations.by_date(date).count
+          registrations.for_date(date).count
         end
 
         def count_for_date_and_slot(date, slot)
-          registrations.by_date_and_slot(date, slot).count
+          registrations.for_date_and_slot(date, slot).count
         end
+
+        # def counts_for_date(date)
+        #   counts_by_slot = registrations.for_date(date).counts_by_slot
+
+        #   # # this doesn't work because counts_by_slot loses the all pre-applied operations
+        #   # p time_slots.left_join(counts_by_slot)
+
+        #   join_keys = time_slots.associations[:registrations].join_keys
+        #   joined = time_slots.new(time_slots.dataset
+        #     .left_join(counts_by_slot.dataset, join_keys.invert.map { |k, v| [k.name, v.name] })
+        #     .select_append { coalesce(registration_count, 0).as(:registration_count) })
+        #   # p joined
+        #   # pp joined.with(auto_struct: false).to_a
+
+        #   counts_by_slot.pluck(:time_slot_id, :registration_count).to_h
+        # end
 
         def dates_with_full_capacity(start_date, end_date, global_registration_limit:)
           query = Queries::RegistrationCapacity.new(

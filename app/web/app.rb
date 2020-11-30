@@ -7,7 +7,6 @@ require 'app/services/registration'
 require 'app/web/validation'
 require 'app/web/serialization'
 require 'app/web/services/authentication'
-require 'app/web/services/crud'
 
 module CovidForm
   module Web
@@ -32,25 +31,28 @@ module CovidForm
         request.halt(status, body)
       end
 
-      def action(request, validation_contract:, result_serializer:)
+      def action(request, validation_contract:, result_serializer:, multiple_results: false)
         validation_result = validation_contract.new.call(request.params)
 
         if validation_result.success?
-          result     = yield validation_result.to_h
-          serializer = result_serializer
+          result            = yield validation_result.to_h
+          serializer        = result_serializer
+          serializer_method = multiple_results ? :serialize_many : :serialize
         else
-          result     = validation_result.errors
-          serializer = Serializers::ValidationErrors
+          result            = validation_result.errors
+          serializer        = Serializers::ValidationErrors
+          serializer_method = :serialize
         end
 
-        response.status, body, headers = serializer.serialize(result)
+        response.status, body, headers = serializer.public_send(serializer_method, result)
 
         response.headers.merge!(headers)
 
         body
       end
 
-      route do |r| # rubocop:disable Metrics/BlockLength
+      # rubocop:disable Metrics/BlockLength
+      route do |r|
         r.root do # GET /
           <<~HTML
             <h1>Seznam rout</h1>
@@ -84,7 +86,21 @@ module CovidForm
                 validation_contract: Validation::Contracts::FullDates,
                 result_serializer:   Serializers::FullDatesResult,
               ) do |params|
-                Services::Capacity.new(params).full_dates
+                Services::Capacity.new.full_dates_between(**params)
+              end
+            end
+          end
+
+          r.is 'available_time_slots' do
+            r.get do # GET /crud/time_slots
+              action(
+                request,
+                validation_contract: Validation::Contracts::TimeSlots,
+                result_serializer:   Serializers::TimeSlot,
+                multiple_results:    true,
+              ) do |params|
+                Services::Capacity.new
+                  .available_time_slots_for(*params.values_at(:date, :exam_type))
               end
             end
           end
@@ -103,19 +119,8 @@ module CovidForm
             end
           end
         end
-
-        r.on 'crud' do
-          r.is 'time_slots' do
-            r.get do # GET /crud/time_slots
-              time_slots = CRUD::TimeSlots.new.all_with_time_ranges
-
-              response.status, body = Serializers::TimeSlot.serialize_many(time_slots)
-
-              body
-            end
-          end
-        end
       end
+      # rubocop:enable Metrics/BlockLength
     end
   end
 end

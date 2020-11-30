@@ -89,7 +89,7 @@ module CovidForm
         def self.serialize(result)
           case result
           in Services::Export::Success({ csv: csv, encoding: encoding })
-            [:ok, csv, { 'Content-Type' => "text/csv;charset=#{encoding}" }]
+            [:ok, csv, { 'Content-Type' => "text/csv;charset=#{encoding.downcase}" }]
           in Services::Export::Failure(output)
             error_response_with(error: [output])
           else

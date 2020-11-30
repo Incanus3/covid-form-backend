@@ -2,21 +2,21 @@ module CovidForm
   module Persistence
     module Queries
       class RegistrationCapacity
-        attr_private :db, :daily_overrides, :registration_counts_by_dates
+        attr_private :db, :daily_overrides, :registration_counts_by_date
 
         # @param db              [Sequel::Database]
         # @param registrations   [ROM::SQL::Relation]
         # @param daily_overrides [ROM::SQL::Relation]
         def initialize(db:, registrations:, daily_overrides:)
-          @db                           = db
-          @daily_overrides              = daily_overrides.dataset
-          @registration_counts_by_dates = registrations.counts_by_dates.dataset
+          @db                          = db
+          @daily_overrides             = daily_overrides.dataset
+          @registration_counts_by_date = registrations.counts_by_date.dataset
         end
 
         # rubocop:disable Layout/MultilineBlockLayout, Layout/BlockEndNewline
         def dates_with_full_capacity(start_date, end_date, global_registration_limit:)
           date_sequence(start_date, end_date)
-            .left_join(registration_counts_by_dates, { exam_date: :date },
+            .left_join(registration_counts_by_date, { exam_date: :date },
                        table_alias: :reg_counts)
             .left_join(daily_overrides, { date: Sequel.qualify(:date_seq, :date) },
                        table_alias: :reg_limits)

@@ -6,6 +6,7 @@ RSpec.feature 'GET /export route' do
   include CovidForm::Import[:db]
 
   before do
+    populate_exam_types
     populate_time_slots
   end
 

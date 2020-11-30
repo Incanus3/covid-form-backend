@@ -4,6 +4,7 @@ require 'dry/monads/do'
 require 'lib/utils'
 require 'app/dependencies'
 require 'app/mailers/registration_confirmation'
+require_relative 'registration_limits'
 
 module CovidForm
   module Services
@@ -39,9 +40,10 @@ module CovidForm
       attr_private_initialize [:config, :db, :client_data, :exam_data] do
         @all_time_slots = db.time_slots.all_with_time_ranges
         @time_slot      = all_time_slots.find { _1.id == exam_data[:time_slot_id] }
+        @limits         = RegistrationLimits.new(all_time_slots)
       end
 
-      attr_private :all_time_slots, :time_slot
+      attr_private :all_time_slots, :time_slot, :limits
 
       def perform
         db.clients.transaction do
@@ -77,7 +79,7 @@ module CovidForm
         return NonexistentTimeSlot.new(exam_data[:time_slot_id]) unless time_slot
 
         existing_count_for_day, existing_count_for_slot = existing_counts_for(exam_date, time_slot)
-        daily_limit, slot_limit                         = limits_for(exam_date, time_slot)
+        daily_limit, slot_limit                         = limits.limits_for(exam_date, time_slot)
 
         return DailyRegistrationLimitReached.new(exam_date) if existing_count_for_day >= daily_limit
 
@@ -107,26 +109,6 @@ module CovidForm
         for_slot = db.registrations.count_for_date_and_slot(date, time_slot)
 
         [for_day, for_slot]
-      end
-
-      def limits_for(date, time_slot)
-        daily_registration_limit = registration_limit_for_date(date)
-        slot_registration_limit  = registration_limit_for_slot(daily_registration_limit, time_slot)
-
-        [daily_registration_limit, slot_registration_limit]
-      end
-
-      def registration_limit_for_date(date)
-        daily_override = db.daily_overrides.for_date(date)
-
-        daily_override&.registration_limit || config[:daily_registration_limit]
-      end
-
-      # FIXME: we should be able to get this from db directly
-      def registration_limit_for_slot(daily_limit, slot)
-        coeff_sum = all_time_slots.map(&:limit_coefficient).sum
-
-        ((Float(daily_limit) / coeff_sum) * slot.limit_coefficient).ceil
       end
     end
   end

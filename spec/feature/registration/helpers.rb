@@ -14,11 +14,13 @@ module CovidForm
         entity.to_h.transform_values { |val| val.is_a?(Date) ? val.to_s : val }
       end
 
-      def create_client_with_registration(
-        client_data: attributes_for(:client), exam_data: attributes_for(:exam)
-      )
-        client = db.clients.create(clean_client_data(client_data))
-        db.registrations.create_for_client(exam_data, client)
+      def create_client_with_registration(client_data: nil, exam_data: nil,
+                                          client_overrides: {}, exam_overrides: {})
+        client_data ||= attributes_for(:client, **client_overrides)
+        exam_data   ||= attributes_for(:exam,   **exam_overrides)
+
+        client        = db.clients.create(clean_client_data(client_data))
+        _registration = db.registrations.create_for_client(exam_data, client)
       end
 
       def create_many_clients_with_registrations(count, client_overrides: {}, exam_overrides: {})

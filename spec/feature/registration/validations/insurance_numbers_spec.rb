@@ -23,6 +23,7 @@ RSpec.feature 'POST /register route - insurance number validations' do # rubocop
       allow_registration_for_today_after_10: true,
     )
 
+    populate_exam_types
     populate_time_slots
   end
 

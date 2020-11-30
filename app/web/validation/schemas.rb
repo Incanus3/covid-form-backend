@@ -23,6 +23,11 @@ module CovidForm
           required(:time_slot_id  ).filled(Types::Integer)
         }
 
+        TimeSlots = Dry::Schema.JSON {
+          required(:date     ).filled(Types::JSON::Date.default { Date.today })
+          required(:exam_type).filled(Types::Strict::String)
+        }
+
         Export = Dry::Schema.JSON {
           required(:start_date).filled(Types::JSON::Date.default { Date.today     })
           required(:end_date  ).filled(Types::JSON::Date.default { Date.today + 7 })

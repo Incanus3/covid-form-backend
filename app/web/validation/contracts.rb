@@ -93,6 +93,10 @@ module CovidForm
           # rubocop:enable Metrics/BlockLength, Metrics/BlockNesting
         end
 
+        class TimeSlots < Contract
+          json(Schemas::TimeSlots)
+        end
+
         class Export < Contract
           json(Schemas::Export)
 

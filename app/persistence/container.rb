@@ -3,10 +3,7 @@ require 'lib/persistence/container'
 
 require 'app/entities'
 
-require_relative 'repositories/clients'
-require_relative 'repositories/registrations'
-require_relative 'repositories/time_slots'
-require_relative 'repositories/daily_overrides'
+require_relative 'repositories'
 
 module CovidForm
   module Persistence
@@ -27,8 +24,10 @@ module CovidForm
       }.freeze
 
       register_repo(Persistence::Repositories::Clients)
-      register_repo(Persistence::Repositories::Registrations)
+      register_repo(Persistence::Repositories::ExamTypes)
       register_repo(Persistence::Repositories::TimeSlots)
+      register_repo(Persistence::Repositories::TimeSlotExamTypes)
+      register_repo(Persistence::Repositories::Registrations)
       register_repo(Persistence::Repositories::DailyOverrides)
     end
   end
