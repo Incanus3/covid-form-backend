@@ -11,6 +11,7 @@ ROM::SQL.migration do
     self[:exam_types].multi_insert([
       { id: 'pcr',   description: 'PCR vyšetření (výtěr z nosu a následné laboratorní zpracování)' },
       { id: 'rapid', description: 'RAPID test (orientační test z kapky krve)'                      },
+      { id: 'ag',    description: 'Antigen test (výtěr z nosu a okamžitý orientační test)'         },
     ])
     # rubocop:enable Layout/LineLength
 

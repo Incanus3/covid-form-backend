@@ -8,6 +8,7 @@ module CovidForm
         db.exam_types.create_many([
           { id: 'pcr',   description: 'PCR vyšetření (výtěr z nosu a následné laboratorní zpracování)' },
           { id: 'rapid', description: 'RAPID test (orientační test z kapky krve)'                      },
+          { id: 'ag',    description: 'Antigen test (výtěr z nosu a okamžitý orientační test)'         },
         ])
       end
 
