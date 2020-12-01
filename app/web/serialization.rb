@@ -115,6 +115,20 @@ module CovidForm
         end
       end
 
+      class ExamType < Serializer
+        class << self
+          def serialize_many(exam_types)
+            success_response_with(exam_types: exam_types.map { do_serialize(_1) })
+          end
+
+          private
+
+          def do_serialize(exam_type)
+            { id: exam_type.id, description: exam_type.description }
+          end
+        end
+      end
+
       class TimeSlot < Serializer
         class << self
           def serialize_many(time_slots)

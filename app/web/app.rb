@@ -4,52 +4,17 @@ require 'app/dependencies'
 require 'app/services/export'
 require 'app/services/capacity'
 require 'app/services/registration'
-require 'app/web/validation'
-require 'app/web/serialization'
-require 'app/web/services/authentication'
+
+require_relative 'app_base'
+require_relative 'validation'
+require_relative 'serialization'
+require_relative 'services/crud'
 
 module CovidForm
   module Web
-    class App < Roda
-      plugin :all_verbs
-      plugin :halt
-      plugin :json
-      plugin :json_parser
-      plugin :not_allowed
-      plugin :request_headers
-      plugin :symbol_status
-
+    class App < AppBase
       Dependencies.start(:persistence) # TODO: stop persistence on exit
       Dependencies.start(:mail_sender)
-
-      def authenticate!(request)
-        result = Authentication.new(request: request).perform
-
-        return unless result.failure?
-
-        status, body = Serializers::AuthenticationFailure.serialize(result)
-        request.halt(status, body)
-      end
-
-      def action(request, validation_contract:, result_serializer:, multiple_results: false)
-        validation_result = validation_contract.new.call(request.params)
-
-        if validation_result.success?
-          result            = yield validation_result.to_h
-          serializer        = result_serializer
-          serializer_method = multiple_results ? :serialize_many : :serialize
-        else
-          result            = validation_result.errors
-          serializer        = Serializers::ValidationErrors
-          serializer_method = :serialize
-        end
-
-        response.status, body, headers = serializer.public_send(serializer_method, result)
-
-        response.headers.merge!(headers)
-
-        body
-      end
 
       # rubocop:disable Metrics/BlockLength
       route do |r|
@@ -74,6 +39,17 @@ module CovidForm
             ) do |params|
               Services::Registration.new(client_data: params[:client],
                                          exam_data:   params[:exam]).perform
+            end
+          end
+        end
+
+        r.on 'crud' do
+          r.is 'exam_types' do
+            r.get do # GET /crud/exam_types
+              exam_types            = CRUD::ExamTypes.new.all
+              response.status, body = Serializers::ExamType.serialize_many(exam_types)
+
+              body
             end
           end
         end
