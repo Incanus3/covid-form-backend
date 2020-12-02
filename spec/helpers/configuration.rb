@@ -1,9 +1,10 @@
 module CovidForm
   module ConfigurationHelpers
     DEFAULT_CONFIG_OPTIONS = {
-      allow_registration_for_weekends:       true,
-      allow_registration_for_today_after_10: true,
-      daily_registration_limit:              200,
+      daily_registration_limit:             200,
+      registration_deadline_offset_minutes: 600,
+      enable_registration_deadline:         false,
+      allow_registration_for_weekends:      true,
     }.freeze
 
     def mock_config_with(**options)

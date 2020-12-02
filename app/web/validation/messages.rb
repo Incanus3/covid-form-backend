@@ -60,11 +60,10 @@ module CovidForm
           ].join(' ')
         end
 
-        def not_a_valid_registration_time
+        def not_a_valid_registration_time(deadline)
           [
             I18n.t('registration.registration_for_today'),
-            I18n.t('validation.only_possible_before',
-                   time: I18n.l(Utils::Time.today_at(10, 0), format: :time_only)),
+            I18n.t('validation.only_possible_before', time: I18n.l(deadline, format: :time_only)),
           ].join(' ')
         end
       end

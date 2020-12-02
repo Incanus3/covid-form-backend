@@ -4,10 +4,11 @@ require 'lib/env_vars'
 module CovidForm
   class Dependencies < Dry::System::Container
     DEFAULT_CONFIG_OPTIONS = {
-      allow_registration_for_weekends:       false,
-      allow_registration_for_today_after_10: false,
-      daily_registration_limit:              Integer(ENV.fetch('DAILY_REGISTRATION_LIMIT', 250)),
-      enable_time_slot_registraiton_limit:   true,
+      allow_registration_for_weekends:      false,
+      enable_registration_deadline:         true,
+      enable_time_slot_registraiton_limit:  true,
+      daily_registration_limit:             Integer(ENV.fetch('DAILY_REGISTRATION_LIMIT',    250)),
+      registration_deadline_offset_minutes: Integer(ENV.fetch('REGISTRATION_OFFSET_MINUTES', 300)),
     }.freeze
 
     DEFAULT_DB_OPTIONS = {

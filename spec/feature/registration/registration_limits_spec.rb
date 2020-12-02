@@ -17,9 +17,9 @@ RSpec.feature 'POST /register route - registration limits' do
   let(:daily_registration_limit) { 5 }
   let(:configuration)            {
     {
-      allow_registration_for_weekends:       true,
-      allow_registration_for_today_after_10: true,
-      enable_time_slot_registraiton_limit:   false,
+      allow_registration_for_weekends:     true,
+      enable_time_slot_registraiton_limit: false,
+      enable_registration_deadline:        false,
     }
   }
 

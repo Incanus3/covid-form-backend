@@ -12,8 +12,8 @@ RSpec.feature 'POST /register route - basic validations' do
 
   before do
     mock_config_with(
-      allow_registration_for_weekends:       true,
-      allow_registration_for_today_after_10: true,
+      enable_registration_deadline:    false,
+      allow_registration_for_weekends: true,
     )
 
     populate_time_slots

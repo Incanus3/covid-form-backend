@@ -28,9 +28,11 @@ module CovidForm
           end
 
           def self.valid_registration_time_for?(date, time = Time.now)
-            cf_config[:allow_registration_for_today_after_10] \
-              || date != Date.today \
-              || time.hour < 10
+            !cf_config[:enable_registration_deadline] || time < deadline_for(date)
+          end
+
+          def self.deadline_for(date)
+            date.to_time + 60 * cf_config[:registration_deadline_offset_minutes]
           end
 
           json do
@@ -43,7 +45,7 @@ module CovidForm
             base.failure(Messages.not_a_valid_workday) unless Registration.valid_workday?(value)
 
             unless Registration.valid_registration_time_for?(value)
-              base.failure(Messages.not_a_valid_registration_time)
+              base.failure(Messages.not_a_valid_registration_time(Registration.deadline_for(value)))
             end
           end
 
