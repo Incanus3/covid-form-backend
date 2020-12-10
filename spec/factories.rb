@@ -20,7 +20,14 @@ FactoryBot.define do
       email { 'xxx' }
     end
 
-    factory :client_with_invalid_email, traits: [:invalid_email]
+    trait :random_insurance_number do
+      insurance_number {
+        "#{Faker::Date.birthday.strftime('%y%m%d')}#{Faker::Number.number(digits: 4)}"
+      }
+    end
+
+    factory :client_with_invalid_email,           traits: [:invalid_email]
+    factory :client_with_random_insurance_number, traits: [:random_insurance_number]
   end
 
   factory :exam, class: CovidForm::Entities::Registration do
