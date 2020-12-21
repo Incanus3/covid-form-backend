@@ -8,10 +8,11 @@ RSpec.feature 'POST /register route - registration limits' do
 
   let(:client_data) { attributes_for(:client)       }
   let(:exam_date)   { Faker::Date.forward(days: 60) }
+  let(:time_slot)   { db.time_slots.first           }
   let(:exam_data)   {
     attributes_for(:exam,
                    exam_date:    exam_date,
-                   time_slot_id: db.time_slots.first.id)
+                   time_slot_id: time_slot.id)
   }
 
   let(:daily_registration_limit) { 5 }
@@ -36,7 +37,7 @@ RSpec.feature 'POST /register route - registration limits' do
     )
   end
 
-  shared_examples('rejected by daily limit') do |limit_type|
+  shared_examples('rejected by limit') do |limit_type|
     it 'request is rejected' do
       post_json '/register', { client: client_data, exam: exam_data }
 
@@ -54,18 +55,21 @@ RSpec.feature 'POST /register route - registration limits' do
     context 'with daily limit already' do
       let(:configuration) { super().merge(daily_registration_limit: daily_registration_limit) }
 
-      include_examples 'rejected by daily limit', 'daily'
+      include_examples 'rejected by limit', 'daily'
     end
 
     context 'with slot limit reached' do
       let(:configuration) {
         super().merge(
-          daily_registration_limit:            daily_registration_limit * db.time_slots.count_all,
           enable_time_slot_registraiton_limit: true,
+          daily_registration_limit:            (
+            daily_registration_limit * db.time_slots.root.sum(:limit_coefficient) /
+            time_slot.limit_coefficient
+          ),
         )
       }
 
-      include_examples 'rejected by daily limit', 'time slot'
+      include_examples 'rejected by limit', 'time slot'
     end
   end
 
@@ -75,17 +79,20 @@ RSpec.feature 'POST /register route - registration limits' do
         db.daily_overrides.create(date: exam_date, registration_limit: daily_registration_limit)
       end
 
-      include_examples 'rejected by daily limit', 'daily'
+      include_examples 'rejected by limit', 'daily'
     end
 
     context 'with slot limit reached' do
       before do
         db.daily_overrides.create(
-          date: exam_date, registration_limit: daily_registration_limit * db.time_slots.count_all,
+          date: exam_date, registration_limit: (
+            daily_registration_limit * db.time_slots.root.sum(:limit_coefficient) /
+            time_slot.limit_coefficient
+          )
         )
       end
 
-      include_examples 'rejected by daily limit', 'time slot'
+      include_examples 'rejected by limit', 'time slot'
     end
   end
 end

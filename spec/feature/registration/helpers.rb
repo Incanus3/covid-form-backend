@@ -27,7 +27,8 @@ module CovidForm
         count, client_factory: :client, client_overrides: {}, exam_overrides: {}
       )
         client_records = db.clients.create_many(
-          attributes_for_list(client_factory, count, **client_overrides).map { clean_client_data(_1) },
+          attributes_for_list(client_factory, count,
+                              **client_overrides).map { clean_client_data(_1) },
         )
 
         db.registrations.create_many(client_records

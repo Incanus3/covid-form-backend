@@ -39,6 +39,7 @@ group :development do # rubocop:disable Metrics/BlockLength
   gem 'rubocop-rspec'
   gem 'rubocop-sequel'
   gem 'rubycritic'
+  gem 'ruby_jard'
   gem 'simplecov'
   gem 'sqlite3'
   gem 'super_diff'

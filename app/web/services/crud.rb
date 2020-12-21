@@ -7,7 +7,7 @@ module CovidForm
         attr_private_initialize [:db]
 
         def all
-          db.exam_types.all
+          db.exam_types.all_by_id
         end
       end
     end

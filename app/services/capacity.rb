@@ -30,6 +30,15 @@ module CovidForm
         db.time_slots.for_exam_type_with_time_ranges(exam_type_id, remove_leading_zeros: true)
       end
 
+      def daily_capacities_for_report(exam_type_id, start_date, end_date)
+        db.registrations.daily_capacities_for(
+          global_registration_limit: config[:daily_registration_limit],
+          exam_type_id:              exam_type_id,
+          start_date:                start_date,
+          end_date:                  end_date,
+        )
+      end
+
       # private
 
       # def limits_service

@@ -25,35 +25,35 @@ module CovidForm
           registrations.for_date_and_slot(date, slot).count
         end
 
-        # def counts_for_date(date)
-        #   counts_by_slot = registrations.for_date(date).counts_by_slot
-
-        #   # # this doesn't work because counts_by_slot loses the all pre-applied operations
-        #   # p time_slots.left_join(counts_by_slot)
-
-        #   join_keys = time_slots.associations[:registrations].join_keys
-        #   joined = time_slots.new(time_slots.dataset
-        #     .left_join(counts_by_slot.dataset, join_keys.invert.map { |k, v| [k.name, v.name] })
-        #     .select_append { coalesce(registration_count, 0).as(:registration_count) })
-        #   # p joined
-        #   # pp joined.with(auto_struct: false).to_a
-
-        #   counts_by_slot.pluck(:time_slot_id, :registration_count).to_h
-        # end
-
         def dates_with_full_capacity(start_date, end_date, global_registration_limit:)
-          query = Queries::RegistrationCapacity.new(
-            db:              default_gateway.connection,
-            registrations:   registrations,
-            daily_overrides: daily_overrides,
-          )
+          registration_capacity_query
+            .dates_with_full_capacity(start_date, end_date,
+                                      global_registration_limit: global_registration_limit)
+        end
 
-          query.dates_with_full_capacity(start_date, end_date,
-                                         global_registration_limit: global_registration_limit)
+        def daily_capacities_for(exam_type_id:, start_date:, end_date:, global_registration_limit:)
+          registration_capacity_query.daily_capacities_for(
+            global_registration_limit: global_registration_limit,
+            exam_type_id:              exam_type_id,
+            start_date:                start_date,
+            end_date:                  end_date,
+          )
         end
 
         def sql_for_export(start_date, end_date)
           registrations.for_export(start_date, end_date).dataset.sql
+        end
+
+        private
+
+        def registration_capacity_query
+          Queries::RegistrationCapacity.new(
+            db:              default_gateway.connection,
+            exam_types:      exam_types,
+            time_slots:      time_slots,
+            registrations:   registrations,
+            daily_overrides: daily_overrides,
+          )
         end
       end
     end

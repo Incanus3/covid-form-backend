@@ -9,8 +9,8 @@ module Utils
         root.to_a
       end
 
-      def count_all
-        root.count
+      def all_by_id
+        root.order(:id).to_a
       end
 
       def first

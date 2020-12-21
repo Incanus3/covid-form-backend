@@ -22,9 +22,11 @@ module CovidForm
 
         lines = force_encoding(stdout).lines
 
+        # :nocov:
         if lines.size > 1 && lines[0].count(DELIMITER) != lines[1].count(DELIMITER)
           lines = lines.drop(1)
         end
+        # :nocov:
 
         output = lines.join
 

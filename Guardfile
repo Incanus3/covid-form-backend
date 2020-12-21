@@ -18,11 +18,13 @@ group :red_green_refactor, halt_on_fail: true do # rubocop:disable Metrics/Block
 
     dsl = Guard::RSpec::Dsl.new(self)
 
-    app_files  = %r{^app/(.+)\.rb$}
-    main_files = /app.rb|config.ru/
+    app_files    = %r{^app/(.+)\.rb$}
+    script_files = %r{^scripts/(.+)\.rb$}
+    main_files   = /app.rb|config.ru/
 
     watch(main_files)         { dsl.rspec.spec_dir }
     watch(app_files)          { dsl.rspec.spec_dir }
+    watch(script_files)       { dsl.rspec.spec_dir }
     watch(dsl.ruby.lib_files) { dsl.rspec.spec_dir }
 
     watch(dsl.rspec.spec_files)

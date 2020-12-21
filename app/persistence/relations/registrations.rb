@@ -33,14 +33,12 @@ module CovidForm
         def counts_by_date
           select { [exam_date, integer.count(id).as(:registration_count)] }
             .group(:exam_date)
-            .order(nil)
         end
 
-        # def counts_by_slot
-        #   select { [time_slot_id, integer.count(id).as(:registration_count)] }
-        #     .group(:time_slot_id)
-        #     .order(nil)
-        # end
+        def counts_by_date_and_slot
+          select { [exam_date, time_slot_id, integer.count(id).as(:registration_count)] }
+            .group(:exam_date, :time_slot_id)
+        end
 
         def for_client(client)
           where(client_id: client.id)
