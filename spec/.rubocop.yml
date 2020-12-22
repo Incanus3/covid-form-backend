@@ -23,6 +23,9 @@ RSpec/FactoryBot/FactoryClassName:
 RSpec/ImplicitSubject:
   Enabled: false
 
+RSpec/LeadingSubject:
+  Enabled: false
+
 RSpec/MultipleExpectations:
   Max: 5
 
@@ -45,3 +48,6 @@ Style/MethodCallWithArgsParentheses:
     - raise_exception
     - subject
     - to
+
+RSpec/ScatteredLet:
+  Enabled: false

@@ -126,6 +126,9 @@ Style/FormatStringToken:
 Style/FrozenStringLiteralComment:
   Enabled: false
 
+Style/HashAsLastArrayItem:
+  Enabled: false
+
 Style/ImplicitRuntimeError:
   Enabled: false
 

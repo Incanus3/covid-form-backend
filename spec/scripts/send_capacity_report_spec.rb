@@ -3,15 +3,15 @@ require 'webmock/rspec'
 require 'spec/feature/registration/helpers'
 require 'scripts/send_capacity_report'
 
+# rubocop:disable Metrics/BlockLength, RSpec/ExampleLength, RSpec/MultipleMemoizedHelpers
 RSpec.feature 'send_capacity_report script' do
   include CovidForm::TestHelpers::Registration
   include CovidForm::Import[:config, :db]
 
-  subject(:reporter) { CovidForm::Reporter.new }
-
   let(:open_date)                { Date.today + 1 }
   let(:closed_date)              { Date.today + 2 }
   let(:daily_registration_limit) { 240            }
+  let(:number_of_days)           { 7              }
 
   before do
     populate_exam_types
@@ -40,53 +40,93 @@ RSpec.feature 'send_capacity_report script' do
     )
   end
 
+  let(:total_coef_sum)   { db.time_slots.all.sum(&:limit_coefficient)                    }
+
+  let(:ag_exam_type)     { db.exam_types.root.where(id: 'ag').combine(:time_slots).one!  }
+  let(:ag_coef_sum)      { ag_exam_type.time_slots.sum(&:limit_coefficient)              }
+  let(:ag_max_capacity)  { daily_registration_limit * ag_coef_sum / total_coef_sum       }
+
+  let(:pcr_exam_type)    { db.exam_types.root.where(id: 'pcr').combine(:time_slots).one! }
+  let(:pcr_coef_sum)     { pcr_exam_type.time_slots.sum(&:limit_coefficient)             }
+  let(:pcr_max_capacity) { daily_registration_limit * pcr_coef_sum / total_coef_sum      }
+
+  let(:registrations_for_ag_slots) {
+    db.registrations.root
+      .where(exam_date: open_date, time_slot_id: ag_exam_type.time_slots.map(&:id))
+  }
+  let(:registrations_for_pcr_slots) {
+    db.registrations.root
+      .where(exam_date: open_date, time_slot_id: pcr_exam_type.time_slots.map(&:id))
+  }
+
+  let(:base_url)   { 'https://sttestcoviddashboard.blob.core.windows.net/crs' }
+  let(:token)      { 'xxx'             }
+  let(:ag_cfa_id)  { SecureRandom.uuid }
+  let(:pcr_cfa_id) { SecureRandom.uuid }
+
+  subject(:reporter) {
+    CovidForm::Reporter.new(
+      token: token, ag_cfa_id: ag_cfa_id, pcr_cfa_id: pcr_cfa_id, logging: false,
+    )
+  }
+
   it 'works' do
     stub_request(:any, /sttestcoviddashboard.blob.core.windows.net/)
 
-    reporter.report(number_of_days: 7)
+    Timecop.freeze do
+      reporter.report(number_of_days: number_of_days)
 
-    # this doesn't work, because WebMock::RequestPattern::BodyPattern#matches? decodes body only if
-    # the matcher is either a hash or WebMock::Matchers::HashIncludingMatcher (returned by
-    # has_including method from WebMock::API, this is not the same as rspec built-in
-    # a_hash_including) not only does this fail, but because
-    # RSpec::Matchers::BuiltIn::Include#actual_collection_includes?  calls .include?(<matcher
-    # returned by a_hash_including>) on the body string, it fails with TypeError: no implicit
-    # conversion of RSpec::Matchers::AliasedMatcher into String, which is pretty hard to find, since
-    # the default backtrace_exclusion_patterns filter the rspec lines in the backtrace out
-    # TODO: report an issue to rspec - string.include? should never be called with a matcher
-    # TODO: possibly make a feature request to webmock to support this case for a JSON array body
-    # expect(a_request(:post, 'https://sttestcoviddashboard.blob.core.windows.net/crs/')
-    #   .with(body: match(a_collection_including(a_hash_including())))).to have_been_made
+      url = "#{base_url}/CRS_#{pcr_cfa_id}_#{Time.now.strftime('%Y%m%d%H%M%S')}.json?#{token}"
 
-    total_coef_sum  = db.time_slots.all.sum(&:limit_coefficient)
-    ag_exam_type    = db.exam_types.root.where(id: 'ag').combine(:time_slots).one!
-    ag_coef_sum     = ag_exam_type.time_slots.sum(&:limit_coefficient)
-    ag_max_capacity = daily_registration_limit * ag_coef_sum / total_coef_sum
-
-    registrations_for_ag_slots = db.registrations.root
-      .where(exam_date: open_date, time_slot_id: ag_exam_type.time_slots.map(&:id))
-
-    expect(
-      a_request(:put, 'https://sttestcoviddashboard.blob.core.windows.net/crs/')
-      .with { |request|
-        expect(JSON.parse(request.body)).to include(
-          {
-            'date'             => Date.today.iso8601,
-            'maximum_capacity' => ag_max_capacity,
-            'available_slots'  => ag_max_capacity,
-          },
-          {
-            'date'             => open_date.iso8601,
-            'maximum_capacity' => ag_max_capacity,
-            'available_slots'  => ag_max_capacity - registrations_for_ag_slots.count,
-          },
-          {
-            'date'             => closed_date.iso8601,
-            'maximum_capacity' => 0,
-            'available_slots'  => 0,
-          },
-        )
-      },
-    ).to have_been_made
+      expect(
+        a_request(:put, url)
+        .with(query: token) { |request|
+          expect(JSON.parse(request.body))
+            .to be_an(Array)
+            .and(contain_exactly(
+              {
+                'cfaId'  => ag_cfa_id,
+                'values' => array_including(
+                  {
+                    'date'             => Date.today.iso8601,
+                    'maximum_capacity' => ag_max_capacity,
+                    'available_slots'  => ag_max_capacity,
+                  },
+                  {
+                    'date'             => open_date.iso8601,
+                    'maximum_capacity' => ag_max_capacity,
+                    'available_slots'  => ag_max_capacity - registrations_for_ag_slots.count,
+                  },
+                  {
+                    'date'             => closed_date.iso8601,
+                    'maximum_capacity' => 0,
+                    'available_slots'  => 0,
+                  },
+                ),
+              }, {
+                'cfaId'  => pcr_cfa_id,
+                'values' => array_including(
+                  {
+                    'date'             => Date.today.iso8601,
+                    'maximum_capacity' => pcr_max_capacity,
+                    'available_slots'  => pcr_max_capacity,
+                  },
+                  {
+                    'date'             => open_date.iso8601,
+                    'maximum_capacity' => pcr_max_capacity,
+                    'available_slots'  => pcr_max_capacity - registrations_for_pcr_slots.count,
+                  },
+                  {
+                    'date'             => closed_date.iso8601,
+                    'maximum_capacity' => 0,
+                    'available_slots'  => 0,
+                  },
+                ),
+              }
+            ))
+        },
+      ).to have_been_made
+    end
   end
 end
+# rubocop:enable Metrics/BlockLength, RSpec/ExampleLength, RSpec/MultipleMemoizedHelpers
