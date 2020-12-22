@@ -5,6 +5,8 @@ APP_ROOT = File.expand_path('..', __dir__)
 $LOAD_PATH.unshift APP_ROOT
 
 require 'attr_extras'
+require 'faraday'
+
 require 'app/dependencies'
 require 'app/services/capacity'
 
@@ -12,15 +14,20 @@ module CovidForm
   class Reporter
     DEFAULT_NUMBER_OF_DAYS = 30
 
-    def send_report(number_of_days: DEFAULT_NUMBER_OF_DAYS)
+    def report(number_of_days: DEFAULT_NUMBER_OF_DAYS)
       ag_data  = data_for_report(exam_type: 'ag',  number_of_days: number_of_days)
       pcr_data = data_for_report(exam_type: 'pcr', number_of_days: number_of_days)
 
-      puts JSON.pretty_generate(ag_data)
-      puts JSON.pretty_generate(pcr_data)
+      send_report(pcr_data, ag_data)
     end
 
     private
+
+    def send_report(_pcr_data, ag_data)
+      Faraday.put('https://sttestcoviddashboard.blob.core.windows.net/crs/',
+                  JSON.pretty_generate(ag_data),
+                  'Content-Type' => 'application/json')
+    end
 
     def data_for_report(exam_type:, number_of_days:)
       capacity_service.daily_capacities_for_report(

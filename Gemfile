@@ -9,6 +9,7 @@ gem 'dry-transformer'
 gem 'dry-types'
 gem 'dry-validation'
 gem 'falcon'
+gem 'faraday'
 gem 'i18n'
 gem 'mail'
 gem 'pg'
@@ -44,4 +45,5 @@ group :development do # rubocop:disable Metrics/BlockLength
   gem 'sqlite3'
   gem 'super_diff'
   gem 'timecop'
+  gem 'webmock'
 end
