@@ -17,7 +17,7 @@ module CovidForm
 
     attr_private :url
 
-    attr_private_initialize [:ag_cfa_id!, :pcr_cfa_id!, :token!, env: :test, logging: true] do
+    attr_private_initialize [:ag_cfa_id!, :pcr_cfa_id!, :token!, :log_file, env: :test, logging: true] do
       # :nocov:
       env_segment = env == :production ? 'prod' : 'test'
       # :nocov:
@@ -55,7 +55,10 @@ module CovidForm
 
       Faraday.new(url: url, headers: headers) do |faraday|
         # :nocov:
-        faraday.response(:logger, nil, { headers: true, bodies: true }) if logging
+        if logging
+          logger = log_file && Logger.new(log_file)
+          faraday.response(:logger, logger, { headers: true, bodies: true })
+        end
         # :nocov:
       end
     end
@@ -75,6 +78,7 @@ if __FILE__ == $PROGRAM_NAME
     token:      ENV.fetch('CRS_TOKEN'),
     pcr_cfa_id: ENV.fetch('CRS_PCR_CFA_ID'),
     ag_cfa_id:  ENV.fetch('CRS_AG_CFA_ID'),
+    log_file:   ENV.fetch('CRS_LOG_FILE', nil),
     logging:    Utils::EnvVars.fetch_bool('CRS_LOGGING', default: true),
   )
 

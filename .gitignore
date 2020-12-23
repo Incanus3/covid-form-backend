@@ -1,3 +1,4 @@
+.env
 .ruby-version
 .rbenv-gemsets
 .rspec.status
