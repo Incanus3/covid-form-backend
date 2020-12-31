@@ -48,13 +48,21 @@ module CovidForm
           'admin'
         end
       },
+      jwt_secret: ENV.fetch('JWT_SECRET') {
+        if env == :production
+          abort 'You must set the JWT_SECRET environment variable'
+        else
+          'secret'
+        end
+      },
     }
 
-    boot(:persistence) do |container|
+    boot(:persistence) do |container| # rubocop:disable Metrics/BlockLength
       init do
-        require 'lib/persistence/configuration'
         require 'app/persistence/container'
+      end
 
+      start do
         options = DEFAULT_DB_OPTIONS.merge({
           logger:        container[:logger],
           sql_log_level: :debug,
@@ -66,10 +74,6 @@ module CovidForm
 
         container.register(:db, db)
       end
-
-      # start do
-      #   container[:db].connect
-      # end
 
       stop do
         container[:db].disconnect

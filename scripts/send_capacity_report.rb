@@ -17,7 +17,9 @@ module CovidForm
 
     attr_private :url
 
-    attr_private_initialize [:ag_cfa_id!, :pcr_cfa_id!, :token!, :log_file, env: :test, logging: true] do
+    attr_private_initialize [
+      :ag_cfa_id!, :pcr_cfa_id!, :token!, :log_file, env: :test, logging: true
+    ] do
       # :nocov:
       env_segment = env == :production ? 'prod' : 'test'
       # :nocov:

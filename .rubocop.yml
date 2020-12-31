@@ -8,6 +8,8 @@ AllCops:
   EnabledByDefault: true
   Exclude:
     - 'bin/*'
+    - 'app/persistence/migrations/20201230112938_create_auth_tables.rb'
+    - 'app/persistence/password_migrations/20201230122937_create_password_hashes.rb'
   TargetRubyVersion: 2.7
 
 Bundler/GemComment:

@@ -1,3 +1,5 @@
+require_relative 'configuration'
+
 module Utils
   module Persistence
     class Container
@@ -41,9 +43,13 @@ module Utils
       end
 
       def start_connection_validator_with(timeout: 300, gateway: :default)
-        sequel_db = rom_container.gateways[gateway].connection
-        sequel_db.extension(:connection_validator)
-        sequel_db.pool.connection_validation_timeout = timeout
+        db = sequel_db(gateway: gateway)
+        db.extension(:connection_validator)
+        db.pool.connection_validation_timeout = timeout
+      end
+
+      def sequel_db(gateway: :default)
+        gateways[gateway].connection
       end
 
       private

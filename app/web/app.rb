@@ -16,6 +16,12 @@ module CovidForm
       Dependencies.start(:persistence) # TODO: stop persistence on exit
       Dependencies.start(:mail_sender)
 
+      plugin :rodauth, json: :only do
+        enable :login, :jwt, :jwt_refresh
+        prefix '/auth'
+        jwt_secret Dependencies[:auth][:jwt_secret]
+      end
+
       # rubocop:disable Metrics/BlockLength
       route do |r|
         r.root do # GET /
@@ -28,6 +34,10 @@ module CovidForm
               <li>GET /capacity/full_dates</li>
             </ul>
           HTML
+        end
+
+        r.on 'auth' do
+          r.rodauth
         end
 
         r.is 'register' do
@@ -83,15 +93,31 @@ module CovidForm
         end
 
         r.is 'export' do
-          r.get do # GET /export
-            authenticate!(request)
+          authenticate!(request)
 
+          r.get do # GET /export
             action(
               request,
               validation_contract: Validation::Contracts::Export,
               result_serializer:   Serializers::ExportResult,
             ) do |params|
               Services::Export.new(params).perform
+            end
+          end
+        end
+
+        r.on 'admin' do
+          rodauth.require_authentication
+
+          r.is 'export' do
+            r.get do # GET /export
+              action(
+                request,
+                validation_contract: Validation::Contracts::Export,
+                result_serializer:   Serializers::ExportResult,
+              ) do |params|
+                Services::Export.new(params).perform
+              end
             end
           end
         end
