@@ -1,10 +1,13 @@
 require 'spec_helper'
+require 'spec/feature/helpers'
 require 'app/dependencies'
-require_relative 'helpers'
 
 RSpec.feature 'POST /register route - registration limits' do
-  include CovidForm::TestHelpers::Registration
   include CovidForm::Import[:db]
+  include CovidForm::TestHelpers::Configuration
+  include CovidForm::TestHelpers::TimeSlots
+  include CovidForm::TestHelpers::ExamTypes
+  include CovidForm::TestHelpers::Registration
 
   let(:client_data) { attributes_for(:client)       }
   let(:exam_date)   { Faker::Date.forward(days: 60) }

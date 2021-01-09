@@ -5,6 +5,7 @@ SimpleCov.configure do
 
   add_filter '/spec/'
   add_filter 'app/persistence/migrations/'
+  add_filter 'app/persistence/password_migrations/'
 
   add_group 'Application', 'app'
   add_group 'Utilities',   'lib'

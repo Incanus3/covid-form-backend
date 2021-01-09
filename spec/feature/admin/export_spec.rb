@@ -1,11 +1,12 @@
 require 'spec_helper'
 require 'spec/feature/helpers'
 
-RSpec.feature 'GET /export route' do
+RSpec.feature 'GET /admin/export route' do
   include CovidForm::Import[:db]
   include CovidForm::TestHelpers::TimeSlots
   include CovidForm::TestHelpers::ExamTypes
   include CovidForm::TestHelpers::Registration
+  include CovidForm::TestHelpers::Authentication
 
   before do
     populate_exam_types
@@ -17,15 +18,20 @@ RSpec.feature 'GET /export route' do
 
   context 'without authentication' do
     it 'returns an appropriate error response' do
-      get '/export'
+      get '/admin/export'
 
       expect(last_response).to be_unauthorized
-      expect(last_response.json['error'])
-        .to eq 'authentication failed: missing Authorization header'
+      expect(last_response.json['error']).to eq 'Please login to continue'
     end
   end
 
   context 'with valid authentication' do
+    before do
+      populate_account_statuses
+      create_admin_account
+      log_in_admin
+    end
+
     context 'on successful export' do
       let(:client)    { db.clients.create(clean_client_data(client_data)) }
       let(:time_slot) { db.time_slots.find(exam_data[:time_slot_id])      }
@@ -38,8 +44,7 @@ RSpec.feature 'GET /export route' do
 
       context 'with CSV_ENCODING unset' do
         it 'returns UTF-8 encoded CSV with exported data', :no_transaction do
-          header 'Authorization', 'Password admin'
-          get    '/export'
+          get '/admin/export'
 
           expect(last_response).to be_ok
 
@@ -68,8 +73,7 @@ RSpec.feature 'GET /export route' do
         end
 
         it 'returns CSV with exported data encoded as desired', :no_transaction do
-          header 'Authorization', 'Password admin'
-          get    '/export'
+          get '/admin/export'
 
           expect(last_response).to be_ok
 
@@ -96,8 +100,7 @@ RSpec.feature 'GET /export route' do
           exam_data.merge({ client_id: client.id, registered_at: Time.now }),
         )
 
-        header 'Authorization', 'Password admin'
-        get    '/export'
+        get '/admin/export'
 
         expect(last_response).to be_unprocessable
         expect(last_response.json['status']  ).to eq 'ERROR'
@@ -108,8 +111,7 @@ RSpec.feature 'GET /export route' do
 
     context 'with bad date params' do
       it 'returns a proper validation error' do
-        header 'Authorization', 'Password admin'
-        get    '/export', start_date: Date.today, end_date: Date.today - 10
+        get '/admin/export', start_date: Date.today, end_date: Date.today - 10
 
         expect(last_response).to be_unprocessable
         expect(last_response.symbolized_json).to match({

@@ -3,8 +3,10 @@ require 'spec/feature/helpers'
 require 'app/dependencies'
 
 RSpec.feature 'POST /register route - insurance number validations' do # rubocop:disable Metrics/BlockLength
-  include CovidForm::TestHelpers::Generic
   include CovidForm::Import[:db]
+  include CovidForm::TestHelpers::Configuration
+  include CovidForm::TestHelpers::TimeSlots
+  include CovidForm::TestHelpers::ExamTypes
 
   let(:insurance_company) { 111                                 }
   let(:insurance_number ) { raise 'must be provided by context' }

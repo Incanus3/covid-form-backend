@@ -41,10 +41,12 @@ Style/MethodCallWithArgsParentheses:
     - be_a
     - describe
     - eq
+    - header
     - feature
     - include
     - match
     - not_to
+    - post_json
     - raise_exception
     - subject
     - to

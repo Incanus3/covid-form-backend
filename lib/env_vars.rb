@@ -11,5 +11,18 @@ module Utils
 
       value && !FALSY_VALUES.include?(value.downcase) || default
     end
+
+    def fetch_required(env, name, dev_default:, upcase: true)
+      name  = name.to_s
+      name  = name.upcase if upcase
+
+      ENV.fetch(name) {
+        if env == :production
+          abort "You must set the #{name} environment variable"
+        else
+          dev_default
+        end
+      }
+    end
   end
 end

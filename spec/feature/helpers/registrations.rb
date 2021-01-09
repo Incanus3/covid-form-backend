@@ -1,11 +1,8 @@
 require 'app/web/validation/contracts'
-require 'spec/feature/helpers'
 
 module CovidForm
   module TestHelpers
     module Registration
-      include Generic
-
       def clean_client_data(data)
         CovidForm::Web::Validation::Schemas::Client.call(data).to_h
       end

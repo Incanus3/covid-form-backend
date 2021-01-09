@@ -1,12 +1,15 @@
 require 'spec_helper'
 require 'webmock/rspec'
-require 'spec/feature/registration/helpers'
+require 'spec/feature/helpers'
 require 'scripts/send_capacity_report'
 
 # rubocop:disable Metrics/BlockLength, RSpec/ExampleLength, RSpec/MultipleMemoizedHelpers
 RSpec.feature 'send_capacity_report script' do
-  include CovidForm::TestHelpers::Registration
   include CovidForm::Import[:config, :db]
+  include CovidForm::TestHelpers::Configuration
+  include CovidForm::TestHelpers::TimeSlots
+  include CovidForm::TestHelpers::ExamTypes
+  include CovidForm::TestHelpers::Registration
 
   let(:open_date)                { Date.today + 1 }
   let(:closed_date)              { Date.today + 2 }

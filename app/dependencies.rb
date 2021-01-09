@@ -39,22 +39,9 @@ module CovidForm
     register :env,    env
     register :logger, logger
     register :config, DEFAULT_CONFIG_OPTIONS
-
     register :auth,   {
-      admin_password: ENV.fetch('ADMIN_PASSWORD') {
-        if env == :production
-          abort 'You must set the ADMIN_PASSWORD environment variable'
-        else
-          'admin'
-        end
-      },
-      jwt_secret: ENV.fetch('JWT_SECRET') {
-        if env == :production
-          abort 'You must set the JWT_SECRET environment variable'
-        else
-          'secret'
-        end
-      },
+      admin_password: Utils::EnvVars.fetch_required(env, :admin_password, dev_default: 'admin'),
+      jwt_secret:     Utils::EnvVars.fetch_required(env, :jwt_secret,     dev_default: 'secret'),
     }
 
     boot(:persistence) do |container| # rubocop:disable Metrics/BlockLength

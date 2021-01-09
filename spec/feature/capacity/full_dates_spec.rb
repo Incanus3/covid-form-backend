@@ -1,9 +1,12 @@
 require 'spec_helper'
-require 'spec/feature/registration/helpers'
+require 'spec/feature/helpers'
 
 RSpec.feature 'GET /capacity/full_dates route' do
-  include CovidForm::TestHelpers::Registration
   include CovidForm::Import[:config, :db]
+  include CovidForm::TestHelpers::Configuration
+  include CovidForm::TestHelpers::TimeSlots
+  include CovidForm::TestHelpers::ExamTypes
+  include CovidForm::TestHelpers::Registration
 
   let(:full_date)                { Date.today + 1 }
   let(:closed_date)              { Date.today + 2 }

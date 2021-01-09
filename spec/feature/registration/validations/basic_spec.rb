@@ -3,8 +3,9 @@ require 'spec/feature/helpers'
 require 'app/dependencies'
 
 RSpec.feature 'POST /register route - basic validations' do
-  include CovidForm::TestHelpers::Generic
   include CovidForm::Import[:db]
+  include CovidForm::TestHelpers::Configuration
+  include CovidForm::TestHelpers::TimeSlots
 
   let(:client_data ) { attributes_for(:client)                  }
   let(:exam_data   ) { attributes_for(:exam)                    }

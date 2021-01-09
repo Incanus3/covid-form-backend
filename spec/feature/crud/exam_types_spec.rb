@@ -2,8 +2,8 @@ require 'spec_helper'
 require 'spec/feature/helpers'
 
 RSpec.feature 'GET /crud/exam_types route' do
-  include CovidForm::TestHelpers::Generic
   include CovidForm::Import[:config, :db]
+  include CovidForm::TestHelpers::ExamTypes
 
   before do
     populate_exam_types

@@ -39,7 +39,7 @@ def get_db(prepend_overrides: false)
   CovidForm::Dependencies[:db]
 end
 
-namespace :db do # rubocop:disable Metrics/BlockLength
+namespace :db do
   desc 'set up database'
   task :setup do
     ROM::SQL::RakeSupport.env = get_db(prepend_overrides: true)

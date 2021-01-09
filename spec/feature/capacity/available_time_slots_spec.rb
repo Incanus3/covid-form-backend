@@ -1,10 +1,12 @@
 require 'spec_helper'
-require 'spec/feature/registration/helpers'
+require 'spec/feature/helpers'
 require 'app/dependencies'
 
 RSpec.feature 'GET /capacity/available_time_slots' do
-  include CovidForm::TestHelpers::Registration
   include CovidForm::Import[:db]
+  include CovidForm::TestHelpers::TimeSlots
+  include CovidForm::TestHelpers::ExamTypes
+  include CovidForm::TestHelpers::Registration
 
   before do
     populate_exam_types

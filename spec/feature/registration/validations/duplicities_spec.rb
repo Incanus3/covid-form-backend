@@ -1,10 +1,13 @@
 require 'spec_helper'
-require 'spec/feature/registration/helpers'
+require 'spec/feature/helpers'
 require 'app/dependencies'
 
 RSpec.feature 'POST /register route - duplicity validations' do
-  include CovidForm::TestHelpers::Registration
   include CovidForm::Import[:db]
+  include CovidForm::TestHelpers::Configuration
+  include CovidForm::TestHelpers::TimeSlots
+  include CovidForm::TestHelpers::ExamTypes
+  include CovidForm::TestHelpers::Registration
 
   let(:client_data ) { attributes_for(:client)                  }
   let(:exam_data   ) { attributes_for(:exam)                    }
@@ -32,8 +35,10 @@ RSpec.feature 'POST /register route - duplicity validations' do
         expect(last_response     ).to be_unprocessable
         expect(last_response.json).to eq({
           'status' => 'ERROR',
-          'error'  => ["client with insurance_number #{client_data[:insurance_number]} " \
-                       "is already registered for #{exam_data[:exam_date]}"],
+          'error'  => [
+            "client with insurance_number #{client_data[:insurance_number]} " \
+            "is already registered for #{exam_data[:exam_date]}",
+          ],
         })
       end
     end

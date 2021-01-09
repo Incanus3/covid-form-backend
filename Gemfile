@@ -42,7 +42,7 @@ group :development do # rubocop:disable Metrics/BlockLength
   gem 'rubocop-rake'
   gem 'rubocop-rspec'
   gem 'rubocop-sequel'
-  gem 'rubycritic'
+  # gem 'rubycritic'
   gem 'ruby_jard'
   gem 'simplecov'
   gem 'sqlite3'
