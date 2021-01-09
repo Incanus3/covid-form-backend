@@ -32,6 +32,17 @@ RSpec.feature 'GET /admin/export route' do
       log_in_admin
     end
 
+    context 'with expired token' do
+      it 'returns expired token error' do
+        Timecop.freeze(Time.now + 30*60) do
+          get '/admin/export'
+
+          expect(last_response).to be_bad_request
+          expect(last_response.json['error']).to eq 'expired JWT access token'
+        end
+      end
+    end
+
     context 'on successful export' do
       let(:client)    { db.clients.create(clean_client_data(client_data)) }
       let(:time_slot) { db.time_slots.find(exam_data[:time_slot_id])      }
