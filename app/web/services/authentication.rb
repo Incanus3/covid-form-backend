@@ -2,7 +2,7 @@ module CovidForm
   module Web
     class Authentication
       include Dry::Monads[:result]
-      include Import[:auth]
+      include Import[:config]
 
       class FailureWithoutArgs < Failure
         def initialize
@@ -15,7 +15,7 @@ module CovidForm
       UnrecognizedAuthenticationMethod = Class.new(Failure)
       BadCredentials                   = Class.new(FailureWithoutArgs)
 
-      attr_private_initialize [:auth, :request]
+      attr_private_initialize [:config, :request]
 
       def perform
         auth_header = request.headers['authorization']
@@ -26,7 +26,7 @@ module CovidForm
 
         return MalformedAuthorizationHeader.new unless method && payload
         return UnrecognizedAuthenticationMethod.new(method) unless method.casecmp('password').zero?
-        return BadCredentials.new unless payload == self.auth[:admin_password]
+        return BadCredentials.new unless payload == self.config[:auth][:admin_password]
 
         Success.new(nil)
       end

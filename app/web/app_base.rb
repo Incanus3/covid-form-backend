@@ -12,6 +12,30 @@ module CovidForm
       plugin :request_headers
       plugin :symbol_status
 
+      # rubocop:disable Style/MethodCallWithArgsParentheses
+      def self.enable_rodauth(options)
+        plugin :rodauth, json: :only do
+          enable :login, :jwt, :jwt_refresh
+
+          prefix '/auth'
+          login_param 'email'
+          jwt_refresh_route 'refresh_token'
+
+          jwt_secret  options[:jwt_secret]
+          hmac_secret options[:hmac_secret]
+
+          json_response_error_status      401
+          expired_jwt_access_token_status 401
+
+          set_deadline_values?                         true
+          allow_refresh_with_expired_jwt_access_token? true
+
+          jwt_access_token_period                      options[:access_token_lifetime_minutes] * 60
+          jwt_refresh_token_deadline_interval minutes: options[:refresh_token_lifetime_minutes]
+        end
+      end
+      # rubocop:enable Style/MethodCallWithArgsParentheses
+
       def authenticate!(request)
         result = Authentication.new(request: request).perform
 

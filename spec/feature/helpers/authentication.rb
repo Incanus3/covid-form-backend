@@ -25,7 +25,7 @@ module CovidForm
       end
 
       def log_in(email, password)
-        post_json '/auth/login', { login: email, password: password }
+        post_json '/auth/login', { email: email, password: password }
 
         token = last_response.json['access_token']
 

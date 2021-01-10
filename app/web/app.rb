@@ -16,11 +16,7 @@ module CovidForm
       Dependencies.start(:persistence) # TODO: stop persistence on exit
       Dependencies.start(:mail_sender)
 
-      plugin :rodauth, json: :only do
-        enable :login, :jwt, :jwt_refresh
-        prefix '/auth'
-        jwt_secret Dependencies[:auth][:jwt_secret]
-      end
+      enable_rodauth(Dependencies[:config][:auth])
 
       # rubocop:disable Metrics/BlockLength
       route do |r|

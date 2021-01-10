@@ -4,6 +4,13 @@ module Utils
 
     FALSY_VALUES = %w[false f no n 0].freeze
 
+    def fetch(name, default: nil, upcase: true)
+      name  = name.to_s
+      name  = name.upcase if upcase
+
+      ENV.fetch(name, default)
+    end
+
     def fetch_bool(name, default: false, upcase: true)
       name  = name.to_s
       name  = name.upcase if upcase
