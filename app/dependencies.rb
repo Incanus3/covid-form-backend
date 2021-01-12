@@ -43,7 +43,7 @@ module CovidForm
       hmac_secret:    EnvVars.fetch_required(env, :hmac_secret,    dev_default: 'secret'),
     }
     auth_lifetime_options = {
-      access_token_lifetime_minutes:  EnvVars.fetch(:token_lifetime_minutes, default: 60),
+      access_token_lifetime_minutes:  EnvVars.fetch(:token_lifetime_minutes, default: 5),
       refresh_token_lifetime_minutes: EnvVars.fetch(:token_lifetime_minutes, default: 24 * 60),
     }
     auth_options = auth_secret_options.merge(auth_lifetime_options)

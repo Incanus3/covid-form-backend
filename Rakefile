@@ -80,4 +80,20 @@ namespace :auth do
       password_hash: BCrypt::Password.create(password).to_s,
     )
   end
+
+  desc 'change user password'
+  task :change_password, [:email] do |_, args|
+    print 'enter password: '
+
+    sequel_db = get_db.sequel_db
+    email     = args[:email]
+    password  = $stdin.gets.chomp
+
+    account_id = sequel_db[:accounts]
+      .where(email: email)
+      .select_map(:id)[0]
+
+    sequel_db[:account_password_hashes].where(id: 1)
+      .update(password_hash: BCrypt::Password.create(password).to_s)
+  end
 end
