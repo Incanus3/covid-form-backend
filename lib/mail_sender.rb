@@ -13,11 +13,16 @@ require_relative 'env_vars'
 module Utils
   class MailSender
     # :nocov:
+    # rubocop:disable Metrics/MethodLength
     def self.configure(env, logger)
       Mail.defaults do
         case env
         when :production
-          delivery_method(:smtp, Utils::MailSender.smtp_options_from_env)
+          if Utils::EnvVars.fetch_bool('DISABLE_EMAILS', default: false)
+            delivery_method(:logger, logger: Logger.new(IO::NULL))
+          else
+            delivery_method(:smtp, Utils::MailSender.smtp_options_from_env)
+          end
         when :development
           delivery_method :logger, logger: logger
         when :test
@@ -27,6 +32,7 @@ module Utils
         end
       end
     end
+    # rubocop:enable Metrics/MethodLength
 
     def self.smtp_options_from_env
       {

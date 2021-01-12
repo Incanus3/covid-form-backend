@@ -42,6 +42,7 @@ def get_db(prepend_overrides: false)
   CovidForm::Dependencies[:db]
 end
 
+# rubocop:disable Metrcis/BlockLength
 namespace :db do
   desc 'set up database'
   task :setup do
@@ -93,7 +94,8 @@ namespace :auth do
       .where(email: email)
       .select_map(:id)[0]
 
-    sequel_db[:account_password_hashes].where(id: 1)
+    sequel_db[:account_password_hashes].where(id: account_id)
       .update(password_hash: BCrypt::Password.create(password).to_s)
   end
 end
+# rubocop:enable Metrcis/BlockLength
