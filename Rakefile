@@ -17,9 +17,10 @@ end
 
 module MigrationOverrides
   def create_migrator(migrator_option)
-    if (ENV['is_password_migration'] == true.to_s
-        && migrator_option.is_a?(Hash)
-        && (path = migrator_option[:path]))
+    if (ENV['is_password_migration'] == true.to_s &&
+        migrator_option.is_a?(Hash) &&
+        (path = migrator_option[:path]))
+
       base, last = File.split(path)
 
       migrator_option[:path] = File.join(base, last.sub('migrations', 'password_migrations'))
@@ -63,10 +64,11 @@ end
 namespace :auth do
   desc 'create user'
   task :create_user, [:email] do |_, args|
+    print 'enter password: '
+
     sequel_db = get_db.sequel_db
     email     = args[:email]
-    print "enter password: "
-    password  = STDIN.gets.chomp
+    password  = $stdin.gets.chomp
 
     account_id = sequel_db[:accounts].insert(
       email:     email,

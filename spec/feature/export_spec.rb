@@ -101,8 +101,11 @@ RSpec.feature 'GET /export route' do
 
         expect(last_response).to be_unprocessable
         expect(last_response.json['status']  ).to eq 'ERROR'
-        expect(last_response.json['error'][0])
-          .to match(/could not connect to server|database .* does not exist|no password supplied/)
+        expect(last_response.json['error'][0]).to match(
+          /could\ not\ connect\ to\ server|
+          (database|role)\ .*\ does\ not\ exist|
+          no\ password\ supplied/x,
+        )
       end
     end
 

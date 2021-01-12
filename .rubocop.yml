@@ -166,6 +166,9 @@ Style/MissingElse:
 Style/MultilineBlockChain:
   Enabled: false
 
+Style/ParenthesesAroundCondition:
+  AllowInMultilineConditions: true
+
 Style/PreferredHashMethods:
   EnforcedStyle: verbose
 
