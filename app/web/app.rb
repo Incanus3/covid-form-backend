@@ -88,20 +88,6 @@ module CovidForm
           end
         end
 
-        r.is 'export' do
-          authenticate!(request)
-
-          r.get do # GET /export
-            action(
-              request,
-              validation_contract: Validation::Contracts::Export,
-              result_serializer:   Serializers::ExportResult,
-            ) do |params|
-              Services::Export.new(params).perform
-            end
-          end
-        end
-
         r.on 'admin' do
           rodauth.require_authentication
 

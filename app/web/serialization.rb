@@ -1,6 +1,5 @@
 require 'lib/utils'
 require 'app/services/registration'
-require 'app/web/services/authentication'
 
 module CovidForm
   module Web
@@ -24,31 +23,6 @@ module CovidForm
           errors_hash = Utils::Hash.map_keys(errors.to_h, ->(key) { key.nil? ? 'error' : key })
 
           error_response_with(errors_hash)
-        end
-      end
-
-      class AuthenticationFailure < Serializer
-        ERROR_STATUS = :unauthorized
-
-        def self.error_response_with(...)
-          super(error: "#{I18n.t('authentication.authentication_failed')}: #{I18n.t(...)}")
-        end
-
-        def self.serialize(result)
-          case result
-          in Authentication::MissingAuthorizationHeader(_)
-            error_response_with('authentication.missing_auth_header')
-          in Authentication::MalformedAuthorizationHeader(_)
-            error_response_with('authentication.malformed_auth_header')
-          in Authentication::UnrecognizedAuthenticationMethod(method)
-            error_response_with('authentication.unrecognized_auth_method', method: method)
-          in Authentication::BadCredentials(_)
-            error_response_with('authentication.bad_credentials')
-          else
-            # :nocov:
-            raise "invalid authentication result to serialize: #{result.inspect}"
-            # :nocov:
-          end
         end
       end
 

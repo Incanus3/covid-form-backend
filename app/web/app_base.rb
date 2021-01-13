@@ -1,5 +1,4 @@
 require_relative 'serialization'
-require_relative 'services/authentication'
 
 module CovidForm
   module Web
@@ -35,15 +34,6 @@ module CovidForm
         end
       end
       # rubocop:enable Style/MethodCallWithArgsParentheses
-
-      def authenticate!(request)
-        result = Authentication.new(request: request).perform
-
-        return unless result.failure?
-
-        status, body = Serializers::AuthenticationFailure.serialize(result)
-        request.halt(status, body)
-      end
 
       def action(request, validation_contract:, result_serializer:, multiple_results: false)
         validation_result = validation_contract.new.call(request.params)
