@@ -12,7 +12,7 @@ require_relative 'services/crud'
 
 module CovidForm
   module Web
-    class App < AppBase
+    class App < AppBase # rubocop:disable Metrics/ClassLength
       Dependencies.start(:persistence) # TODO: stop persistence on exit
       Dependencies.start(:mail_sender)
 
@@ -105,6 +105,16 @@ module CovidForm
               ) do |params|
                 Services::Export.new(params).perform
               end
+            end
+          end
+
+          r.is 'settings' do
+            r.get do # GET /admin/settings
+              {
+                settings: {
+                  daily_registration_limit: Dependencies[:config][:daily_registration_limit],
+                },
+              }
             end
           end
 

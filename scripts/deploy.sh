@@ -2,7 +2,7 @@
 
 set -euf -o pipefail
 
-if [ $1 == "vaccination" ]; then
+if [ "$1" == "vaccination" ]; then
   env_file='.env.vaccination'
   passenger_app_name='vaccination_form'
 else
