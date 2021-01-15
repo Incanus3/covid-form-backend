@@ -18,6 +18,10 @@ module CovidForm
 
       enable_rodauth(Dependencies[:config][:auth])
 
+      status_handler(404) do
+        { error: 'resource not found' }
+      end
+
       # rubocop:disable Metrics/BlockLength
       route do |r|
         r.root do # GET /
@@ -80,6 +84,7 @@ module CovidForm
                 validation_contract: Validation::Contracts::TimeSlots,
                 result_serializer:   Serializers::TimeSlot,
                 multiple_results:    true,
+                serializer_options:  { with_coefficient: false },
               ) do |params|
                 Services::Capacity.new
                   .available_time_slots_for(*params.values_at(:date, :exam_type))
@@ -99,6 +104,17 @@ module CovidForm
                 result_serializer:   Serializers::ExportResult,
               ) do |params|
                 Services::Export.new(params).perform
+              end
+            end
+          end
+
+          r.on 'crud' do
+            r.is 'time_slots' do
+              r.get do # GET /admin/crud/time_slots
+                exam_types            = CRUD::TimeSlots.new.all
+                response.status, body = Serializers::TimeSlot.serialize_many(exam_types)
+
+                body
               end
             end
           end

@@ -323,6 +323,7 @@ DEPENDENCIES
   bcrypt
   bundler-audit
   database_cleaner-sequel
+  dry-core
   dry-inflector
   dry-monads
   dry-schema

@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 
 gem 'attr_extras'
 gem 'bcrypt'
+gem 'dry-core'
 gem 'dry-inflector'
 gem 'dry-monads'
 gem 'dry-schema'

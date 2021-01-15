@@ -105,8 +105,10 @@ module CovidForm
 
       class TimeSlot < Serializer
         class << self
-          def serialize_many(time_slots)
-            success_response_with(time_slots: time_slots.map { do_serialize(_1) })
+          def serialize_many(time_slots, with_coefficient: true)
+            success_response_with(
+              time_slots: time_slots.map { do_serialize(_1, with_coefficient: with_coefficient) },
+            )
           end
 
           def formatted_time_range(time_slot)
@@ -115,13 +117,15 @@ module CovidForm
 
           private
 
-          def do_serialize(time_slot)
+          def do_serialize(time_slot, with_coefficient: true)
             output = {
               id:         time_slot.id,
               name:       time_slot.name,
               start_time: Utils::Time.format(time_slot.start_time),
               end_time:   Utils::Time.format(time_slot.end_time),
             }
+
+            output[:limit_coefficient] = time_slot.limit_coefficient if with_coefficient
 
             # :nocov:
             output[:time_range] = time_slot.time_range if time_slot.respond_to?(:time_range)

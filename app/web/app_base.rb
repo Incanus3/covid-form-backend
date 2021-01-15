@@ -9,6 +9,7 @@ module CovidForm
       plugin :json_parser
       plugin :not_allowed
       plugin :request_headers
+      plugin :status_handler
       plugin :symbol_status
 
       # rubocop:disable Style/MethodCallWithArgsParentheses
@@ -35,7 +36,10 @@ module CovidForm
       end
       # rubocop:enable Style/MethodCallWithArgsParentheses
 
-      def action(request, validation_contract:, result_serializer:, multiple_results: false)
+      def action(
+        request, validation_contract:, result_serializer:,
+        multiple_results: false, serializer_options: {}
+      )
         validation_result = validation_contract.new.call(request.params)
 
         if validation_result.success?
@@ -48,7 +52,9 @@ module CovidForm
           serializer_method = :serialize
         end
 
-        response.status, body, headers = serializer.public_send(serializer_method, result)
+        response.status, body, headers = serializer.public_send(
+          serializer_method, result, **serializer_options
+        )
 
         response.headers.merge!(headers)
 
