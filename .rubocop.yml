@@ -153,6 +153,7 @@ Style/MethodCallWithArgsParentheses:
     - raise
     - require
     - require_relative
+    - respond_with
     - run
     - source
     - subject

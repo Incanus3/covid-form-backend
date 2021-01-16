@@ -12,7 +12,7 @@ require_relative 'services/crud'
 
 module CovidForm
   module Web
-    class App < AppBase # rubocop:disable Metrics/ClassLength
+    class App < AppBase
       Dependencies.start(:persistence) # TODO: stop persistence on exit
       Dependencies.start(:mail_sender)
 
@@ -47,7 +47,6 @@ module CovidForm
         r.is 'register' do
           r.post do # POST /register
             action(
-              request,
               validation_contract: Validation::Contracts::Registration,
               result_serializer:   Serializers::RegistrationResult,
             ) do |params|
@@ -60,10 +59,9 @@ module CovidForm
         r.on 'crud' do
           r.is 'exam_types' do
             r.get do # GET /crud/exam_types
-              exam_types            = CRUD::ExamTypes.new.all
-              response.status, body = Serializers::ExamType.serialize_many(exam_types)
+              service = CRUD::ExamTypes.new
 
-              body
+              respond_with Serializers::CRUDServiceResult.serialize(service, service.all)
             end
           end
         end
@@ -72,7 +70,6 @@ module CovidForm
           r.is 'full_dates' do
             r.get do # GET /capacity/full_dates
               action(
-                request,
                 validation_contract: Validation::Contracts::FullDates,
                 result_serializer:   Serializers::FullDatesResult,
               ) do |params|
@@ -84,7 +81,6 @@ module CovidForm
           r.is 'available_time_slots' do
             r.get do # GET /crud/time_slots
               action(
-                request,
                 validation_contract: Validation::Contracts::AvailableTimeSlots,
                 result_serializer:   Serializers::TimeSlot,
                 multiple_results:    true,
@@ -103,7 +99,6 @@ module CovidForm
           r.is 'export' do
             r.get do # GET /export
               action(
-                request,
                 validation_contract: Validation::Contracts::Export,
                 result_serializer:   Serializers::ExportResult,
               ) do |params|
@@ -124,32 +119,12 @@ module CovidForm
 
           r.on 'crud' do
             r.on 'time_slots' do
-              r.is do
-                r.get do # GET /admin/crud/time_slots
-                  time_slots            = CRUD::TimeSlots.new.all
-                  response.status, body = Serializers::TimeSlot.serialize_many(time_slots)
-
-                  body
-                end
-              end
-
-              r.is Integer do |id|
-                r.put do # PUT /admin/crud/time_slots/:id
-                  validation_result = Validation::Contracts::TimeSlot.new.call(request.params)
-
-                  if validation_result.success?
-                    service = CRUD::TimeSlots.new
-                    result  = service.update(id, validation_result.to_h)
-
-                    respond_with Serializers::CRUDServiceResult.serialize(service, result)
-                  else
-                    response.status, body =
-                      Serializers::ValidationErrors.serialize(validation_result.errors)
-
-                    body
-                  end
-                end
-              end
+              # GET /admin/crud/time_slots
+              # PUT /admin/crud/time_slots/:id
+              crud_actions(
+                service:             CRUD::TimeSlots,
+                validation_contract: Validation::Contracts::TimeSlot,
+              )
             end
           end
         end

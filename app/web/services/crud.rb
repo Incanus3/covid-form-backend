@@ -31,7 +31,7 @@ module CovidForm
         end
 
         def all
-          repository.all_by_id
+          Success.new(entities: repository.all_by_id)
         end
 
         def update(id, attributes)
@@ -40,7 +40,7 @@ module CovidForm
           if existing.exist?
             updated = existing.command(:update).call(Utils::Hash.symbolize_keys(attributes))
 
-            Success.new(updated)
+            Success.new(entity: updated)
           else
             NotFound.new(model, id)
           end

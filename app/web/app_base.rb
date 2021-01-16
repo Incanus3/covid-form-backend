@@ -8,12 +8,10 @@ module CovidForm
 
       plugin :all_verbs
       plugin :halt
-      plugin :json
       plugin :json_parser
       plugin :not_allowed
       plugin :request_headers
       plugin :status_handler
-      plugin :symbol_status
 
       # rubocop:disable Style/MethodCallWithArgsParentheses
       def self.enable_rodauth(options)
@@ -44,15 +42,16 @@ module CovidForm
         serializer_response in [status, body, headers]
         # :nocov:
 
-        request.halt([
-          Rack::Utils.status_code(status),
-          { CONTENT_TYPE_HEADER => JSON_CONTENT_TYPE }.merge(headers),
-          body.to_json,
-        ])
+        if serializer_response.json?
+          headers = { CONTENT_TYPE_HEADER => JSON_CONTENT_TYPE }.merge(headers)
+          body    = body.to_json
+        end
+
+        request.halt([Rack::Utils.status_code(status), headers, [body]])
       end
 
       def action(
-        request, validation_contract:, result_serializer:,
+        validation_contract:, result_serializer:,
         multiple_results: false, serializer_options: {}
       )
         validation_result = validation_contract.new.call(request.params)
@@ -61,19 +60,45 @@ module CovidForm
           result            = yield validation_result.to_h
           serializer        = result_serializer
           serializer_method = multiple_results ? :serialize_many : :serialize
+
+          respond_with serializer.public_send(serializer_method, result, **serializer_options)
         else
-          result            = validation_result.errors
-          serializer        = Serializers::ValidationErrors
-          serializer_method = :serialize
+          respond_with Serializers::ValidationErrors.serialize(validation_result.errors)
+        end
+      end
+
+      def crud_actions(service:, validation_contract:)
+        request.is do
+          get_all_action(service: service)
         end
 
-        response.status, body, headers = serializer.public_send(
-          serializer_method, result, **serializer_options
-        )
+        request.is Integer do |id|
+          update_action(id, service: service, validation_contract: validation_contract)
+        end
+      end
 
-        response.headers.merge!(headers)
+      def get_all_action(service:)
+        request.get do
+          service_inst = service.new
+          result       = service_inst.all
 
-        body
+          respond_with Serializers::CRUDServiceResult.serialize(service_inst, result)
+        end
+      end
+
+      def update_action(id, service:, validation_contract:)
+        request.put do
+          validation_result = validation_contract.new.call(request.params)
+
+          if validation_result.success?
+            service_inst = service.new
+            result       = service_inst.update(id, validation_result.to_h)
+
+            respond_with Serializers::CRUDServiceResult.serialize(service_inst, result)
+          else
+            respond_with Serializers::ValidationErrors.serialize(validation_result.errors)
+          end
+        end
       end
     end
   end

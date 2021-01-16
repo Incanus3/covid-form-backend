@@ -11,10 +11,15 @@ module Utils
       status :override_me
       base_body({}.freeze)
 
-      attr_value_initialize :status, :body, :headers
+      attr_value_initialize :body, :headers, [json: true]
+      attr_query :json?
 
       def self.with(fields)
-        new(status, base_body.merge(fields.to_h), {})
+        new(base_body.merge(fields.to_h), {})
+      end
+
+      def status
+        self.class.status
       end
 
       # this may not be needed if we define destructuring
