@@ -5,6 +5,10 @@ module Utils
     class Repository < ROM::Repository::Root
       commands :create, update: :by_pk, delete: :by_pk
 
+      def model
+        root.mapper.model
+      end
+
       def all
         root.to_a
       end
@@ -23,6 +27,10 @@ module Utils
 
       def create_many(tuples)
         root.command(:create, result: :many).call(tuples)
+      end
+
+      def lock_by_id(id)
+        root.by_pk(id).lock
       end
 
       private

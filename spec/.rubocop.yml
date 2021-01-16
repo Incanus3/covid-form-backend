@@ -47,6 +47,7 @@ Style/MethodCallWithArgsParentheses:
     - match
     - not_to
     - post_json
+    - put_json
     - raise_exception
     - subject
     - to

@@ -1,8 +1,11 @@
 require 'lib/utils'
+require 'lib/web/responses'
 require 'app/services/registration'
 
 module CovidForm
   module Web
+    Responses = Utils::Web::Responses
+
     module Serializers
       class Serializer # rubocop:disable Style/StaticClass
         BASE_SUCCESS_BODY = { status: 'OK'    }.freeze
@@ -89,6 +92,19 @@ module CovidForm
         end
       end
 
+      class CRUDServiceResult < Serializer
+        def self.serialize(service, result)
+          model_name = Utils::Class.name(service.model)
+
+          case result
+          in CRUD::CRUDService::Success(record)
+            Serializers.const_get(model_name).serialize(record)
+          in CRUD::CRUDService::NotFound({ model: model, id: id })
+            Responses::NotFound.with(error: "#{model_name} with id #{id} not found")
+          end
+        end
+      end
+
       class ExamType < Serializer
         class << self
           def serialize_many(exam_types)
@@ -111,6 +127,10 @@ module CovidForm
             )
           end
 
+          def serialize(...)
+            success_response_with(time_slot: do_serialize(...))
+          end
+
           def formatted_time_range(time_slot)
             "#{Utils::Time.format(time_slot.start_time)}-#{Utils::Time.format(time_slot.end_time)}"
           end
@@ -121,8 +141,8 @@ module CovidForm
             output = {
               id:         time_slot.id,
               name:       time_slot.name,
-              start_time: Utils::Time.format(time_slot.start_time),
-              end_time:   Utils::Time.format(time_slot.end_time),
+              start_time: Utils::Time.format(time_slot.start_time, remove_leading_zeros: false),
+              end_time:   Utils::Time.format(time_slot.end_time,   remove_leading_zeros: false),
             }
 
             output[:limit_coefficient] = time_slot.limit_coefficient if with_coefficient

@@ -6,6 +6,14 @@ module Utils
   Array  = Dry::Transformer::ArrayTransformations
   Hash   = Dry::Transformer::HashTransformations
 
+  module Class
+    module_function
+
+    def name(cls)
+      cls.name.split('::').last
+    end
+  end
+
   module Date
     COMMON_YEAR_DAYS_IN_MONTH = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31].freeze
 

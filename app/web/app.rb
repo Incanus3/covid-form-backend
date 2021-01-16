@@ -18,6 +18,10 @@ module CovidForm
 
       enable_rodauth(Dependencies[:config][:auth])
 
+      # TODO: add error handler so that 500 requests don't fail CORS checks
+      # TODO: convert all serializer results to Response instances,
+      # then we can use respond_with everywhere
+
       status_handler(404) do
         { error: 'resource not found' }
       end
@@ -81,7 +85,7 @@ module CovidForm
             r.get do # GET /crud/time_slots
               action(
                 request,
-                validation_contract: Validation::Contracts::TimeSlots,
+                validation_contract: Validation::Contracts::AvailableTimeSlots,
                 result_serializer:   Serializers::TimeSlot,
                 multiple_results:    true,
                 serializer_options:  { with_coefficient: false },
@@ -119,12 +123,32 @@ module CovidForm
           end
 
           r.on 'crud' do
-            r.is 'time_slots' do
-              r.get do # GET /admin/crud/time_slots
-                exam_types            = CRUD::TimeSlots.new.all
-                response.status, body = Serializers::TimeSlot.serialize_many(exam_types)
+            r.on 'time_slots' do
+              r.is do
+                r.get do # GET /admin/crud/time_slots
+                  time_slots            = CRUD::TimeSlots.new.all
+                  response.status, body = Serializers::TimeSlot.serialize_many(time_slots)
 
-                body
+                  body
+                end
+              end
+
+              r.is Integer do |id|
+                r.put do # PUT /admin/crud/time_slots/:id
+                  validation_result = Validation::Contracts::TimeSlot.new.call(request.params)
+
+                  if validation_result.success?
+                    service = CRUD::TimeSlots.new
+                    result  = service.update(id, validation_result.to_h)
+
+                    respond_with Serializers::CRUDServiceResult.serialize(service, result)
+                  else
+                    response.status, body =
+                      Serializers::ValidationErrors.serialize(validation_result.errors)
+
+                    body
+                  end
+                end
               end
             end
           end

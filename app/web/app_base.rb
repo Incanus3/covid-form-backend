@@ -3,6 +3,9 @@ require_relative 'serialization'
 module CovidForm
   module Web
     class AppBase < Roda
+      CONTENT_TYPE_HEADER = 'Content-Type'.freeze
+      JSON_CONTENT_TYPE   = 'application/json'.freeze
+
       plugin :all_verbs
       plugin :halt
       plugin :json
@@ -35,6 +38,18 @@ module CovidForm
         end
       end
       # rubocop:enable Style/MethodCallWithArgsParentheses
+
+      def respond_with(serializer_response)
+        # :nocov:
+        serializer_response in [status, body, headers]
+        # :nocov:
+
+        request.halt([
+          Rack::Utils.status_code(status),
+          { CONTENT_TYPE_HEADER => JSON_CONTENT_TYPE }.merge(headers),
+          body.to_json,
+        ])
+      end
 
       def action(
         request, validation_contract:, result_serializer:,

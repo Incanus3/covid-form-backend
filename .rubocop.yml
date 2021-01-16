@@ -86,7 +86,7 @@ Naming/MemoizedInstanceVariableName:
   EnforcedStyleForLeadingUnderscores: required
 
 Naming/MethodParameterName:
-  AllowedNames: [as, db, pk]
+  AllowedNames: [as, db, id, pk]
 
 Naming/VariableNumber:
   Enabled: false

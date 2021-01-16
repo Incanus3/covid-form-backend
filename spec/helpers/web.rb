@@ -29,6 +29,11 @@ module JSONRequests
     post(path, body && JSON.generate(body))
   end
 
+  def put_json(path, body = nil)
+    header('Content-Type', 'application/json')
+    put(path, body && JSON.generate(body))
+  end
+
   def patch_json(path, body = nil)
     header('Content-Type', 'application/json')
     patch(path, body && JSON.generate(body))

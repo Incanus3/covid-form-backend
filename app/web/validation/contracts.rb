@@ -95,8 +95,8 @@ module CovidForm
           # rubocop:enable Metrics/BlockLength, Metrics/BlockNesting
         end
 
-        class TimeSlots < Contract
-          json(Schemas::TimeSlots)
+        class AvailableTimeSlots < Contract
+          json(Schemas::AvailableTimeSlots)
         end
 
         class Export < Contract
@@ -117,6 +117,10 @@ module CovidForm
               base.failure('end_date must be after start_date')
             end
           end
+        end
+
+        class TimeSlot < Contract
+          json(Schemas::TimeSlot)
         end
       end
     end
