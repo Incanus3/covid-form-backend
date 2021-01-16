@@ -31,7 +31,7 @@ RSpec.feature 'POST /register route - registration limits' do
     populate_exam_types
     populate_time_slots
 
-    mock_config_with(configuration)
+    mock_config_with(**configuration)
 
     create_many_clients_with_registrations(
       daily_registration_limit, exam_overrides: {

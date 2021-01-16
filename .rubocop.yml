@@ -2,7 +2,7 @@ require:
   - rubocop-performance
   - rubocop-rake
   - rubocop-rspec
-  - rubocop-sequel
+  # - rubocop-sequel
 
 AllCops:
   EnabledByDefault: true

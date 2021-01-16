@@ -176,8 +176,6 @@ GEM
     parallel (1.20.1)
     parser (3.0.0.0)
       ast (~> 2.4.1)
-    patience_diff (1.1.0)
-      trollop (~> 1.16)
     pg (1.2.3)
     process-metrics (0.2.1)
       console (~> 1.8)
@@ -273,8 +271,6 @@ GEM
     rubocop-rspec (2.1.0)
       rubocop (~> 1.0)
       rubocop-ast (>= 1.1.0)
-    rubocop-sequel (0.1.0)
-      rubocop (~> 1.0)
     ruby-progressbar (1.11.0)
     ruby2_keywords (0.0.2)
     ruby_jard (0.3.1)
@@ -296,15 +292,10 @@ GEM
     simplecov-html (0.12.3)
     simplecov_json_formatter (0.1.2)
     sqlite3 (1.4.2)
-    super_diff (0.5.3)
-      attr_extras (>= 6.2.4)
-      diff-lcs
-      patience_diff
     thor (1.0.1)
     timecop (0.9.2)
     timers (4.3.2)
     transproc (1.1.1)
-    trollop (1.16.2)
     tty-screen (0.8.1)
     tzinfo (2.0.4)
       concurrent-ruby (~> 1.0)
@@ -357,15 +348,13 @@ DEPENDENCIES
   rubocop-performance
   rubocop-rake
   rubocop-rspec
-  rubocop-sequel
   ruby_jard
   sequel
   sequel_pg
   simplecov
   sqlite3
-  super_diff
   timecop
   webmock
 
 BUNDLED WITH
-   2.1.4
+   2.2.3

@@ -102,7 +102,7 @@ module CovidForm
                 validation_contract: Validation::Contracts::Export,
                 result_serializer:   Serializers::ExportResult,
               ) do |params|
-                Services::Export.new(params).perform
+                Services::Export.new(**params).perform
               end
             end
           end
