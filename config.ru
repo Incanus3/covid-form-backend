@@ -1,6 +1,12 @@
 require 'rack/cors'
 require_relative './app'
 
+if defined?(PhusionPassenger)
+  PhusionPassenger.on_event(:starting_worker_process) do
+    CovidForm::Dependencies[:db].default_gateway.disconnect
+  end
+end
+
 use Rack::Cors do
   allow do
     origins(
