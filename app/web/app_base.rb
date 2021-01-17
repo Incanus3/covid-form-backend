@@ -7,6 +7,7 @@ module CovidForm
       JSON_CONTENT_TYPE   = 'application/json'.freeze
 
       plugin :all_verbs
+      plugin :error_handler
       plugin :halt
       plugin :json_parser
       plugin :not_allowed

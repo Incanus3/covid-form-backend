@@ -1,5 +1,6 @@
 require 'roda'
 
+require 'lib/web/responses'
 require 'app/dependencies'
 require 'app/services/export'
 require 'app/services/capacity'
@@ -13,17 +14,19 @@ require_relative 'services/crud'
 module CovidForm
   module Web
     class App < AppBase
+      Responses = Utils::Web::Responses
+
       Dependencies.start(:persistence) # TODO: stop persistence on exit
       Dependencies.start(:mail_sender)
 
       enable_rodauth(Dependencies[:config][:auth])
 
-      # TODO: add error handler so that 500 requests don't fail CORS checks
-      # TODO: convert all serializer results to Response instances,
-      # then we can use respond_with everywhere
+      error do |error|
+        respond_with Serializers::Error.serialize(error)
+      end
 
       status_handler(404) do
-        { error: 'resource not found' }
+        respond_with Responses::NotFound.with(error: 'resource not found')
       end
 
       # rubocop:disable Metrics/BlockLength

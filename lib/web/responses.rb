@@ -48,6 +48,10 @@ module Utils
       class UnprocessableEntity < ErrorResponse
         status :unprocessable_entity
       end
+
+      class InternalServerError < ErrorResponse
+        status :internal_server_error
+      end
     end
   end
 end

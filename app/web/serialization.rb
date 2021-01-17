@@ -17,6 +17,12 @@ module CovidForm
         end
       end
 
+      class Error < Serializer
+        def self.serialize(error)
+          Responses::InternalServerError.with(message: "#{error.class.name}: #{error.message}")
+        end
+      end
+
       class ValidationErrors < Serializer
         def self.serialize(errors)
           errors_hash = Utils::Hash.map_keys(errors.to_h, ->(key) { key.nil? ? 'error' : key })
