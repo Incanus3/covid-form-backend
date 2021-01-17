@@ -43,6 +43,12 @@ module CovidForm
           required(:start_time       ).filled(Types::JSON::Time)
           required(:end_time         ).filled(Types::JSON::Time)
           required(:limit_coefficient).filled(Types::Integer)
+
+          optional(:exam_types).array(Types::Strict::String)
+        }
+
+        ExamType = Dry::Schema.JSON {
+          required(:description).filled(Types::Strict::String)
         }
       end
     end

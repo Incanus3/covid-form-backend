@@ -4,10 +4,12 @@ require 'app/dependencies'
 
 RSpec.feature 'time slots CRUD actions - update' do
   include CovidForm::Import[:db]
+  include CovidForm::TestHelpers::ExamTypes
   include CovidForm::TestHelpers::TimeSlots
   include CovidForm::TestHelpers::Authentication
 
   before do
+    populate_exam_types
     populate_time_slots
     populate_account_statuses
     create_admin_account
@@ -52,6 +54,20 @@ RSpec.feature 'time slots CRUD actions - update' do
         limit_coefficient: 8,
       },
     })
+  end
+
+  it 'supports setting 1:N relationships' do
+    db.time_slot_exam_types.create(time_slot_id: time_slot.id, exam_type: 'pcr')
+
+    update(
+      time_slot.id, name: 'u', start_time: '09:00', end_time: '11:00', limit_coefficient: 8,
+      exam_types: ['ag']
+    )
+
+    updated_time_slot = db.time_slots.root.combine(:exam_types).by_pk(time_slot.id).one!
+
+    expect(updated_time_slot.exam_types).to     include(an_object_having_attributes(id: 'ag'))
+    expect(updated_time_slot.exam_types).not_to include(an_object_having_attributes(id: 'pcr'))
   end
 
   context 'with nonexistent id' do

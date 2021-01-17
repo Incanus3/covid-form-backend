@@ -126,6 +126,15 @@ module CovidForm
           end
 
           r.on 'crud' do
+            r.on 'exam_types' do
+              # GET /admin/crud/time_slots
+              # PUT /admin/crud/time_slots/:id
+              crud_actions(
+                service:             CRUD::ExamTypes,
+                validation_contract: Validation::Contracts::ExamType,
+              )
+            end
+
             r.on 'time_slots' do
               # GET /admin/crud/time_slots
               # PUT /admin/crud/time_slots/:id

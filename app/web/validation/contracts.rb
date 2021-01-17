@@ -122,6 +122,10 @@ module CovidForm
         class TimeSlot < Contract
           json(Schemas::TimeSlot)
         end
+
+        class ExamType < Contract
+          json(Schemas::ExamType)
+        end
       end
     end
   end
