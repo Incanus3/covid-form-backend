@@ -17,6 +17,10 @@ module Utils
         root.order(:id).to_a
       end
 
+      def all_by_id_with(assocs)
+        root.combine(*assocs).order(:id).to_a
+      end
+
       def first
         root.first
       end

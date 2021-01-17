@@ -3,15 +3,20 @@
 set -euf -o pipefail
 
 if [ "$1" == "vaccination" ]; then
-  env_file='.env.vaccination'
+  deploy_dir='vaccination-form-backend'
   passenger_app_name='vaccination_form'
 else
-  env_file='.env'
+  deploy_dir='covid-form-backend'
   passenger_app_name='covid_form'
 fi
 
-servers=(production1-tth production2-tth)
-deploy_dir='covid-form-backend'
+if [ -n "${2-}" ]; then
+  servers=("$2")
+else
+  servers=(production1-tth production2-tth)
+fi
+
+env_file='.env'
 deploy_to="deploy/spital/$deploy_dir"
 
 echo "deploying to $deploy_to"

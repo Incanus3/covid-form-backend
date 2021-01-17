@@ -7,6 +7,7 @@ module CovidForm
     Responses = Utils::Web::Responses
 
     module Serializers
+      # :nocov:
       class Serializer # rubocop:disable Style/StaticClass
         def self.serialize(something)
           raise NotImplementedError
@@ -22,6 +23,7 @@ module CovidForm
           Responses::InternalServerError.with(message: "#{error.class.name}: #{error.message}")
         end
       end
+      # :nocov:
 
       class ValidationErrors < Serializer
         def self.serialize(errors)
@@ -111,13 +113,14 @@ module CovidForm
         end
       end
 
+      # TODO: move these to some Entity serializers submodule
       class ExamType < Serializer
         class << self
           def serialize_many(exam_types)
             Responses::OK.with(exam_types: exam_types.map { do_serialize(_1) })
           end
 
-          private
+          # private
 
           def do_serialize(exam_type)
             { id: exam_type.id, description: exam_type.description }
@@ -156,6 +159,12 @@ module CovidForm
             # :nocov:
             output[:time_range] = time_slot.time_range if time_slot.respond_to?(:time_range)
             # :nocov:
+
+            if time_slot.respond_to?(:exam_types)
+              output[:exam_types] = time_slot.exam_types.map { |exam_type|
+                Serializers::ExamType.do_serialize(exam_type)
+              }
+            end
 
             output
           end

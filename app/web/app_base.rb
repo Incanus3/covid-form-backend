@@ -80,8 +80,15 @@ module CovidForm
 
       def get_all_action(service:)
         request.get do
+          # TODO: validate params
+
           service_inst = service.new
-          result       = service_inst.all
+          result =
+            if (assocs = request.params['with'])
+              service_inst.all_with(assocs)
+            else
+              service_inst.all
+            end
 
           respond_with Serializers::CRUDServiceResult.serialize(service_inst, result)
         end

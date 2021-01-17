@@ -13,7 +13,7 @@ require_relative 'services/crud'
 
 module CovidForm
   module Web
-    class App < AppBase
+    class App < AppBase # rubocop:disable Metrics/ClassLength
       Responses = Utils::Web::Responses
 
       Dependencies.start(:persistence) # TODO: stop persistence on exit
@@ -21,13 +21,18 @@ module CovidForm
 
       enable_rodauth(Dependencies[:config][:auth])
 
-      error do |error|
-        respond_with Serializers::Error.serialize(error)
+      # :nocov:
+      unless Dependencies[:env] == :test
+        error do |error|
+          # TODO: when tested enough, return only some generic message in production env
+          respond_with Serializers::Error.serialize(error)
+        end
       end
 
       status_handler(404) do
         respond_with Responses::NotFound.with(error: 'resource not found')
       end
+      # :nocov:
 
       # rubocop:disable Metrics/BlockLength
       route do |r|

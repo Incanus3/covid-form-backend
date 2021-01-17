@@ -34,6 +34,10 @@ module CovidForm
           Success.new(entities: repository.all_by_id)
         end
 
+        def all_with(assocs)
+          Success.new(entities: repository.all_by_id_with(assocs.map(&:to_sym)))
+        end
+
         def update(id, attributes)
           existing = repository.lock_by_id(id)
 
