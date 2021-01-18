@@ -76,6 +76,7 @@ module CovidForm
 
         request.is Integer do |id|
           update_action(id, service: service, validation_contract: validation_contract)
+          delete_action(id, service: service)
         end
       end
 
@@ -122,6 +123,15 @@ module CovidForm
           else
             respond_with Serializers::ValidationErrors.serialize(validation_result.errors)
           end
+        end
+      end
+
+      def delete_action(id, service:)
+        request.delete do
+          service_inst = service.new
+          result       = service_inst.delete(id)
+
+          respond_with Serializers::CRUDServiceResult.serialize(service_inst, result)
         end
       end
     end

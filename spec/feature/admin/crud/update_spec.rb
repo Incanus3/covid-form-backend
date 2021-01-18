@@ -5,12 +5,10 @@ require 'app/dependencies'
 RSpec.feature 'time slots CRUD actions - update' do
   include CovidForm::Import[:db]
   include CovidForm::TestHelpers::ExamTypes
-  include CovidForm::TestHelpers::TimeSlots
   include CovidForm::TestHelpers::Authentication
 
   before do
     populate_exam_types
-    populate_time_slots
     populate_account_statuses
     create_admin_account
     log_in_admin

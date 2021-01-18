@@ -41,6 +41,7 @@ Style/MethodCallWithArgsParentheses:
     - be_a
     - describe
     - eq
+    - delete
     - header
     - feature
     - include

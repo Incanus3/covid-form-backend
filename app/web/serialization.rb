@@ -103,10 +103,15 @@ module CovidForm
           model_name = Utils::Class.name(service.model)
 
           case result
-          in CRUD::CRUDService::Success(entity: entity)
+          in CRUD::CRUDService::Success(status: :created, entity: entity)
+            # TODO: this should return created status instead of OK
+            Serializers.const_get(model_name).serialize(entity)
+          in CRUD::CRUDService::Success(status: :updated, entity: entity)
             Serializers.const_get(model_name).serialize(entity)
           in CRUD::CRUDService::Success(entities: entities)
             Serializers.const_get(model_name).serialize_many(entities)
+          in CRUD::CRUDService::Success(status: :deleted)
+            Responses::NoContent.with_no_body
           in CRUD::CRUDService::NotFound({ model: model, id: id })
             Responses::NotFound.with(error: "#{model_name} with id #{id} not found")
           end

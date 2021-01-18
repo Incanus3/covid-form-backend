@@ -18,6 +18,10 @@ module Utils
         new(base_body.merge(fields.to_h), {})
       end
 
+      def self.with_no_body
+        new('', {}, json: false)
+      end
+
       def status
         self.class.status
       end
@@ -39,6 +43,10 @@ module Utils
     module Responses
       class OK < SuccessResponse
         status :ok
+      end
+
+      class NoContent < SuccessResponse
+        status :no_content
       end
 
       class NotFound < ErrorResponse

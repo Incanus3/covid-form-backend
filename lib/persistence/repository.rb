@@ -21,6 +21,10 @@ module Utils
         root.combine(*assocs).order(:id).to_a
       end
 
+      def count_all
+        root.count
+      end
+
       def first
         root.first
       end
@@ -35,6 +39,10 @@ module Utils
 
       def lock_by_id(id)
         root.by_pk(id).lock
+      end
+
+      def delete_by_id(id)
+        root.by_pk(id).delete
       end
 
       private

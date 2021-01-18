@@ -42,7 +42,7 @@ module CovidForm
 
           update_associations(created.id, association_values)
 
-          Success.new(entity: created)
+          Success.new(status: :created, entity: created)
         end
 
         def update(id, values)
@@ -56,7 +56,19 @@ module CovidForm
 
             update_associations(id, association_values)
 
-            Success.new(entity: updated)
+            Success.new(status: :updated, entity: updated)
+          else
+            NotFound.new(model, id)
+          end
+        end
+
+        def delete(id)
+          existing = repository.lock_by_id(id)
+
+          if existing.exist?
+            repository.delete_by_id(id)
+
+            Success.new(status: :deleted)
           else
             NotFound.new(model, id)
           end

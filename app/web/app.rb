@@ -131,9 +131,10 @@ module CovidForm
 
           r.on 'crud' do
             r.on 'exam_types' do
-              # GET  /admin/crud/exam_types
-              # POST /admin/crud/exam_types
-              # PUT  /admin/crud/exam_types/:id
+              # GET    /admin/crud/exam_types
+              # POST   /admin/crud/exam_types
+              # PUT    /admin/crud/exam_types/:id
+              # DELETE /admin/crud/exam_types/:id
               crud_actions(
                 service:             CRUD::ExamTypes,
                 validation_contract: Validation::Contracts::ExamType,
@@ -141,9 +142,10 @@ module CovidForm
             end
 
             r.on 'time_slots' do
-              # GET  /admin/crud/time_slots
-              # POST /admin/crud/time_slots
-              # PUT  /admin/crud/time_slots/:id
+              # GET    /admin/crud/time_slots
+              # POST   /admin/crud/time_slots
+              # PUT    /admin/crud/time_slots/:id
+              # DELETE /admin/crud/time_slots/:id
               crud_actions(
                 service:             CRUD::TimeSlots,
                 validation_contract: Validation::Contracts::TimeSlot,

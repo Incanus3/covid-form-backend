@@ -5,7 +5,6 @@ require 'app/dependencies'
 RSpec.feature 'time slots CRUD actions - create' do
   include CovidForm::Import[:db]
   include CovidForm::TestHelpers::ExamTypes
-  include CovidForm::TestHelpers::TimeSlots
   include CovidForm::TestHelpers::Authentication
 
   before do

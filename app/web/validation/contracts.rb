@@ -119,6 +119,7 @@ module CovidForm
           end
         end
 
+        # TODO: validate that end time is after start time
         class TimeSlot < Contract
           json(Schemas::TimeSlot)
         end
