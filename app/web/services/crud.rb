@@ -22,6 +22,48 @@ module CovidForm
 
         attr_private_initialize [:db]
 
+        def model
+          repository.model
+        end
+
+        def all
+          Success.new(entities: repository.all_by_id)
+        end
+
+        def all_with(assocs)
+          Success.new(entities: repository.all_by_id_with(assocs.map(&:to_sym)))
+        end
+
+        def create(values)
+          attribute_values   = values.slice(*attribute_names)
+          association_values = values.slice(*association_names)
+
+          created = relation.command(:create).call(attribute_values)
+
+          update_associations(created.id, association_values)
+
+          Success.new(entity: created)
+        end
+
+        def update(id, values)
+          existing = repository.lock_by_id(id)
+
+          if existing.exist?
+            attribute_values   = values.slice(*attribute_names)
+            association_values = values.slice(*association_names)
+
+            updated = existing.command(:update).call(attribute_values)
+
+            update_associations(id, association_values)
+
+            Success.new(entity: updated)
+          else
+            NotFound.new(model, id)
+          end
+        end
+
+        private
+
         def repository
           db.public_send(self.class.repo_name)
         end
@@ -41,38 +83,6 @@ module CovidForm
         def association_names
           schema.associations.elements.keys
         end
-
-        def model
-          repository.model
-        end
-
-        def all
-          Success.new(entities: repository.all_by_id)
-        end
-
-        def all_with(assocs)
-          Success.new(entities: repository.all_by_id_with(assocs.map(&:to_sym)))
-        end
-
-        def update(id, values)
-          existing = repository.lock_by_id(id)
-
-          if existing.exist?
-            symbolized_values  = Utils::Hash.symbolize_keys(values)
-            attribute_values   = symbolized_values.slice(*attribute_names)
-            association_values = symbolized_values.slice(*association_names)
-
-            updated = existing.command(:update).call(attribute_values)
-
-            update_associations(id, association_values)
-
-            Success.new(entity: updated)
-          else
-            NotFound.new(model, id)
-          end
-        end
-
-        private
 
         def update_associations(id, association_values)
           association_values.each do |assoc_name, desired_related_ids|

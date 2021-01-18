@@ -22,7 +22,7 @@ module CovidForm
       enable_rodauth(Dependencies[:config][:auth])
 
       # :nocov:
-      unless Dependencies[:env] == :test
+      if Dependencies[:env] == :production
         error do |error|
           # TODO: when tested enough, return only some generic message in production env
           respond_with Serializers::Error.serialize(error)
@@ -31,6 +31,10 @@ module CovidForm
 
       status_handler(404) do
         respond_with Responses::NotFound.with(error: 'resource not found')
+      end
+
+      status_handler(405) do
+        respond_with Responses::MethodNotAllowed.with(error: 'method not allowed')
       end
       # :nocov:
 
@@ -127,8 +131,9 @@ module CovidForm
 
           r.on 'crud' do
             r.on 'exam_types' do
-              # GET /admin/crud/time_slots
-              # PUT /admin/crud/time_slots/:id
+              # GET  /admin/crud/exam_types
+              # POST /admin/crud/exam_types
+              # PUT  /admin/crud/exam_types/:id
               crud_actions(
                 service:             CRUD::ExamTypes,
                 validation_contract: Validation::Contracts::ExamType,
@@ -136,8 +141,9 @@ module CovidForm
             end
 
             r.on 'time_slots' do
-              # GET /admin/crud/time_slots
-              # PUT /admin/crud/time_slots/:id
+              # GET  /admin/crud/time_slots
+              # POST /admin/crud/time_slots
+              # PUT  /admin/crud/time_slots/:id
               crud_actions(
                 service:             CRUD::TimeSlots,
                 validation_contract: Validation::Contracts::TimeSlot,

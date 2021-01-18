@@ -45,6 +45,10 @@ module Utils
         status :not_found
       end
 
+      class MethodNotAllowed < ErrorResponse
+        status :method_not_allowed
+      end
+
       class UnprocessableEntity < ErrorResponse
         status :unprocessable_entity
       end

@@ -71,6 +71,7 @@ module CovidForm
       def crud_actions(service:, validation_contract:)
         request.is do
           get_all_action(service: service)
+          create_action( service: service, validation_contract: validation_contract)
         end
 
         request.is Integer do |id|
@@ -91,6 +92,21 @@ module CovidForm
             end
 
           respond_with Serializers::CRUDServiceResult.serialize(service_inst, result)
+        end
+      end
+
+      def create_action(service:, validation_contract:)
+        request.post do
+          validation_result = validation_contract.new.call(request.params)
+
+          if validation_result.success?
+            service_inst = service.new
+            result       = service_inst.create(validation_result.to_h)
+
+            respond_with Serializers::CRUDServiceResult.serialize(service_inst, result)
+          else
+            respond_with Serializers::ValidationErrors.serialize(validation_result.errors)
+          end
         end
       end
 
