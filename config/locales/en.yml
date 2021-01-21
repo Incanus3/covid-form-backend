@@ -11,6 +11,14 @@ en:
     bad_credentials:
       "bad credentials"
 
+  crud:
+    not_found:
+      "%{model_name} with id %{id} not found"
+    has_related_records:
+      "%{model_name} with id %{id} has related records"
+    violates_unique_constraint:
+      "%{model_name} violates unique constraint"
+
   validation:
     not_a_valid:
       "%{value} is not a valid %{what}"
@@ -60,6 +68,9 @@ en:
       municipality: 'city'
 
   entities:
+    time_slot:
+      model_name: 'time slot'
+
     client:
       birth_year:
         "birth year"

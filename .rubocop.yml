@@ -88,6 +88,9 @@ Naming/MemoizedInstanceVariableName:
 Naming/MethodParameterName:
   AllowedNames: [as, db, id, pk]
 
+Naming/PredicateName:
+  Enabled: false
+
 Naming/VariableNumber:
   Enabled: false
 

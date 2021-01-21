@@ -73,4 +73,25 @@ RSpec.feature 'time slots CRUD actions - create' do
       })
     end
   end
+
+  context 'when time slot with same name already exists' do
+    before do
+      db.time_slots.create({
+        name:              'existing',
+        start_time:        Utils::Time.today_at(8,  0),
+        end_time:          Utils::Time.today_at(10, 0),
+        limit_coefficient: 7,
+      })
+    end
+
+    it 'returns appropriate error response' do
+      create(name: 'existing', start_time: '09:00', end_time: '11:00', limit_coefficient: 8)
+
+      expect(last_response).to be_forbidden
+      expect(last_response.symbolized_json).to match(
+        status: 'ERROR',
+        error:  'time slot violates unique constraint',
+      )
+    end
+  end
 end

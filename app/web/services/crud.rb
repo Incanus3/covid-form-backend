@@ -17,6 +17,18 @@ module CovidForm
           end
         end
 
+        class HasRelatedRecords < Failure
+          def initialize(model, id)
+            super({ model: model, id: id })
+          end
+        end
+
+        class ViolatesUniqueConstraint < Failure
+          def initialize(model)
+            super({ model: model })
+          end
+        end
+
         defines :repo_name, type: Symbol
         repo_name :override_me
 
@@ -38,7 +50,12 @@ module CovidForm
           attribute_values   = values.slice(*attribute_names)
           association_values = values.slice(*association_names)
 
-          created = relation.command(:create).call(attribute_values)
+          # FIXME: unique constraints should be handled by validation contracts
+          begin
+            created = relation.command(:create).call(attribute_values)
+          rescue ROM::SQL::UniqueConstraintError
+            return ViolatesUniqueConstraint.new(model)
+          end
 
           update_associations(created.id, association_values)
 
@@ -52,7 +69,12 @@ module CovidForm
             attribute_values   = values.slice(*attribute_names)
             association_values = values.slice(*association_names)
 
-            updated = existing.command(:update).call(attribute_values)
+            # FIXME: unique constraints should be handled by validation contracts
+            begin
+              updated = existing.command(:update).call(attribute_values)
+            rescue ROM::SQL::UniqueConstraintError
+              return ViolatesUniqueConstraint.new(model)
+            end
 
             update_associations(id, association_values)
 
@@ -66,7 +88,11 @@ module CovidForm
           existing = repository.lock_by_id(id)
 
           if existing.exist?
-            repository.delete_by_id(id)
+            begin
+              repository.delete_by_id(id)
+            rescue Sequel::ForeignKeyConstraintViolation
+              return HasRelatedRecords.new(model, id)
+            end
 
             Success.new(status: :deleted)
           else

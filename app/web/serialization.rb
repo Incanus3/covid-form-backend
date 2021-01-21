@@ -99,6 +99,34 @@ module CovidForm
       end
 
       class CRUDServiceResult < Serializer
+        module Messages
+          module_function
+
+          def not_found(model_name, id)
+            I18n.t(
+              'crud.not_found',
+              id:         id,
+              model_name: I18n.t("entities.#{Utils::String.underscore(model_name)}.model_name"),
+            )
+          end
+
+          def has_related_records(model_name, id)
+            I18n.t(
+              'crud.has_related_records',
+              id:         id,
+              model_name: I18n.t("entities.#{Utils::String.underscore(model_name)}.model_name"),
+            )
+          end
+
+          def violates_unique_constraint(model_name)
+            I18n.t(
+              'crud.violates_unique_constraint',
+              model_name: I18n.t("entities.#{Utils::String.underscore(model_name)}.model_name"),
+            )
+          end
+        end
+
+        # rubocop:disable Metrics/MethodLength
         def self.serialize(service, result)
           model_name = Utils::Class.name(service.model)
 
@@ -113,10 +141,15 @@ module CovidForm
           in CRUD::CRUDService::Success(status: :deleted)
             Responses::NoContent.with_no_body
           in CRUD::CRUDService::NotFound({ model: model, id: id })
-            Responses::NotFound.with(error: "#{model_name} with id #{id} not found")
+            Responses::NotFound.with(error: Messages.not_found(model_name, id))
+          in CRUD::CRUDService::HasRelatedRecords({ model: model, id: id })
+            Responses::Forbidden.with(error: Messages.has_related_records(model_name, id))
+          in CRUD::CRUDService::ViolatesUniqueConstraint({ model: model })
+            Responses::Forbidden.with(error: Messages.violates_unique_constraint(model_name))
           end
         end
       end
+      # rubocop:enable Metrics/MethodLength
 
       # TODO: move these to some Entity serializers submodule
       class ExamType < Serializer

@@ -53,6 +53,10 @@ module Utils
         status :not_found
       end
 
+      class Forbidden < ErrorResponse
+        status :forbidden
+      end
+
       class MethodNotAllowed < ErrorResponse
         status :method_not_allowed
       end

@@ -13,11 +13,11 @@ module CovidForm
         end
 
         def must_not_be_shorter(than:)
-          I18n.t('validation.must_not_be_shorter', than: than )
+          I18n.t('validation.must_not_be_shorter', than: than)
         end
 
         def must_not_be_longer(than:)
-          I18n.t('validation.must_not_be_longer', than: than )
+          I18n.t('validation.must_not_be_longer', than: than)
         end
 
         def must_not_be_both(variant1, variant2)

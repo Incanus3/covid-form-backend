@@ -5,6 +5,8 @@ require 'app/dependencies'
 RSpec.feature 'time slots CRUD actions - delete' do
   include CovidForm::Import[:db]
   include CovidForm::TestHelpers::TimeSlots
+  include CovidForm::TestHelpers::ExamTypes
+  include CovidForm::TestHelpers::Registration
   include CovidForm::TestHelpers::Authentication
 
   before do
@@ -44,12 +46,27 @@ RSpec.feature 'time slots CRUD actions - delete' do
       delete_time_slot(0)
 
       expect(last_response).to be_not_found
-      expect(last_response.symbolized_json).to match({
+      expect(last_response.symbolized_json).to match(
         status: 'ERROR',
-        error:  'TimeSlot with id 0 not found',
-      })
+        error:  'time slot with id 0 not found',
+      )
     end
   end
 
-  # TODO: return appropriate error when can't delete due to fkeys
+  context 'with existing registration for time slot' do
+    before do
+      populate_exam_types
+      create_client_with_registration(exam_overrides: { time_slot_id: time_slot.id })
+    end
+
+    it 'returns appropriate error response' do
+      delete_time_slot(time_slot.id)
+
+      expect(last_response).to be_forbidden
+      expect(last_response.symbolized_json).to match(
+        status: 'ERROR',
+        error:  "time slot with id #{time_slot.id} has related records",
+      )
+    end
+  end
 end
