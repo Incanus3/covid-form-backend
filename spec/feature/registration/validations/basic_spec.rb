@@ -5,6 +5,7 @@ require 'app/dependencies'
 RSpec.feature 'POST /register route - basic validations' do
   include CovidForm::Import[:db]
   include CovidForm::TestHelpers::Configuration
+  include CovidForm::TestHelpers::ExamTypes
   include CovidForm::TestHelpers::TimeSlots
 
   let(:client_data ) { attributes_for(:client)                  }
@@ -17,6 +18,7 @@ RSpec.feature 'POST /register route - basic validations' do
       allow_registration_for_weekends: true,
     )
 
+    populate_exam_types
     populate_time_slots
   end
 
@@ -59,6 +61,21 @@ RSpec.feature 'POST /register route - basic validations' do
       expect(last_response).to be_unprocessable
       expect(response_data[:status]).to eq 'ERROR'
       expect(response_data[:error][0]).to match(/time slot.*does not exist/)
+    end
+  end
+
+  context 'with nonexistent exam type' do
+    let(:exam_data) { attributes_for(:exam, exam_type: 'nonexistent') }
+
+    it 'request is rejected' do
+      post_json '/register', request_data
+
+      response_data = last_response.symbolized_json
+
+      expect(last_response).to be_unprocessable
+      expect(response_data[:status]).to eq 'ERROR'
+      expect(response_data[:exam][:exam_type][0])
+        .to match("'nonexistent' is not a valid exam type, must be one of: 'ag', 'pcr', 'rapid'")
     end
   end
 end

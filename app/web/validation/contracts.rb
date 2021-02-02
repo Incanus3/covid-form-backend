@@ -16,6 +16,8 @@ module CovidForm
         end
 
         class Registration < Contract
+          include CovidForm::Import[:db]
+
           INSURANCE_NUMBER_REGEX =
             /^(?<year>\d\d)(?<month>\d\d)(?<day>\d\d)(?<suffix>\d{3,4})$/.freeze
 
@@ -38,6 +40,14 @@ module CovidForm
           json do
             required(:client).value(Schemas::Client)
             required(:exam  ).value(Schemas::Exam)
+          end
+
+          rule(exam: :exam_type) do
+            all_exam_type_ids = db.exam_types.all_ids
+
+            unless all_exam_type_ids.include?(value)
+              key.failure(Messages.not_a_valid_exam_type(value, allowed_values: all_exam_type_ids))
+            end
           end
 
           rule(exam: :exam_date) do

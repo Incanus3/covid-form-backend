@@ -24,6 +24,8 @@ en:
       "%{value} is not a valid %{what}"
     must_only_contain:
       "must only contain %{what}"
+    must_be_one_of:
+      "must be one of: %{allowed_values}"
     must_be_a_workday:
       "is only possible for workdays"
     must_be_divisible_by:
@@ -74,6 +76,10 @@ en:
     client:
       birth_year:
         "birth year"
+
+    exam:
+      exam_type:
+        "exam type"
 
     date:
       parts:

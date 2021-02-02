@@ -13,6 +13,10 @@ module Utils
         root.to_a
       end
 
+      def all_ids
+        root.pluck(:id)
+      end
+
       def all_by_id
         root.order(:id).to_a
       end

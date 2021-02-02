@@ -32,6 +32,19 @@ module CovidForm
           I18n.t('validation.must_not_be_in_past')
         end
 
+        def not_a_valid_exam_type(exam_type, allowed_values:)
+          [
+            I18n.t(
+              'validation.not_a_valid',
+              value: quote(exam_type), what: I18n.t('entities.exam.exam_type'),
+            ),
+            I18n.t(
+              'validation.must_be_one_of',
+              allowed_values: allowed_values.map { quote(_1) }.join(', '),
+            ),
+          ].join(', ')
+        end
+
         def not_a_valid_month(month)
           I18n.t('validation.not_a_valid',
                  value: month, what: I18n.t('entities.date.parts.month'))
@@ -65,6 +78,10 @@ module CovidForm
             I18n.t('registration.registration_for_today'),
             I18n.t('validation.only_possible_before', time: I18n.l(deadline, format: :time_only)),
           ].join(' ')
+        end
+
+        def quote(string)
+          "'#{string}'"
         end
       end
     end

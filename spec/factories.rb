@@ -37,7 +37,7 @@ FactoryBot.define do
     end
 
     requestor_type { CovidForm::Web::Validation::Types::RequestorType.values.sample }
-    exam_type      { CovidForm::Web::Validation::Types::ExamType.values.sample      }
+    exam_type      { db.exam_types.all_ids.sample                                   }
     exam_date      { Faker::Date.forward(days: max_days_forward)                    }
     time_slot_id   { db.time_slots.ids.sample                                       }
 

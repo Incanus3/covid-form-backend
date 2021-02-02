@@ -11,7 +11,7 @@ module CovidForm
       module Types
         include Dry.Types()
 
-        ExamType      = Strict::String.constructor(&:downcase).enum('pcr', 'rapid', 'ag')
+        ExamType      = Strict::String.constructor(&:downcase)
         RequestorType = Strict::String.constructor(&:downcase).enum('pl', 'khs', 'samopl', 'ag')
 
         Email         = Strict::String.constrained(format: EMAIL_REGEX)

@@ -24,6 +24,8 @@ cz:
       "%{value} není validní %{what}"
     must_only_contain:
       "musí obsahovat pouze %{what}"
+    must_be_one_of:
+      "musí být jedním z: %{allowed_values}"
     must_be_a_workday:
       "je možná pouze na pracovní dny"
     must_be_divisible_by:
@@ -109,6 +111,10 @@ cz:
     client:
       birth_year:
         "rok narození"
+
+    exam:
+      exam_type:
+        "druh vyšetření"
 
     date:
       parts:
