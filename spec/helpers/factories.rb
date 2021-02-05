@@ -8,6 +8,7 @@ RSpec.configure do |config|
   Faker::Config.locale = 'cz'
 
   I18n.load_path << Dir["#{File.join(APP_ROOT, 'config', 'locales')}/*.yml"]
+  I18n.default_locale = :en
 
   config.before(:suite) do
     FactoryBot.find_definitions

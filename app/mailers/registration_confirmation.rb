@@ -13,9 +13,14 @@ module CovidForm
 
       private
 
+      # rubocop:disable Metrics/MethodLength
       def mail
         client    = self.client
-        exam_info = { date: I18n.l(exam_date), time_range: time_range, exam_type: exam_type.upcase }
+        exam_info = {
+          date:       I18n.l(exam_date),
+          exam_type:  exam_type.description,
+          time_range: time_range,
+        }
 
         Mail.new {
           to      client.email
@@ -32,6 +37,7 @@ module CovidForm
           end
         }
       end
+      # rubocop:enable Metrics/MethodLength
     end
   end
 end

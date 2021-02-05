@@ -95,10 +95,13 @@ module CovidForm
       end
 
       def send_mail_to(client)
-        mailer = Mailers::RegistrationConfirmation.new(client:     client,
-                                                       exam_type:  exam_data[:exam_type],
-                                                       exam_date:  exam_data[:exam_date],
-                                                       time_range: time_slot.time_range)
+        exam_type = db.exam_types.find(exam_data[:exam_type])
+        mailer    = Mailers::RegistrationConfirmation.new(
+          client:     client,
+          exam_type:  exam_type,
+          exam_date:  exam_data[:exam_date],
+          time_range: time_slot.time_range,
+        )
 
         Success.new(mailer.send)
       end

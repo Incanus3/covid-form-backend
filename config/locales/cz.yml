@@ -62,7 +62,7 @@ cz:
       "Potvrzení registrace k PCR COVID-19 testování"
     success_email_body: |
       Vaše registrace k testu na COVID-19 byla úspěšná.
-      Registrovali jste se na %{date}, %{time_range}. Druh vyšetření je %{exam_type}.
+      Registrovali jste se na %{date}, %{time_range}. Druh vyšetření je "%{exam_type}".
       Prosíme, dostavte se v uvedený den a v časovém rozmezí, pro které jste se registroval/a, do odběrového místa Nemocnice Litoměřice, a.s.
       Upozorňujeme pacienty, kteří se registrovali na Antigen test, že v případě pozitivního výsledku tohoto testu, který se dozví krátce po výtěru, budou vyzváni k absolvování PCR vyšetření, ke kterému je nutné se dostavit v ten samý den po 12. hodině (odběr bude rovněž proveden na odběrovém místě Nemocnice Litoměřice, a.s.). Proto prosíme, abyste při organizaci svého času v den odběru počítali i s touto možností.
       I přes úspěšně provedenou registraci upozorňujeme na možnost neprovedení odběru v daném časovém úseku a v krajním případě (zejména v případě výpadku celorepublikového  žádankového systému či náhlého omezení množství vzorků přijímaných ze strany spolupracující laboratoře) i na možnost neprovedení odběru ve vámi zvolený den. Ačkoli tyto situace nemocnice nemůže ovlivnit, nastanou-li, snažíme se jejich dopady na pacienty maximálně eliminovat.
@@ -71,7 +71,7 @@ cz:
       Odběrové místo Nemocnice Litoměřice, a.s.
     success_email_html_body: |
       <p>Vaše registrace k testu na COVID-19 byla úspěšná.</p>
-      <p>Registrovali jste se na %{date}, %{time_range}. Druh vyšetření je %{exam_type}.</p>
+      <p>Registrovali jste se na %{date}, %{time_range}. Druh vyšetření je "%{exam_type}".</p>
       <p>Prosíme, dostavte se v uvedený den a v časovém rozmezí, pro které jste se registroval/a, do odběrového místa Nemocnice Litoměřice, a.s.</p>
       <p style="color: blue;">Upozorňujeme pacienty, kteří se registrovali na Antigen test, že v případě pozitivního výsledku tohoto testu, který se dozví krátce po výtěru, budou vyzváni k absolvování PCR vyšetření, ke kterému je nutné se dostavit v ten samý den po 12. hodině (odběr bude rovněž proveden na odběrovém místě Nemocnice Litoměřice, a.s.). Proto prosíme, abyste při organizaci svého času v den odběru počítali i s touto možností.</p>
       <p>I přes úspěšně provedenou registraci upozorňujeme na možnost neprovedení odběru v daném časovém úseku a v krajním případě (zejména v případě výpadku celorepublikového  žádankového systému či náhlého omezení množství vzorků přijímaných ze strany spolupracující laboratoře) i na možnost neprovedení odběru ve vámi zvolený den. Ačkoli tyto situace nemocnice nemůže ovlivnit, nastanou-li, snažíme se jejich dopady na pacienty maximálně eliminovat.</p>
