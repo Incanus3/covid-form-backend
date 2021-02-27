@@ -60,16 +60,17 @@ module CovidForm
 
         def columns_for_export(slots_with_ranges)
           [
-            translated_column_from(registrations, :registered_at),
-            translated_column_from(clients,       :email),
-            *translated_columns_from(registrations, [:requestor_type, :exam_type]),
+            translated_column_from(registrations, :exam_type),
             *translated_columns_from(
               clients,
               %i[last_name first_name insurance_number insurance_company] +
               %i[zip_code municipality phone_number],
             ),
-            translated_column_from(slots_with_ranges, :time_range),
+            translated_column_from(registrations,     :requestor_type),
             translated_column_from(registrations,     :exam_date),
+            translated_column_from(slots_with_ranges, :time_range),
+            translated_column_from(registrations,     :registered_at),
+            translated_column_from(clients,           :email),
           ]
         end
       end
