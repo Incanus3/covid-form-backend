@@ -40,9 +40,9 @@ RSpec.feature 'GET /admin/export route' do
 
         expect(last_response.headers['Content-Type']).to eq 'text/csv;charset=utf-8'
         expect(last_response.body.is_utf8?).to be true
-        expect(data[0]).to match(/;email;requestor_type;.*;time_range;/)
+        expect(data[0]).to match(/last_name;.*;time_range;.*;email/)
         expect(data[1]).to match(
-          /;"#{client_data[:email]}";"#{exam_data[:requestor_type]}";.*;"#{time_range}";/,
+          /"#{client_data[:last_name]}";.*;"#{time_range}";.*;"#{client_data[:email]}"/,
         )
       end
     end
@@ -70,9 +70,9 @@ RSpec.feature 'GET /admin/export route' do
         expect(last_response.headers['Content-Type'])
           .to eq "text/csv;charset=#{ruby_encoding.downcase}"
         expect(last_response.body.is_utf8?).to be false
-        expect(data[0]).to match(/;email;.*;last_name;.*;time_range;/)
+        expect(data[0]).to match(/last_name;.*;time_range;.*;email/)
         expect(data[1]).to match(
-          /;"#{client_data[:email]}";.*;"#{client_data[:last_name]}";.*;"#{time_range}";/,
+          /"#{client_data[:last_name]}";.*;"#{time_range}";.*;"#{client_data[:email]}"/,
         )
       end
     end
