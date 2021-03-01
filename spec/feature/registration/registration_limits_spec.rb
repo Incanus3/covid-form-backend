@@ -55,7 +55,7 @@ RSpec.feature 'POST /register route - registration limits' do
   end
 
   context 'global daily limit' do
-    context 'with daily limit already' do
+    context 'with daily limit reached' do
       let(:configuration) { super().merge(daily_registration_limit: daily_registration_limit) }
 
       include_examples 'rejected by limit', 'daily'

@@ -1,3 +1,5 @@
+require 'app/configuration'
+
 module CovidForm
   module TestHelpers
     module Configuration
@@ -11,7 +13,7 @@ module CovidForm
       def mock_config_with(**options)
         allow(CovidForm::Dependencies).to receive(:resolve).and_call_original
         allow(CovidForm::Dependencies).to receive(:resolve).with(:config)
-          .and_return(DEFAULT_CONFIG_OPTIONS.merge(options))
+          .and_return(CovidForm::Configuration.new(:test, DEFAULT_CONFIG_OPTIONS.merge(options)))
       end
     end
   end
