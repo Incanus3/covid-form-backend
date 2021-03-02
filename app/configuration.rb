@@ -47,13 +47,18 @@ module CovidForm
 
     private
 
+    def default_options(env)
+      @_default_options ||= OpenStruct.new(
+        default_general_options(env).merge(auth: default_auth_options(env)),
+      )
+    end
+
     def default_general_options(_env)
       fetch_int = ->(key, default) { Integer(ENV.fetch(key, default)) }
 
       {
         allow_registration_for_weekends:      false,
         enable_registration_deadline:         true,
-        enable_time_slot_registraiton_limit:  true,
         daily_registration_limit:             fetch_int.('DAILY_REGISTRATION_LIMIT',    250),
         registration_deadline_offset_minutes: fetch_int.('REGISTRATION_OFFSET_MINUTES', 300),
       }
@@ -68,12 +73,6 @@ module CovidForm
         access_token_lifetime_minutes:  fetch(:token_lifetime_minutes, default: 5),
         refresh_token_lifetime_minutes: fetch(:token_lifetime_minutes, default: 24 * 60),
       }
-    end
-
-    def default_options(env)
-      @_default_options ||= OpenStruct.new(
-        default_general_options(env).merge(auth: default_auth_options(env)),
-      )
     end
   end
 end

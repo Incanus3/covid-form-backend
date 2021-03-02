@@ -21,9 +21,8 @@ RSpec.feature 'POST /register route - registration limits' do
   let(:daily_registration_limit) { 5 }
   let(:configuration)            {
     {
-      allow_registration_for_weekends:     true,
-      enable_time_slot_registraiton_limit: false,
-      enable_registration_deadline:        false,
+      allow_registration_for_weekends: true,
+      enable_registration_deadline:    false,
     }
   }
 
@@ -64,7 +63,6 @@ RSpec.feature 'POST /register route - registration limits' do
     context 'with slot limit reached' do
       let(:configuration) {
         super().merge(
-          enable_time_slot_registraiton_limit: true,
           daily_registration_limit:            (
             daily_registration_limit * db.time_slots.root.sum(:limit_coefficient) /
             time_slot.limit_coefficient
