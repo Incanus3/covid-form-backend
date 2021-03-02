@@ -137,6 +137,10 @@ module CovidForm
         class ExamType < Contract
           json(Schemas::ExamType)
         end
+
+        class Setting < Contract
+          json(Schemas::Setting)
+        end
       end
     end
   end

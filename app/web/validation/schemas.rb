@@ -50,6 +50,11 @@ module CovidForm
         ExamType = Dry::Schema.JSON {
           required(:description).filled(Types::Strict::String)
         }
+
+        Setting = Dry::Schema.JSON {
+          required(:key  ).filled(Types::Strict::String).value(excludes?: 'auth')
+          required(:value).filled(Types::Nominal::Any)
+        }
       end
     end
   end

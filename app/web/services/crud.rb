@@ -53,11 +53,12 @@ module CovidForm
           # FIXME: unique constraints should be handled by validation contracts
           begin
             created = relation.command(:create).call(attribute_values)
+            id      = created.public_send(repository.primary_key)
           rescue ROM::SQL::UniqueConstraintError
             return ViolatesUniqueConstraint.new(model)
           end
 
-          update_associations(created.id, association_values)
+          update_associations(id, association_values)
 
           Success.new(status: :created, entity: created)
         end
@@ -153,6 +154,10 @@ module CovidForm
 
       class TimeSlots < CRUDService
         repo_name :time_slots
+      end
+
+      class Settings < CRUDService
+        repo_name :settings
       end
     end
   end

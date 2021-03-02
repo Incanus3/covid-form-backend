@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'spec/feature/helpers'
 require 'app/dependencies'
 
-RSpec.feature 'time slots CRUD actions' do
+RSpec.feature 'settings CRUD actions' do
   include CovidForm::Import[:db]
   include CovidForm::TestHelpers::Authentication
 
@@ -14,13 +14,11 @@ RSpec.feature 'time slots CRUD actions' do
 
   describe 'get' do
     it 'works' do
-      get '/admin/settings'
+      get '/admin/crud/settings'
 
       expect(last_response).to be_ok
-      expect(last_response.symbolized_json).to match({
-        settings: {
-          daily_registration_limit: CovidForm::Dependencies[:config][:daily_registration_limit],
-        },
+      expect(last_response.symbolized_json[:settings]).to include({
+        daily_registration_limit: CovidForm::Dependencies[:config][:daily_registration_limit],
       })
     end
   end

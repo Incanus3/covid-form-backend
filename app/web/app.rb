@@ -120,16 +120,6 @@ module CovidForm
             end
           end
 
-          r.is 'settings' do
-            r.get do # GET /admin/settings
-              {
-                settings: {
-                  daily_registration_limit: Dependencies[:config][:daily_registration_limit],
-                },
-              }
-            end
-          end
-
           r.on 'crud' do
             r.on 'exam_types' do
               # GET    /admin/crud/exam_types
@@ -151,6 +141,28 @@ module CovidForm
                 service:             CRUD::TimeSlots,
                 validation_contract: Validation::Contracts::TimeSlot,
               )
+            end
+
+            r.on 'settings' do
+              service             = CRUD::Settings
+              validation_contract = Validation::Contracts::Setting
+
+              request.is do
+                r.get do # GET /admin/crud/settings
+                  { settings: Dependencies[:config].to_h.reject { |key, _val| key == :auth } }
+                end
+
+                # POST /admin/crud/settings
+                create_action(service: service, validation_contract: validation_contract)
+              end
+
+              request.is String do |id|
+                # PUT    /admin/crud/settings/:id
+                update_action(id, service: service, validation_contract: validation_contract)
+
+                # DELETE /admin/crud/settings/:id
+                delete_action(id, service: service)
+              end
             end
           end
         end

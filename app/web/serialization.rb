@@ -208,6 +208,24 @@ module CovidForm
           end
         end
       end
+
+      class Setting < Serializer
+        class << self
+          def serialize(...)
+            Responses::OK.with(setting: do_serialize(...))
+          end
+
+          def serialize_many(settings)
+            Responses::OK.with(settings: settings.map { do_serialize(_1) })
+          end
+
+          # private
+
+          def do_serialize(setting)
+            { key: setting.key, value: setting.value }
+          end
+        end
+      end
     end
   end
 end

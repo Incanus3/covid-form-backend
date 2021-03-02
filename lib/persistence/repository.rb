@@ -11,6 +11,10 @@ module Utils
         root.mapper.model
       end
 
+      def primary_key
+        root.primary_key
+      end
+
       def all
         root.to_a
       end

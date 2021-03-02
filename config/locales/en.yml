@@ -83,6 +83,10 @@ en:
       exam_type:
         "exam type"
 
+    setting:
+      model_name:
+        "setting"
+
     date:
       parts:
         month: "month"

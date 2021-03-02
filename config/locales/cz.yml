@@ -116,6 +116,10 @@ cz:
       exam_type:
         "druh vyšetření"
 
+    setting:
+      model_name:
+        "nastavení"
+
     date:
       parts:
         month: "měsíc"
