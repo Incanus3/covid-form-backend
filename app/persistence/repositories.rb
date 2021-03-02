@@ -1,4 +1,5 @@
 require_relative 'repositories/clients'
+require_relative 'repositories/settings'
 require_relative 'repositories/exam_types'
 require_relative 'repositories/time_slots'
 require_relative 'repositories/time_slot_exam_types'

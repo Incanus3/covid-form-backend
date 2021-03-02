@@ -4,12 +4,16 @@ inherit_from:
 inherit_mode:
   merge:
     - IgnoredMethods
+    - ProceduralMethods
 
 Metrics/BlockLength:
   Max: 100
 
 RSpec/ExampleLength:
   Max: 20
+
+RSpec/AnyInstance:
+  Enabled: false
 
 RSpec/Capybara/FeatureMethods:
   EnabledMethods: [feature]
@@ -33,7 +37,14 @@ RSpec/MultipleMemoizedHelpers:
   Max: 8
 
 RSpec/NestedGroups:
-  Max: 4
+  Max: 5
+
+Style/BlockDelimiters:
+  ProceduralMethods:
+    - expect
+
+Style/MethodCalledOnDoEndBlock:
+  Enabled: false
 
 Style/MethodCallWithArgsParentheses:
   IgnoredMethods:

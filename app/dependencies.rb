@@ -1,6 +1,5 @@
 require 'dry/system/container'
 require 'lib/env_vars'
-require_relative 'configuration'
 
 module CovidForm
   class Dependencies < Dry::System::Container
@@ -22,24 +21,23 @@ module CovidForm
 
     register :env,    env
     register :logger, logger
-    register :config, Configuration.new(env)
 
     boot(:persistence) do |container| # rubocop:disable Metrics/BlockLength
+      default_db_options = {
+        adapter:  ENV.fetch('DB_BACKEND',  'postgres'),
+        host:     ENV.fetch('DB_HOST',     'localhost'),
+        port:     ENV.fetch('DB_PORT',     '5432'),
+        user:     ENV.fetch('DB_USER',     'covid'),
+        password: ENV.fetch('DB_PASSWORD', 'covid'),
+        database: ENV.fetch('DB_NAME',     'covid'),
+      }.freeze
+
       init do
         require 'app/persistence/container'
       end
 
       start do
-        DEFAULT_DB_OPTIONS = {
-          adapter:  ENV.fetch('DB_BACKEND',  'postgres'),
-          host:     ENV.fetch('DB_HOST',     'localhost'),
-          port:     ENV.fetch('DB_PORT',     '5432'),
-          user:     ENV.fetch('DB_USER',     'covid'),
-          password: ENV.fetch('DB_PASSWORD', 'covid'),
-          database: ENV.fetch('DB_NAME',     'covid'),
-        }.freeze
-
-        options = DEFAULT_DB_OPTIONS.merge({
+        options = default_db_options.merge({
           logger:        container[:logger],
           sql_log_level: :debug,
         })
@@ -53,6 +51,18 @@ module CovidForm
 
       stop do
         container[:db].disconnect
+      end
+    end
+
+    boot(:configuration) do |container|
+      init do
+        require 'app/configuration'
+      end
+
+      start do
+        use :persistence
+
+        container.register(:config, Configuration.new(container[:env], container[:db]))
       end
     end
 

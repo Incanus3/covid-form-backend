@@ -3,6 +3,8 @@ require 'rom/repository'
 module Utils
   module Persistence
     class Repository < ROM::Repository::Root
+      NotFound = ::Class.new(RuntimeError)
+
       commands :create, update: :by_pk, delete: :by_pk
 
       def model
@@ -34,7 +36,13 @@ module Utils
       end
 
       def find(pk)
+        root.by_pk(pk).one
+      end
+
+      def find!(pk)
         root.by_pk(pk).one!
+      rescue ROM::TupleCountMismatchError
+        raise NotFound
       end
 
       def create_many(tuples)

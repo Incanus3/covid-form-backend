@@ -17,6 +17,7 @@ module CovidForm
       Responses = Utils::Web::Responses
 
       Dependencies.start(:persistence) # TODO: stop persistence on exit
+      Dependencies.start(:configuration)
       Dependencies.start(:mail_sender)
 
       enable_rodauth(Dependencies[:config][:auth])

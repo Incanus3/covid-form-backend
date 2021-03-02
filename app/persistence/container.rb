@@ -24,6 +24,7 @@ module CovidForm
       }.freeze
 
       register_repo(Persistence::Repositories::Clients)
+      register_repo(Persistence::Repositories::Settings)
       register_repo(Persistence::Repositories::ExamTypes)
       register_repo(Persistence::Repositories::TimeSlots)
       register_repo(Persistence::Repositories::TimeSlotExamTypes)

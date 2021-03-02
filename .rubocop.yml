@@ -58,6 +58,9 @@ Layout/SpaceInsideArrayLiteralBrackets:
 Layout/SpaceInsideParens:
   Enabled: false
 
+Layout/SpaceInsideReferenceBrackets:
+  Enabled: false
+
 Layout/TrailingEmptyLines:
   Enabled: false
 
@@ -95,6 +98,9 @@ Naming/VariableNumber:
   Enabled: false
 
 Performance/ChainArrayAllocation:
+  Enabled: false
+
+Performance/OpenStruct:
   Enabled: false
 
 Style/AccessModifierDeclarations:
@@ -138,6 +144,9 @@ Style/ImplicitRuntimeError:
   Enabled: false
 
 Style/InlineComment:
+  Enabled: false
+
+Style/LambdaCall:
   Enabled: false
 
 Style/MethodCallWithArgsParentheses:
