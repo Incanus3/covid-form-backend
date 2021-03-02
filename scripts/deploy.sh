@@ -31,6 +31,6 @@ for server in ${servers[@]}; do
     rake db:migrate
     load-dotenv $env_file.passwords
     rake db:migrate_passwords
-    passenger-config restart-app --name $passenger_app_name
+    passenger-config restart-app --name $passenger_app_name || true
 EOF
 done

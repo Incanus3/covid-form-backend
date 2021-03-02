@@ -1,3 +1,5 @@
+require 'bcrypt'
+
 module CovidForm
   module TestHelpers
     module Authentication

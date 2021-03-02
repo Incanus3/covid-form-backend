@@ -24,7 +24,7 @@ module CovidForm
       end
     end
 
-    def method_missing(name, *args)
+    def method_missing(name, *_args)
       return super if name.end_with?('=') || table.has_key?(name)
 
       begin
@@ -34,7 +34,7 @@ module CovidForm
       end
     end
 
-    def respond_to_missing?(name)
+    def respond_to_missing?(name, _include_all = false)
       super || default_options(env).respond_to?(name) || db.settings.key_exists?(name)
     end
 

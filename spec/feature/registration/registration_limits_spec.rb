@@ -63,7 +63,7 @@ RSpec.feature 'POST /register route - registration limits' do
     context 'with slot limit reached' do
       let(:configuration) {
         super().merge(
-          daily_registration_limit:            (
+          daily_registration_limit: (
             daily_registration_limit * db.time_slots.root.sum(:limit_coefficient) /
             time_slot.limit_coefficient
           ),

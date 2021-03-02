@@ -13,7 +13,7 @@ module CovidForm
         end
 
         def key_exists?(key)
-          root.by_pk(key.to_s).exists?
+          root.by_pk(key.to_s).exist?
         end
       end
     end

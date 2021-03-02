@@ -13,6 +13,3 @@ require_relative 'helpers/coverage'
 require_relative 'helpers/web'
 
 SimpleCov.start
-
-require 'lib/utils'
-require 'app/web/app'

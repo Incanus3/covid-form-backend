@@ -45,6 +45,8 @@ RSpec.configure do |config|
   config.include JSONRequests
 
   def app
+    require 'app/web/app'
+
     CovidForm::Web::App
   end
 end

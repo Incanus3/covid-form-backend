@@ -75,7 +75,7 @@ RSpec.feature 'POST /register route - basic validations' do
       expect(last_response).to be_unprocessable
       expect(response_data[:status]).to eq 'ERROR'
       expect(response_data[:exam][:exam_type][0])
-        .to match("'nonexistent' is not a valid exam type, must be one of: 'ag', 'pcr', 'rapid'")
+        .to include("'nonexistent' is not a valid exam type")
     end
   end
 end
