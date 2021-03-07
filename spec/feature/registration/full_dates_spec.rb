@@ -16,8 +16,10 @@ RSpec.feature 'GET /registration/full_dates route' do
     populate_exam_types
     populate_time_slots
 
-    mock_config_with(daily_registration_limit:        daily_registration_limit,
-                     allow_registration_for_weekends: false)
+    mock_config_with(
+      daily_registration_limit:        daily_registration_limit,
+      allow_registration_for_weekends: false,
+    )
 
     db.daily_overrides.create(date: closed_date, registration_limit: 0)
 

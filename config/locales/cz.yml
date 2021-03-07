@@ -26,6 +26,8 @@ cz:
       "musí obsahovat pouze %{what}"
     must_be_one_of:
       "musí být jedním z: %{allowed_values}"
+    must_be_between:
+      "musí být mezi %{start} a %{end}"
     must_be_a_workday:
       "je možná pouze na pracovní dny"
     must_be_divisible_by:
@@ -83,46 +85,44 @@ cz:
 
   column_translations:
     clients:
-      first_name:        'krestni_jmeno'
-      last_name:         'prijmeni'
-      municipality:      'mesto'
-      zip_code:          'PSC'
-      email:             'email'
-      phone_number:      'telefon'
-      insurance_number:  'cislo_pojistence'
-      insurance_company: 'pojistovna'
+      first_name:        "krestni_jmeno"
+      last_name:         "prijmeni"
+      municipality:      "mesto"
+      zip_code:          "PSC"
+      email:             "email"
+      phone_number:      "telefon"
+      insurance_number:  "cislo_pojistence"
+      insurance_company: "pojistovna"
 
     registrations:
-      registered_at:  'cas_registrace'
-      requestor_type: 'typ_zadatele'
-      exam_type:      'druh_vysetreni'
-      exam_date:      'datum_vysetreni'
+      registered_at:  "cas_registrace"
+      requestor_type: "typ_zadatele"
+      exam_type:      "druh_vysetreni"
+      exam_date:      "datum_vysetreni"
 
     time_slots:
-      name:       'nazev'
-      start_time: 'cas_pocatku'
-      end_time:   'cas_konce'
-      time_range: 'casovy_slot'
+      name:       "nazev"
+      start_time: "cas_pocatku"
+      end_time:   "cas_konce"
+      time_range: "casovy_slot"
 
   entities:
     time_slot:
-      model_name: 'časový slot'
+      model_name: "časový slot"
 
     client:
-      birth_year:
-        "rok narození"
+      birth_year: "rok narození"
 
     exam:
-      exam_type:
-        "druh vyšetření"
+      exam_type: "druh vyšetření"
+      exam_date: "datum vyšetření"
 
     setting:
-      model_name:
-        "nastavení"
+      model_name: "nastavení"
 
     date:
       parts:
-        month: "měsíc"
+        month:        "měsíc"
         day_of_month: "den v měsíci"
 
     number:

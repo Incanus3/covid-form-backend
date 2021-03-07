@@ -4,6 +4,7 @@ require 'lib/web/responses'
 require 'app/dependencies'
 require 'app/services/export'
 require 'app/services/capacity'
+require 'app/services/configuration'
 require 'app/services/registration'
 
 require_relative 'app_base'
@@ -45,10 +46,11 @@ module CovidForm
           <<~HTML
             <h1>Seznam rout</h1>
             <ul>
-              <li>POST /register</li>
-              <li>GET /export</li>
-              <li>GET /crud/time_slots</li>
-              <li>GET /capacity/full_dates</li>
+              <li>POST /registration/create</li>
+              <li>GET /registration/allowed_dates</li>
+              <li>GET /registration/full_dates</li>
+              <li>GET /registration/available_time_slots</li>
+              <li>GET /crud/exam_types</li>
             </ul>
           HTML
         end
@@ -58,7 +60,7 @@ module CovidForm
         end
 
         r.on 'registration' do
-          r.is 'create', method: :post do # POST /register
+          r.is 'create', method: :post do # POST /registration/create
             action(
               validation_contract: Validation::Contracts::Registration,
               result_serializer:   Serializers::RegistrationResult,
@@ -69,7 +71,11 @@ module CovidForm
             end
           end
 
-          r.is 'full_dates', method: :get do # GET /capacity/full_dates
+          r.is 'allowed_dates', method: :get do # GET /registration/allowed_dates
+            respond_with Responses::OK.with(Services::Configuration.new.allowed_exam_dates)
+          end
+
+          r.is 'full_dates', method: :get do # GET /registration/full_dates
             action(
               validation_contract: Validation::Contracts::FullDates,
               result_serializer:   Serializers::FullDatesResult,
@@ -78,7 +84,7 @@ module CovidForm
             end
           end
 
-          r.is 'available_time_slots', method: :get do # GET /crud/time_slots
+          r.is 'available_time_slots', method: :get do # GET /registration/available_time_slots
             action(
               validation_contract: Validation::Contracts::AvailableTimeSlots,
               result_serializer:   Serializers::TimeSlot,

@@ -8,6 +8,12 @@ RSpec.feature 'POST /registration/create route - weekday validation' do
   include CovidForm::TestHelpers::TimeSlots
   include CovidForm::TestHelpers::ExamTypes
 
+  def next_week_day(wday)
+    date  = Date.today + 1
+    date += 1 until date.wday == wday
+    date
+  end
+
   let(:client_data ) { attributes_for(:client)                  }
   let(:exam_data   ) { attributes_for(:exam)                    }
   let(:request_data) { { client: client_data, exam: exam_data } }
@@ -23,7 +29,7 @@ RSpec.feature 'POST /registration/create route - weekday validation' do
   end
 
   context 'registration for monday' do
-    let(:exam_data) { attributes_for(:exam, exam_date: Date.new(2050, 1, 3)) }
+    let(:exam_data) { attributes_for(:exam, exam_date: next_week_day(1)) }
 
     it 'is accepted' do
       post_json '/registration/create', request_data
@@ -33,7 +39,7 @@ RSpec.feature 'POST /registration/create route - weekday validation' do
   end
 
   context 'registration for saturday' do
-    let(:exam_data) { attributes_for(:exam, exam_date: Date.new(2050, 1, 1)) }
+    let(:exam_data) { attributes_for(:exam, exam_date: next_week_day(6)) }
 
     it 'is rejected' do
       post_json '/registration/create', request_data

@@ -209,5 +209,8 @@ Style/TrailingCommaInArrayLiteral:
 Style/TrailingCommaInHashLiteral:
   EnforcedStyleForMultiline: comma
 
+Style/UnlessLogicalOperators:
+  Enabled: false
+
 Style/WordArray:
   MinSize: 5

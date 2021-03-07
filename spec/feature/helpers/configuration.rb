@@ -7,6 +7,9 @@ module CovidForm
       Import[:db]
 
       DEFAULT_CONFIG_OPTIONS = {
+        week_starts_on:                       1,
+        open_registration_in_weeks:           0,
+        close_registration_in_weeks:          100,
         daily_registration_limit:             200,
         registration_deadline_offset_minutes: 600,
         enable_registration_deadline:         false,

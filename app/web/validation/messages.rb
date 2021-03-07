@@ -45,6 +45,20 @@ module CovidForm
           ].join(', ')
         end
 
+        def not_a_valid_exam_date(exam_date, allowed_dates)
+          [
+            I18n.t(
+              'validation.not_a_valid',
+              value: I18n.l(exam_date), what: I18n.t('entities.exam.exam_date'),
+            ),
+            I18n.t(
+              'validation.must_be_between',
+              start: I18n.l(allowed_dates.start_date),
+              end:   I18n.l(allowed_dates.end_date),
+            ),
+          ].join(', ')
+        end
+
         def not_a_valid_month(month)
           I18n.t('validation.not_a_valid',
                  value: month, what: I18n.t('entities.date.parts.month'))

@@ -26,6 +26,8 @@ en:
       "must only contain %{what}"
     must_be_one_of:
       "must be one of: %{allowed_values}"
+    must_be_between:
+      "must be between %{start} and %{end}"
     must_be_a_workday:
       "is only possible for workdays"
     must_be_divisible_by:
@@ -69,27 +71,25 @@ en:
 
   column_translations:
     clients:
-      municipality: 'city'
+      municipality: "city"
 
   entities:
     time_slot:
-      model_name: 'time slot'
+      model_name: "time slot"
 
     client:
-      birth_year:
-        "birth year"
+      birth_year: "birth year"
 
     exam:
-      exam_type:
-        "exam type"
+      exam_type: "exam type"
+      exam_date: "exam date"
 
     setting:
-      model_name:
-        "setting"
+      model_name: "setting"
 
     date:
       parts:
-        month: "month"
+        month:        "month"
         day_of_month: "day of month"
 
     number:

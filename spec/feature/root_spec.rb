@@ -8,6 +8,6 @@ RSpec.feature 'GET / root route' do
 
     expect(last_response).to be_ok
     expect(body).to include 'seznam rout'
-    expect(body).to include 'post /register'
+    expect(body).to include 'post /registration/create'
   end
 end

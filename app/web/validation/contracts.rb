@@ -54,6 +54,12 @@ module CovidForm
             key.failure( Messages.must_not_be_in_past) if     value < Date.today
             base.failure(Messages.not_a_valid_workday) unless Registration.valid_workday?(value)
 
+            allowed_dates = Services::Configuration.new.allowed_exam_dates
+
+            if value < allowed_dates.start_date || value > allowed_dates.end_date
+              base.failure(Messages.not_a_valid_exam_date(value, allowed_dates))
+            end
+
             unless Registration.valid_registration_time_for?(value)
               base.failure(Messages.not_a_valid_registration_time(Registration.deadline_for(value)))
             end

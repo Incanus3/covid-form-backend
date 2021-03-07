@@ -79,5 +79,5 @@ module CovidForm
     end
   end
 
-  Import = Dry::AutoInject(Dependencies)
+  Import = Dependencies.injector
 end
