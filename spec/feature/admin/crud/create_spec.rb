@@ -66,6 +66,7 @@ RSpec.feature 'time slots CRUD actions - create' do
       expect(last_response).to be_unprocessable
       expect(last_response.symbolized_json).to match({
         status:            'ERROR',
+        code:              'validation_failed',
         name:              ['must be a string'],
         start_time:        ['must be a time'],
         end_time:          ['is missing'],
@@ -90,6 +91,7 @@ RSpec.feature 'time slots CRUD actions - create' do
       expect(last_response).to be_forbidden
       expect(last_response.symbolized_json).to match(
         status: 'ERROR',
+        code:   'forbidden',
         error:  'time slot violates unique constraint',
       )
     end

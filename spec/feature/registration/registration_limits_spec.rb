@@ -44,9 +44,10 @@ RSpec.feature 'POST /register route - registration limits' do
       post_json '/register', { client: client_data, exam: exam_data }
 
       expect(last_response     ).to be_unprocessable
-      expect(last_response.json).to match({
-        'status' => 'ERROR',
-        'error'  => a_collection_including(
+      expect(last_response.symbolized_json).to match({
+        status: 'ERROR',
+        code:   'validation_failed',
+        error:  a_collection_including(
           a_string_matching(/#{limit_type} registration limit for .* reached/),
         ),
       })

@@ -75,6 +75,7 @@ RSpec.feature 'time slots CRUD actions - update' do
       expect(last_response).to be_not_found
       expect(last_response.symbolized_json).to match({
         status: 'ERROR',
+        code:   'not_found',
         error:  'time slot with id 0 not found',
       })
     end
@@ -87,6 +88,7 @@ RSpec.feature 'time slots CRUD actions - update' do
       expect(last_response).to be_unprocessable
       expect(last_response.symbolized_json).to match({
         status:            'ERROR',
+        code:              'validation_failed',
         name:              ['must be a string'],
         start_time:        ['must be a time'],
         end_time:          ['is missing'],
@@ -113,6 +115,7 @@ RSpec.feature 'time slots CRUD actions - update' do
       expect(last_response).to be_forbidden
       expect(last_response.symbolized_json).to match(
         status: 'ERROR',
+        code:   'forbidden',
         error:  'time slot violates unique constraint',
       )
     end

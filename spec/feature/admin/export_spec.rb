@@ -106,6 +106,7 @@ RSpec.feature 'GET /admin/export route' do
       expect(last_response).to be_unprocessable
       expect(last_response.symbolized_json).to match({
         status: 'ERROR',
+        code:   'validation_failed',
         error:  a_collection_including('end_date must be after start_date'),
       })
     end

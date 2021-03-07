@@ -32,10 +32,11 @@ RSpec.feature 'POST /register route - duplicity validations' do
       it 'request is rejected' do
         post_json '/register', request_data
 
-        expect(last_response     ).to be_unprocessable
-        expect(last_response.json).to eq({
-          'status' => 'ERROR',
-          'error'  => [
+        expect(last_response).to be_unprocessable
+        expect(last_response.symbolized_json).to eq({
+          status: 'ERROR',
+          code:   'validation_failed',
+          error:  [
             "client with insurance_number #{client_data[:insurance_number]} " \
             "is already registered for #{exam_data[:exam_date]}",
           ],

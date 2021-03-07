@@ -5,14 +5,16 @@ module Utils
     class Response
       extend Dry::Core::ClassAttributes
 
-      defines :status,    type: ::Symbol
-      defines :base_body, type: ::Hash
+      defines :status, type: ::Symbol
 
       status :override_me
-      base_body({}.freeze)
 
       attr_value_initialize :body, :headers, [json: true]
       attr_query :json?
+
+      def self.base_body
+        {}
+      end
 
       def self.with(fields)
         new(base_body.merge(fields.to_h), {})
@@ -33,11 +35,19 @@ module Utils
     end
 
     class SuccessResponse < Response
-      base_body({ status: 'OK' }.freeze)
+      def self.base_body
+        { status: 'OK' }
+      end
     end
 
     class ErrorResponse < Response
-      base_body({ status: 'ERROR' }.freeze)
+      def self.base_body
+        { status: 'ERROR', code: code }
+      end
+
+      def self.code
+        status
+      end
     end
 
     module Responses
@@ -63,6 +73,10 @@ module Utils
 
       class UnprocessableEntity < ErrorResponse
         status :unprocessable_entity
+
+        def self.code
+          :validation_failed
+        end
       end
 
       class InternalServerError < ErrorResponse

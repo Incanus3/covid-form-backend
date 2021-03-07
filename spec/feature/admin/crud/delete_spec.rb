@@ -48,6 +48,7 @@ RSpec.feature 'time slots CRUD actions - delete' do
       expect(last_response).to be_not_found
       expect(last_response.symbolized_json).to match(
         status: 'ERROR',
+        code:   'not_found',
         error:  'time slot with id 0 not found',
       )
     end
@@ -65,6 +66,7 @@ RSpec.feature 'time slots CRUD actions - delete' do
       expect(last_response).to be_forbidden
       expect(last_response.symbolized_json).to match(
         status: 'ERROR',
+        code:   'forbidden',
         error:  "time slot with id #{time_slot.id} has related records",
       )
     end
