@@ -26,6 +26,7 @@ gem 'sequel'
 gem 'sequel_pg'
 
 group :development do # rubocop:disable Metrics/BlockLength
+  gem 'awesome_print'
   gem 'bundler-audit'
   gem 'database_cleaner-sequel'
   gem 'factory_bot'
@@ -47,7 +48,7 @@ group :development do # rubocop:disable Metrics/BlockLength
   gem 'ruby_jard'
   gem 'simplecov'
   gem 'sqlite3'
-  # gem 'super_diff'
+  gem 'super_diff'
   gem 'timecop'
   gem 'webmock'
 end

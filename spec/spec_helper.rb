@@ -4,6 +4,7 @@ ENV['APP_ENV'] = 'test'
 $LOAD_PATH.unshift(APP_ROOT)
 
 require 'attr_extras'
+require 'awesome_print'
 require 'timecop'
 require_relative 'helpers/base'
 require_relative 'helpers/database'
