@@ -45,6 +45,10 @@ module CovidForm
       default_options(env).to_h.merge(db_options).merge(table)
     end
 
+    def to_a
+      to_h.map { |key, value| { key: key, value: value } }
+    end
+
     private
 
     def default_options(env)

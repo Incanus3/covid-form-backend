@@ -18,7 +18,8 @@ RSpec.feature 'settings CRUD actions' do
 
       expect(last_response).to be_ok
       expect(last_response.symbolized_json[:settings]).to include({
-        daily_registration_limit: CovidForm::Dependencies[:config][:daily_registration_limit],
+        key:   'daily_registration_limit',
+        value: CovidForm::Dependencies[:config][:daily_registration_limit],
       })
     end
   end

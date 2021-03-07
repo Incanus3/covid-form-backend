@@ -112,7 +112,9 @@ module CovidForm
       end
 
       def update_action(id, service:, validation_contract:)
-        request.put do
+        # FIXME: patch must do partial validation
+
+        request.on method: [:put, :patch] do
           validation_result = validation_contract.new.call(request.params)
 
           if validation_result.success?

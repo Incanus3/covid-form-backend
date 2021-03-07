@@ -149,7 +149,9 @@ module CovidForm
 
               request.is do
                 r.get do # GET /admin/crud/settings
-                  { settings: Dependencies[:config].to_h.reject { |key, _val| key == :auth } }
+                  settings = Dependencies[:config].to_a.reject { |setting| setting[:key] == :auth }
+
+                  { settings: settings }
                 end
 
                 # POST /admin/crud/settings
