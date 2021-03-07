@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'spec/feature/helpers'
 require 'app/dependencies'
 
-RSpec.feature 'POST /register route - duplicity validations' do
+RSpec.feature 'POST /registration/create route - duplicity validations' do
   include CovidForm::Import[:db]
   include CovidForm::TestHelpers::Configuration
   include CovidForm::TestHelpers::TimeSlots
@@ -30,7 +30,7 @@ RSpec.feature 'POST /register route - duplicity validations' do
       end
 
       it 'request is rejected' do
-        post_json '/register', request_data
+        post_json '/registration/create', request_data
 
         expect(last_response).to be_unprocessable
         expect(last_response.symbolized_json).to eq({

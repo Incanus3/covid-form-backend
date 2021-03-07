@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'spec/feature/helpers'
 require 'app/dependencies'
 
-RSpec.feature 'POST /register route - insurance number validations' do # rubocop:disable Metrics/BlockLength
+RSpec.feature 'POST /registration/create route - insurance number validations' do # rubocop:disable Metrics/BlockLength
   include CovidForm::Import[:db]
   include CovidForm::TestHelpers::Configuration
   include CovidForm::TestHelpers::TimeSlots
@@ -34,7 +34,7 @@ RSpec.feature 'POST /register route - insurance number validations' do # rubocop
       let(:insurance_number) { 'abcdefghij'[...number_of_digits] }
 
       it 'request is rejected' do
-        post_json '/register', request_data
+        post_json '/registration/create', request_data
 
         response_data = last_response.symbolized_json
 
@@ -49,7 +49,7 @@ RSpec.feature 'POST /register route - insurance number validations' do # rubocop
       let(:insurance_number) { '5013011234'[...number_of_digits] }
 
       it 'request is rejected' do
-        post_json '/register', request_data
+        post_json '/registration/create', request_data
 
         response_data = last_response.symbolized_json
 
@@ -64,7 +64,7 @@ RSpec.feature 'POST /register route - insurance number validations' do # rubocop
       let(:insurance_number) { '5001321237'[...number_of_digits] }
 
       it 'request is rejected' do
-        post_json '/register', request_data
+        post_json '/registration/create', request_data
 
         response_data = last_response.symbolized_json
 
@@ -80,7 +80,7 @@ RSpec.feature 'POST /register route - insurance number validations' do # rubocop
         let(:insurance_number) { '5001419874'[...number_of_digits] }
 
         it 'request is accepted' do
-          post_json '/register', request_data
+          post_json '/registration/create', request_data
 
           expect(last_response).to be_ok
         end
@@ -90,7 +90,7 @@ RSpec.feature 'POST /register route - insurance number validations' do # rubocop
         let(:insurance_number) { '5021419876'[...number_of_digits] }
 
         it 'request is rejected' do
-          post_json '/register', request_data
+          post_json '/registration/create', request_data
 
           response_data = last_response.symbolized_json
 
@@ -105,7 +105,7 @@ RSpec.feature 'POST /register route - insurance number validations' do # rubocop
         let(:insurance_number) { '5001411239'[...number_of_digits] }
 
         it 'request is rejected' do
-          post_json '/register', request_data
+          post_json '/registration/create', request_data
 
           response_data = last_response.symbolized_json
 
@@ -123,7 +123,7 @@ RSpec.feature 'POST /register route - insurance number validations' do # rubocop
       let(:insurance_number) { '500101123' }
 
       it 'request is accepted' do
-        post_json '/register', request_data
+        post_json '/registration/create', request_data
 
         expect(last_response).to be_ok
       end
@@ -133,7 +133,7 @@ RSpec.feature 'POST /register route - insurance number validations' do # rubocop
       let(:insurance_number) { '500101000' }
 
       it 'request is rejected' do
-        post_json '/register', request_data
+        post_json '/registration/create', request_data
 
         response_data = last_response.symbolized_json
 
@@ -147,7 +147,7 @@ RSpec.feature 'POST /register route - insurance number validations' do # rubocop
       let(:insurance_number) { '550101123' }
 
       it 'request is rejected' do
-        post_json '/register', request_data
+        post_json '/registration/create', request_data
 
         response_data = last_response.symbolized_json
 
@@ -166,7 +166,7 @@ RSpec.feature 'POST /register route - insurance number validations' do # rubocop
       let(:insurance_number) { '5501011230' }
 
       it 'request is accepted' do
-        post_json '/register', request_data
+        post_json '/registration/create', request_data
 
         expect(last_response).to be_ok
       end
@@ -176,7 +176,7 @@ RSpec.feature 'POST /register route - insurance number validations' do # rubocop
       let(:insurance_number) { '5501011231' }
 
       it 'request is rejected' do
-        post_json '/register', request_data
+        post_json '/registration/create', request_data
 
         response_data = last_response.symbolized_json
 
@@ -193,7 +193,7 @@ RSpec.feature 'POST /register route - insurance number validations' do # rubocop
     let(:insurance_number) { '12345678' }
 
     it 'request is rejected' do
-      post_json '/register', request_data
+      post_json '/registration/create', request_data
 
       response_data = last_response.symbolized_json
 
@@ -208,7 +208,7 @@ RSpec.feature 'POST /register route - insurance number validations' do # rubocop
     let(:insurance_number) { '12345678901' }
 
     it 'request is rejected' do
-      post_json '/register', request_data
+      post_json '/registration/create', request_data
 
       response_data = last_response.symbolized_json
 
@@ -224,7 +224,7 @@ RSpec.feature 'POST /register route - insurance number validations' do # rubocop
     let(:insurance_number)  { '743277000' }
 
     it 'any insurance number is accepted' do
-      post_json '/register', request_data
+      post_json '/registration/create', request_data
 
       expect(last_response).to be_ok
     end

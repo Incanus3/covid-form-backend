@@ -57,66 +57,54 @@ module CovidForm
           r.rodauth
         end
 
-        r.is 'register' do
-          r.post do # POST /register
+        r.on 'registration' do
+          r.is 'create', method: :post do # POST /register
             action(
               validation_contract: Validation::Contracts::Registration,
               result_serializer:   Serializers::RegistrationResult,
             ) do |params|
-              Services::Registration.new(client_data: params[:client],
-                                         exam_data:   params[:exam]).perform
+              Services::Registration.new(
+                client_data: params[:client], exam_data: params[:exam],
+              ).perform
+            end
+          end
+
+          r.is 'full_dates', method: :get do # GET /capacity/full_dates
+            action(
+              validation_contract: Validation::Contracts::FullDates,
+              result_serializer:   Serializers::FullDatesResult,
+            ) do |params|
+              Services::Capacity.new.full_dates_between(**params)
+            end
+          end
+
+          r.is 'available_time_slots', method: :get do # GET /crud/time_slots
+            action(
+              validation_contract: Validation::Contracts::AvailableTimeSlots,
+              result_serializer:   Serializers::TimeSlot,
+              multiple_results:    true,
+              serializer_options:  { with_coefficient: false },
+            ) do |params|
+              Services::Capacity.new.available_time_slots_for(*params.values_at(:date, :exam_type))
             end
           end
         end
 
         r.on 'crud' do
           r.is 'exam_types' do
-            r.get do # GET /crud/exam_types
-              service = CRUD::ExamTypes.new
-
-              respond_with Serializers::CRUDServiceResult.serialize(service, service.all)
-            end
-          end
-        end
-
-        r.on 'capacity' do
-          r.is 'full_dates' do
-            r.get do # GET /capacity/full_dates
-              action(
-                validation_contract: Validation::Contracts::FullDates,
-                result_serializer:   Serializers::FullDatesResult,
-              ) do |params|
-                Services::Capacity.new.full_dates_between(**params)
-              end
-            end
-          end
-
-          r.is 'available_time_slots' do
-            r.get do # GET /crud/time_slots
-              action(
-                validation_contract: Validation::Contracts::AvailableTimeSlots,
-                result_serializer:   Serializers::TimeSlot,
-                multiple_results:    true,
-                serializer_options:  { with_coefficient: false },
-              ) do |params|
-                Services::Capacity.new
-                  .available_time_slots_for(*params.values_at(:date, :exam_type))
-              end
-            end
+            get_all_action(service: CRUD::ExamTypes)
           end
         end
 
         r.on 'admin' do
           rodauth.require_authentication
 
-          r.is 'export' do
-            r.get do # GET /export
-              action(
-                validation_contract: Validation::Contracts::Export,
-                result_serializer:   Serializers::ExportResult,
-              ) do |params|
-                Services::Export.new(**params).perform
-              end
+          r.is 'export', method: :get do # GET /export
+            action(
+              validation_contract: Validation::Contracts::Export,
+              result_serializer:   Serializers::ExportResult,
+            ) do |params|
+              Services::Export.new(**params).perform
             end
           end
 

@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'spec/feature/helpers'
 require 'app/dependencies'
 
-RSpec.feature 'POST /register route - success effects' do
+RSpec.feature 'POST /registration/create route - success effects' do
   include CovidForm::Import[:db]
   include CovidForm::TestHelpers::Configuration
   include CovidForm::TestHelpers::TimeSlots
@@ -25,7 +25,7 @@ RSpec.feature 'POST /register route - success effects' do
 
   context 'with a new client' do
     it 'creates the client' do
-      post_json '/register', request_data
+      post_json '/registration/create', request_data
 
       client = db.clients.find_by_insurance_number(client_data[:insurance_number])
 
@@ -33,7 +33,7 @@ RSpec.feature 'POST /register route - success effects' do
     end
 
     it 'creates a registration' do
-      post_json '/register', request_data
+      post_json '/registration/create', request_data
 
       client       = db.clients.find_by_insurance_number(client_data[:insurance_number])
       registration = db.registrations.for_client(client).first
@@ -43,7 +43,7 @@ RSpec.feature 'POST /register route - success effects' do
     end
 
     it 'returns a response including both' do
-      post_json '/register', request_data
+      post_json '/registration/create', request_data
 
       response_data = last_response.symbolized_json
 
@@ -55,7 +55,7 @@ RSpec.feature 'POST /register route - success effects' do
     end
 
     it 'sends and informational email' do
-      post_json '/register', request_data
+      post_json '/registration/create', request_data
 
       is_expected.to have_sent_email
         .from('covid@test.cz')
@@ -72,7 +72,7 @@ RSpec.feature 'POST /register route - success effects' do
 
       client_data[:first_name] = 'Updated'
 
-      post_json '/register', request_data
+      post_json '/registration/create', request_data
 
       updated_client = db.clients.find(client.id)
 

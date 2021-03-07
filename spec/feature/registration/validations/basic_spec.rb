@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'spec/feature/helpers'
 require 'app/dependencies'
 
-RSpec.feature 'POST /register route - basic validations' do
+RSpec.feature 'POST /registration/create route - basic validations' do
   include CovidForm::Import[:db]
   include CovidForm::TestHelpers::Configuration
   include CovidForm::TestHelpers::ExamTypes
@@ -26,7 +26,7 @@ RSpec.feature 'POST /register route - basic validations' do
     let(:client_data) { attributes_for(:client_with_invalid_email) }
 
     it 'request is rejected' do
-      post_json '/register', request_data
+      post_json '/registration/create', request_data
 
       response_data = last_response.symbolized_json
 
@@ -40,7 +40,7 @@ RSpec.feature 'POST /register route - basic validations' do
     let(:exam_data) { attributes_for(:exam_with_past_date) }
 
     it 'request is rejected' do
-      post_json '/register', request_data
+      post_json '/registration/create', request_data
 
       response_data = last_response.symbolized_json
 
@@ -54,7 +54,7 @@ RSpec.feature 'POST /register route - basic validations' do
     let(:exam_data) { attributes_for(:exam, time_slot_id: -1) }
 
     it 'request is rejected' do
-      post_json '/register', request_data
+      post_json '/registration/create', request_data
 
       response_data = last_response.symbolized_json
 
@@ -68,7 +68,7 @@ RSpec.feature 'POST /register route - basic validations' do
     let(:exam_data) { attributes_for(:exam, exam_type: 'nonexistent') }
 
     it 'request is rejected' do
-      post_json '/register', request_data
+      post_json '/registration/create', request_data
 
       response_data = last_response.symbolized_json
 

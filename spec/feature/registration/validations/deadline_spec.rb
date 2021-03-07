@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'spec/feature/helpers'
 require 'app/dependencies'
 
-RSpec.feature 'POST /register route - lock after deadline' do
+RSpec.feature 'POST /registration/create route - lock after deadline' do
   include CovidForm::Import[:db]
   include CovidForm::TestHelpers::Configuration
   include CovidForm::TestHelpers::TimeSlots
@@ -32,7 +32,7 @@ RSpec.feature 'POST /register route - lock after deadline' do
 
       it 'is accepted even after deadline time' do
         Timecop.freeze(Utils::Time.today_at(10, 0)) do
-          post_json '/register', request_data
+          post_json '/registration/create', request_data
         end
 
         expect(last_response).to be_ok
@@ -44,7 +44,7 @@ RSpec.feature 'POST /register route - lock after deadline' do
 
       it 'is accepted before deadline time' do
         Timecop.freeze(Utils::Time.today_at(9, 59)) do
-          post_json '/register', request_data
+          post_json '/registration/create', request_data
         end
 
         expect(last_response).to be_ok
@@ -52,7 +52,7 @@ RSpec.feature 'POST /register route - lock after deadline' do
 
       it 'is rejected after deadline time' do
         Timecop.freeze(Utils::Time.today_at(10, 0)) do
-          post_json '/register', request_data
+          post_json '/registration/create', request_data
         end
 
         response_data = last_response.symbolized_json
@@ -73,7 +73,7 @@ RSpec.feature 'POST /register route - lock after deadline' do
 
       it 'is accepted before deadline time' do
         Timecop.freeze(Utils::Time.today_at(18, 59)) do
-          post_json '/register', request_data
+          post_json '/registration/create', request_data
         end
 
         expect(last_response).to be_ok
@@ -81,7 +81,7 @@ RSpec.feature 'POST /register route - lock after deadline' do
 
       it 'is rejected after deadline time' do
         Timecop.freeze(Utils::Time.today_at(19, 0)) do
-          post_json '/register', request_data
+          post_json '/registration/create', request_data
         end
 
         response_data = last_response.symbolized_json
@@ -98,7 +98,7 @@ RSpec.feature 'POST /register route - lock after deadline' do
 
       it 'is rejected even before deadline time' do
         Timecop.freeze(Utils::Time.today_at(18, 59)) do
-          post_json '/register', request_data
+          post_json '/registration/create', request_data
         end
 
         response_data = last_response.symbolized_json
@@ -111,7 +111,7 @@ RSpec.feature 'POST /register route - lock after deadline' do
 
       it 'is rejected after deadline time' do
         Timecop.freeze(Utils::Time.today_at(19, 0)) do
-          post_json '/register', request_data
+          post_json '/registration/create', request_data
         end
 
         response_data = last_response.symbolized_json

@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'spec/feature/helpers'
 require 'app/dependencies'
 
-RSpec.feature 'POST /register route - weekday validation' do
+RSpec.feature 'POST /registration/create route - weekday validation' do
   include CovidForm::Import[:db]
   include CovidForm::TestHelpers::Configuration
   include CovidForm::TestHelpers::TimeSlots
@@ -26,7 +26,7 @@ RSpec.feature 'POST /register route - weekday validation' do
     let(:exam_data) { attributes_for(:exam, exam_date: Date.new(2050, 1, 3)) }
 
     it 'is accepted' do
-      post_json '/register', request_data
+      post_json '/registration/create', request_data
 
       expect(last_response).to be_ok
     end
@@ -36,7 +36,7 @@ RSpec.feature 'POST /register route - weekday validation' do
     let(:exam_data) { attributes_for(:exam, exam_date: Date.new(2050, 1, 1)) }
 
     it 'is rejected' do
-      post_json '/register', request_data
+      post_json '/registration/create', request_data
 
       response_data = last_response.symbolized_json
 

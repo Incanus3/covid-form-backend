@@ -34,6 +34,9 @@ module CovidForm
 
           jwt_access_token_period                      options[:access_token_lifetime_minutes] * 60
           jwt_refresh_token_deadline_interval minutes: options[:refresh_token_lifetime_minutes]
+
+          # jwt_access_token_period                      1
+          # jwt_refresh_token_deadline_interval seconds: 2
         end
       end
       # rubocop:enable Style/MethodCallWithArgsParentheses

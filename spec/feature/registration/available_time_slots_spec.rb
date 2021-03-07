@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'spec/feature/helpers'
 require 'app/dependencies'
 
-RSpec.feature 'GET /capacity/available_time_slots' do
+RSpec.feature 'GET /registration/available_time_slots' do
   include CovidForm::Import[:db]
   include CovidForm::TestHelpers::TimeSlots
   include CovidForm::TestHelpers::ExamTypes
@@ -17,7 +17,7 @@ RSpec.feature 'GET /capacity/available_time_slots' do
   end
 
   it 'works' do
-    get '/capacity/available_time_slots', exam_type: 'pcr'
+    get '/registration/available_time_slots', exam_type: 'pcr'
 
     expect(last_response).to be_ok
     expect(last_response.symbolized_json).to match({

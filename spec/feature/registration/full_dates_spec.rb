@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'spec/feature/helpers'
 
-RSpec.feature 'GET /capacity/full_dates route' do
+RSpec.feature 'GET /registration/full_dates route' do
   include CovidForm::Import[:config, :db]
   include CovidForm::TestHelpers::Configuration
   include CovidForm::TestHelpers::TimeSlots
@@ -27,7 +27,7 @@ RSpec.feature 'GET /capacity/full_dates route' do
 
   context 'with valid params' do
     it 'returns dates with capacity limit reached' do
-      get '/capacity/full_dates', start_date: Date.today, end_date: Date.today + 10
+      get '/registration/full_dates', start_date: Date.today, end_date: Date.today + 10
 
       expect(last_response).to be_ok
       expect(last_response.symbolized_json).to match({
@@ -39,7 +39,7 @@ RSpec.feature 'GET /capacity/full_dates route' do
 
   context 'with invalid params' do
     it 'returns a proper validation error' do
-      get '/capacity/full_dates', start_date: Date.today, end_date: Date.today - 10
+      get '/registration/full_dates', start_date: Date.today, end_date: Date.today - 10
 
       expect(last_response).to be_unprocessable
       expect(last_response.symbolized_json).to match({
