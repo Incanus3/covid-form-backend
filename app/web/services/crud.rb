@@ -156,6 +156,10 @@ module CovidForm
         repo_name :time_slots
       end
 
+      class DailyOverrides < CRUDService
+        repo_name :daily_overrides
+      end
+
       class Settings < CRUDService
         repo_name :settings
       end

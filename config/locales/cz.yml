@@ -117,6 +117,9 @@ cz:
       exam_type: "druh vyšetření"
       exam_date: "datum vyšetření"
 
+    daily_override:
+      model_name: "denní nastavení"
+
     setting:
       model_name: "nastavení"
 

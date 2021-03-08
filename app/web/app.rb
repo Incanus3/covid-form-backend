@@ -137,6 +137,19 @@ module CovidForm
               )
             end
 
+            r.on 'daily_overrides' do
+              # TODO: return only for future dates
+
+              # GET    /admin/crud/daily_overrides
+              # POST   /admin/crud/daily_overrides
+              # PUT    /admin/crud/daily_overrides/:id
+              # DELETE /admin/crud/daily_overrides/:id
+              crud_actions(
+                service:             CRUD::DailyOverrides,
+                validation_contract: Validation::Contracts::DailyOverride,
+              )
+            end
+
             r.on 'settings' do
               service             = CRUD::Settings
               validation_contract = Validation::Contracts::Setting

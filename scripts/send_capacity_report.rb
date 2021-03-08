@@ -74,6 +74,7 @@ end
 # :nocov:
 if __FILE__ == $PROGRAM_NAME
   CovidForm::Dependencies.start(:persistence)
+  CovidForm::Dependencies.start(:configuration)
 
   reporter = CovidForm::Reporter.new(
     env:        ENV.fetch('CRS_ENV', 'test').to_sym,

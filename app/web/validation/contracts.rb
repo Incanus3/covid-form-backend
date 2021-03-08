@@ -144,6 +144,10 @@ module CovidForm
           json(Schemas::ExamType)
         end
 
+        class DailyOverride < Contract
+          json(Schemas::DailyOverride)
+        end
+
         class Setting < Contract
           json(Schemas::Setting)
         end

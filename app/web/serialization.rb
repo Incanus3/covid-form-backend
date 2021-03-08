@@ -209,6 +209,28 @@ module CovidForm
         end
       end
 
+      class DailyOverride < Serializer
+        class << self
+          def serialize(...)
+            Responses::OK.with(daily_override: do_serialize(...))
+          end
+
+          def serialize_many(daily_overrides)
+            Responses::OK.with(daily_overrides: daily_overrides.map { do_serialize(_1) })
+          end
+
+          # private
+
+          def do_serialize(daily_override)
+            {
+              id:                 daily_override.id,
+              date:               daily_override.date,
+              registration_limit: daily_override.registration_limit,
+            }
+          end
+        end
+      end
+
       class Setting < Serializer
         class << self
           def serialize(...)

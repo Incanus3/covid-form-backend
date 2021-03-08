@@ -51,6 +51,11 @@ module CovidForm
           required(:description).filled(Types::Strict::String)
         }
 
+        DailyOverride = Dry::Schema.JSON {
+          required(:date              ).filled(Types::JSON::Date)
+          required(:registration_limit).filled(Types::Integer)
+        }
+
         Setting = Dry::Schema.JSON {
           required(:key  ).filled(Types::Strict::String).value(excludes?: 'auth')
           required(:value).filled(Types::Nominal::Any)
