@@ -64,8 +64,12 @@ module CovidForm
         week_starts_on:                       1,
         open_registration_in_weeks:           1,
         close_registration_in_weeks:          1,
-        allow_registration_for_weekends:      false,
-        enable_registration_deadline:         true,
+        allow_registration_for_weekends:      fetch_bool(
+          'ALLOW_REGISTRATION_FOR_WEEKENDS', default: false
+        ),
+        enable_registration_deadline:         fetch_bool(
+          'ENABLE_REGISTRATION_DEADLINE', default: true
+        ),
         daily_registration_limit:             fetch_int.('DAILY_REGISTRATION_LIMIT',    250),
         registration_deadline_offset_minutes: fetch_int.('REGISTRATION_OFFSET_MINUTES', 300),
       }

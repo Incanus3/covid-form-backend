@@ -84,6 +84,9 @@ en:
       exam_type: "exam type"
       exam_date: "exam date"
 
+    daily_override:
+      model_name: "daily settings"
+
     setting:
       model_name: "setting"
 
